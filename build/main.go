@@ -13,6 +13,15 @@ import (
 	"github.com/gomarkdown/markdown"
 )
 
+type Site struct {
+	Config SiteConfig
+	Posts  []Post
+}
+
+type SiteConfig struct {
+	Title string
+}
+
 type Post struct {
 	Config          PostConfig
 	Content         string
@@ -33,6 +42,12 @@ func main() {
 	}
 
 	if args[0] == "build" {
+		site := Site{
+			Config: SiteConfig{
+				Title: "Tim's Blog",
+			},
+		}
+
 		posts, readErr := ReadPosts()
 
 		if readErr != nil {
@@ -40,14 +55,16 @@ func main() {
 			panic(readErr)
 		}
 
-		postCount, buildErr := BuildSite(posts)
+		site.Posts = posts
+
+		buildErr := BuildSite(site)
 
 		if buildErr != nil {
 			log.Printf("there was a problem building the site: %+v", buildErr)
 			panic(buildErr)
 		}
 
-		fmt.Printf("blog built. posts written: %s\n", strconv.Itoa(postCount))
+		fmt.Printf("blog built. posts written: %s\n", strconv.Itoa(len(site.Posts)))
 	}
 }
 
@@ -96,30 +113,69 @@ func ReadPosts() ([]Post, error) {
 	return posts, nil
 }
 
-func BuildSite(posts []Post) (int, error) {
+func BuildSite(site Site) error {
 	truncatePublicDir()
 
+	if err := BuildPosts(site.Posts); err != nil {
+		return err
+	}
+
+	if err := BuildHomePage(site); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func BuildPosts(posts []Post) error {
 	for key, post := range posts {
 		newDir := fmt.Sprintf("../docs/%s", post.Config.Slug)
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
-			return 0, err
+			return err
 		}
 
 		newFilePath := fmt.Sprintf("%s/index.html", newDir)
 		fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
-			return 0, err
+			return err
 		}
 
 		fp.WriteString(posts[key].RenderedContent)
 
 		if err := fp.Close(); err != nil {
-			return 0, err
+			return err
 		}
 	}
 
-	return len(posts), nil
+	return nil
+}
+
+func BuildHomePage(site Site) error {
+	template, parseErr := template.ParseFiles("./templates/home.html")
+	if parseErr != nil {
+		return fmt.Errorf("error reading template file home.html")
+	}
+
+	var content bytes.Buffer
+	templateErr := template.Execute(&content, site)
+	if templateErr != nil {
+		return fmt.Errorf("error generating template")
+	}
+
+	newFilePath := fmt.Sprintf("../docs/index.html")
+	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+
+	fp.WriteString(content.String())
+
+	if err := fp.Close(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func RenderContent(filePath string, post *Post) error {
