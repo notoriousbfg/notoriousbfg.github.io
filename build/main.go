@@ -1,19 +1,21 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
+	"text/template"
 
 	"github.com/gomarkdown/markdown"
 )
 
 type Post struct {
 	Config          PostConfig
-	Content         []byte
+	Content         string
 	RenderedContent string
 }
 
@@ -52,17 +54,6 @@ func main() {
 func ReadPosts() ([]Post, error) {
 	var posts []Post
 
-	templateHTML := `
-		<!DOCTYPE html>
-		<html>
-			<head>
-				<title>Hello World</title>
-			</head>
-			<body>
-				<div class="page-content">%s</div>
-			</body>
-		</html>`
-
 	items, err := ioutil.ReadDir("../posts")
 	if err != nil {
 		return nil, fmt.Errorf("error reading posts directory")
@@ -82,29 +73,19 @@ func ReadPosts() ([]Post, error) {
 				if subItem.Name() == "config.json" {
 					filePath := fmt.Sprintf("../posts/%s/config.json", item.Name())
 					contents, err := ioutil.ReadFile(filePath)
-
 					if err != nil {
 						return nil, fmt.Errorf("error reading config file: %s", filePath)
 					}
 
-					err = json.Unmarshal([]byte(contents), &post.Config)
-
-					if err != nil {
+					if err = json.Unmarshal([]byte(contents), &post.Config); err != nil {
 						return nil, fmt.Errorf("error unmarshalling JSON: %s", filePath)
 					}
 				}
 
 				if subItem.Name() == "post.md" {
-					filePath := fmt.Sprintf("../posts/%s/post.md", item.Name())
-					contents, err := ioutil.ReadFile(filePath)
-
-					if err != nil {
-						return nil, fmt.Errorf("error reading config file: %s", filePath)
+					if err := RenderContent(fmt.Sprintf("../posts/%s/post.md", item.Name()), &post); err != nil {
+						return nil, err
 					}
-
-					md := []byte(contents)
-					post.Content = markdown.ToHTML(md, nil, nil)
-					post.RenderedContent = fmt.Sprintf(templateHTML, string(post.Content))
 				}
 			}
 
@@ -139,6 +120,30 @@ func BuildSite(posts []Post) (int, error) {
 	}
 
 	return len(posts), nil
+}
+
+func RenderContent(filePath string, post *Post) error {
+	contents, pathErr := ioutil.ReadFile(filePath)
+
+	if pathErr != nil {
+		return fmt.Errorf("error reading file: %s", filePath)
+	}
+
+	post.Content = string(markdown.ToHTML(contents, nil, nil))
+
+	template, parseErr := template.ParseFiles("./templates/base.html")
+	if parseErr != nil {
+		return fmt.Errorf("error reading template file base.html")
+	}
+
+	var content bytes.Buffer
+	templateErr := template.Execute(&content, post)
+	if templateErr != nil {
+		return fmt.Errorf("error generating template")
+	}
+
+	post.RenderedContent = content.String()
+	return nil
 }
 
 func truncatePublicDir() {
