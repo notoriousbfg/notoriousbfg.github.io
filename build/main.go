@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"strconv"
 
 	"github.com/gomarkdown/markdown"
 )
@@ -22,16 +24,28 @@ type PostConfig struct {
 }
 
 func main() {
-	posts, readErr := ReadPosts()
+	args := os.Args[1:]
 
-	if readErr != nil {
-		panic(readErr)
+	if len(args) == 0 {
+		panic("not enough arguments passed to cli")
 	}
 
-	buildErr := BuildSite(posts)
+	if args[0] == "build" {
+		posts, readErr := ReadPosts()
 
-	if buildErr != nil {
-		panic(buildErr)
+		if readErr != nil {
+			log.Printf("there was a problem reading the posts directory: %+v", readErr)
+			panic(readErr)
+		}
+
+		postCount, buildErr := BuildSite(posts)
+
+		if buildErr != nil {
+			log.Printf("there was a problem building the site: %+v", buildErr)
+			panic(buildErr)
+		}
+
+		fmt.Printf("blog built. posts written: %s\n", strconv.Itoa(postCount))
 	}
 }
 
@@ -101,26 +115,33 @@ func ReadPosts() ([]Post, error) {
 	return posts, nil
 }
 
-func BuildSite(posts []Post) error {
+func BuildSite(posts []Post) (int, error) {
+	truncatePublicDir()
+
 	for key, post := range posts {
 		newDir := fmt.Sprintf("../public/%s", post.Config.Slug)
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		newFilePath := fmt.Sprintf("%s/index.html", newDir)
 		fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		fp.WriteString(posts[key].RenderedContent)
 
 		if err := fp.Close(); err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	return nil
+	return len(posts), nil
+}
+
+func truncatePublicDir() {
+	os.RemoveAll("../public")
+	os.MkdirAll("../public", os.ModePerm)
 }
