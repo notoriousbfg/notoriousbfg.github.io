@@ -100,7 +100,7 @@ func BuildSite(posts []Post) (int, error) {
 	truncatePublicDir()
 
 	for key, post := range posts {
-		newDir := fmt.Sprintf("../public/%s", post.Config.Slug)
+		newDir := fmt.Sprintf("../docs/%s", post.Config.Slug)
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
 			return 0, err
@@ -147,6 +147,6 @@ func RenderContent(filePath string, post *Post) error {
 }
 
 func truncatePublicDir() {
-	os.RemoveAll("../public")
-	os.MkdirAll("../public", os.ModePerm)
+	os.RemoveAll("../docs")
+	os.MkdirAll("../docs", os.ModePerm)
 }
