@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gomarkdown/markdown"
+	"github.com/gosimple/slug"
 )
 
 type Site struct {
@@ -64,6 +65,20 @@ func (pc *PostConfig) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (pc *PostConfig) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Title       string `json:"title"`
+		Slug        string `json:"slug"`
+		Published   string `json:"published"`
+		Description string `json:"description"`
+	}{
+		Title:       pc.Title,
+		Slug:        pc.Slug,
+		Published:   pc.Published.Format("2006-01-02"),
+		Description: pc.Description,
+	})
+}
+
 func main() {
 	args := os.Args[1:]
 
@@ -82,7 +97,7 @@ func main() {
 
 		if readErr != nil {
 			log.Printf("there was a problem reading the posts directory:\n%+v\n", readErr)
-			panic(readErr)
+			return
 		}
 
 		site.Posts = posts
@@ -91,10 +106,52 @@ func main() {
 
 		if buildErr != nil {
 			log.Printf("there was a problem building the site: %+v", buildErr)
-			panic(buildErr)
+			return
 		}
 
 		fmt.Printf("blog built. posts written: %s\n", strconv.Itoa(len(site.Posts)))
+	}
+
+	if args[0] == "new" {
+		if len(args) == 1 {
+			log.Printf("you must specify a post title")
+			return
+		}
+
+		title := args[1]
+		slug := slug.Make(title)
+		newDir := fmt.Sprintf("../posts/%s_%s", time.Now().Format("2006-01-02"), slug)
+
+		err := os.MkdirAll(newDir, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		config := &PostConfig{Title: title, Slug: slug, Published: time.Now()}
+		b, err := json.MarshalIndent(config, "", "	")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		newConfigFilePath := fmt.Sprintf("%s/config.json", newDir)
+		configFilePointer, err := os.OpenFile(newConfigFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		configFilePointer.WriteString(string(b))
+
+		newMDFilePath := fmt.Sprintf("%s/post.md", newDir)
+		mdFilePointer, err := os.OpenFile(newMDFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		mdFilePointer.WriteString(fmt.Sprintf("# %s", title))
+
+		fmt.Printf("post \"%s\" successfully created\n", title)
 	}
 }
 
