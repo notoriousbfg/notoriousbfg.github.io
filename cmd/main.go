@@ -274,9 +274,9 @@ func RenderContent(filePath string, post *Post) error {
 
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
 
-	template, parseErr := template.ParseFiles("./templates/base.html")
+	template, parseErr := template.ParseFiles("./templates/post.html")
 	if parseErr != nil {
-		return fmt.Errorf("error reading template file base.html")
+		return fmt.Errorf("error reading template file post.html")
 	}
 
 	var content bytes.Buffer
