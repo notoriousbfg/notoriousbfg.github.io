@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"text/template"
+	"time"
 
 	"github.com/gomarkdown/markdown"
 )
@@ -31,7 +32,37 @@ type Post struct {
 type PostConfig struct {
 	Title       string
 	Slug        string
+	Published   time.Time
 	Description string
+}
+
+func (pc *PostConfig) UnmarshalJSON(data []byte) error {
+	var postConfig struct {
+		Title       string
+		Slug        string
+		Published   string
+		Description string
+	}
+	err := json.Unmarshal(data, &postConfig)
+	if err != nil {
+		return err
+	}
+	pc.Title = postConfig.Title
+	pc.Slug = postConfig.Slug
+
+	if len(postConfig.Published) == 0 {
+		return fmt.Errorf("post \"%s\" has no publish date", postConfig.Title)
+	}
+
+	// this just doesn't work at all! bizarre language decision
+	// timestamp, err := time.Parse("1st January 2022", postConfig.Published)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// pc.Published = timestamp
+	pc.Description = postConfig.Description
+	return nil
 }
 
 func main() {
@@ -51,7 +82,7 @@ func main() {
 		posts, readErr := ReadPosts()
 
 		if readErr != nil {
-			log.Printf("there was a problem reading the posts directory: %+v", readErr)
+			log.Printf("there was a problem reading the posts directory:\n%+v\n", readErr)
 			panic(readErr)
 		}
 
@@ -95,7 +126,7 @@ func ReadPosts() ([]Post, error) {
 					}
 
 					if err = json.Unmarshal([]byte(contents), &post.Config); err != nil {
-						return nil, fmt.Errorf("error unmarshalling JSON: %s", filePath)
+						return nil, fmt.Errorf("error unmarshalling JSON (%s): %+v\n", filePath, err)
 					}
 				}
 
