@@ -54,13 +54,12 @@ func (pc *PostConfig) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("post \"%s\" has no publish date", postConfig.Title)
 	}
 
-	// this just doesn't work at all! bizarre language decision
-	// timestamp, err := time.Parse("1st January 2022", postConfig.Published)
-	// if err != nil {
-	// 	return err
-	// }
+	timestamp, err := time.Parse("2006-01-02", postConfig.Published)
+	if err != nil {
+		return err
+	}
 
-	// pc.Published = timestamp
+	pc.Published = timestamp
 	pc.Description = postConfig.Description
 	return nil
 }
