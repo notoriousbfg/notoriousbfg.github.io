@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"text/template"
 	"time"
@@ -18,6 +19,20 @@ import (
 type Site struct {
 	Config SiteConfig
 	Posts  []Post
+}
+
+func (s *Site) LatestPosts() []Post {
+	posts := s.Posts
+	sort.Slice(posts, func(i, j int) bool {
+		return posts[i].Config.Published.Before(posts[j].Config.Published)
+	})
+	var sliceLength int
+	if len(posts) >= 5 {
+		sliceLength = 5
+	} else {
+		sliceLength = len(posts)
+	}
+	return posts[0:sliceLength]
 }
 
 type SiteConfig struct {
@@ -177,7 +192,7 @@ func BuildSite(site Site) error {
 		return err
 	}
 
-	if err := BuildHomePage(site); err != nil {
+	if err := BuildHomePage(&site); err != nil {
 		return err
 	}
 
@@ -208,7 +223,7 @@ func BuildPosts(posts []Post) error {
 	return nil
 }
 
-func BuildHomePage(site Site) error {
+func BuildHomePage(site *Site) error {
 	template, parseErr := template.ParseFiles("./templates/home.html")
 	if parseErr != nil {
 		return fmt.Errorf("error reading template file home.html")
@@ -217,7 +232,7 @@ func BuildHomePage(site Site) error {
 	var content bytes.Buffer
 	templateErr := template.Execute(&content, site)
 	if templateErr != nil {
-		return fmt.Errorf("error generating template")
+		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
 	}
 
 	newFilePath := fmt.Sprintf("../docs/index.html")
