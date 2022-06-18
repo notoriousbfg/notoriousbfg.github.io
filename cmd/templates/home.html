@@ -1,11 +1,12 @@
 {{ define "main" }}
-<main>
-    {{ range .LatestPosts }}
-        <a href="./{{ .Config.Slug }}">
-            <div>
-                <h2>{{ .Config.Title }}</h2>
-            </div>
-        </a>
-    {{ end }}
+<main class="container">
+    <section class="post-links">
+        {{ range .LatestPosts }}
+            <a href="./{{ .Config.Slug }}" class="post-link">
+                <h2 class="title link-hover">{{ .Config.Title }}</h2>
+                <span class="post-date">{{ .Config.Published.Format "2nd January, 2006" }}</span>
+            </a>
+        {{ end }}
+    </section>
 </main>
 {{ end }}
