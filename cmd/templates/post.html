@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>{{ .Config.Title }}</title>
-	</head>
-	<body>
-		<div class="page-content">{{ .Content }}</div>
-	</body>
-</html>
+{{ define "main" }}
+	<div class="page-content">{{ .Content }}</div>
+{{ end }}

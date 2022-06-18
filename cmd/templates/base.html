@@ -1,0 +1,14 @@
+{{ define "base" }}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ .Config.Title }}</title>
+        <meta name="description" content="{{ .Config.Description }}" />
+        <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="./site.css">
+    </head>
+    <body>
+        {{ template "main" . }}
+    </body>
+</html>
+{{ end }}

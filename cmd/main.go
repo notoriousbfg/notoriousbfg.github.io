@@ -36,7 +36,8 @@ func (s *Site) LatestPosts() []Post {
 }
 
 type SiteConfig struct {
-	Title string
+	Title       string
+	Description string
 }
 
 type Post struct {
@@ -104,7 +105,8 @@ func main() {
 	if args[0] == "build" {
 		site := Site{
 			Config: SiteConfig{
-				Title: "Tim's Blog",
+				Title:       "Tim's Blog",
+				Description: "The personal blog of Tim White, Software Developer from Bournemouth.",
 			},
 		}
 
@@ -224,13 +226,12 @@ func BuildPosts(posts []Post) error {
 }
 
 func BuildHomePage(site *Site) error {
-	template, parseErr := template.ParseFiles("./templates/home.html")
-	if parseErr != nil {
-		return fmt.Errorf("error reading template file home.html")
-	}
+	template := template.Must(
+		template.ParseFiles("./templates/home.html", "./templates/base.html"),
+	)
 
 	var content bytes.Buffer
-	templateErr := template.Execute(&content, site)
+	templateErr := template.ExecuteTemplate(&content, "base", site)
 	if templateErr != nil {
 		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
 	}
@@ -291,13 +292,12 @@ func RenderContent(filePath string, post *Post) error {
 
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
 
-	template, parseErr := template.ParseFiles("./templates/post.html")
-	if parseErr != nil {
-		return fmt.Errorf("error reading template file post.html")
-	}
+	template := template.Must(
+		template.ParseFiles("./templates/post.html", "./templates/base.html"),
+	)
 
 	var content bytes.Buffer
-	templateErr := template.Execute(&content, post)
+	templateErr := template.ExecuteTemplate(&content, "base", post)
 	if templateErr != nil {
 		return fmt.Errorf("error generating template")
 	}

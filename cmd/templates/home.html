@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ .Config.Title }}</title>
-    </head>
-    <body>
-        <div>
-            {{ range .LatestPosts }}
-                <a href="./{{ .Config.Slug }}">
-                    <div>
-                        <h2>{{ .Config.Title }}</h2>
-                    </div>
-                </a>
-            {{ end }}
-        </div>
-    </body>
-</html>
+{{ define "main" }}
+<main>
+    {{ range .LatestPosts }}
+        <a href="./{{ .Config.Slug }}">
+            <div>
+                <h2>{{ .Config.Title }}</h2>
+            </div>
+        </a>
+    {{ end }}
+</main>
+{{ end }}
