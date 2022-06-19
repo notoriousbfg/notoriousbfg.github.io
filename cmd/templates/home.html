@@ -2,11 +2,11 @@
 <section>
     <article class="post">        
         <header class="post-header">
-            <a href="./{{ .FirstPost.Config.Slug }}">
+            <a href="/{{ .FirstPost.Config.Slug }}">
                 <h1 class="title post-title">{{ .FirstPost.Config.Title }}</h1>
             </a>
             <p>
-                <span class="post-date">{{ .FirstPost.Config.Published.Format "2nd January, 2006" }}</span>
+                <span class="post-date">{{ .FirstPost.Config.FormattedDate }}</span>
             </p>
         </header>
         <div class="body">
@@ -18,9 +18,9 @@
 </section>
 <section class="post-links">
     {{ range .LatestPosts }}
-        <a href="./{{ .Config.Slug }}" class="post-link">
+        <a href="/{{ .Config.Slug }}" class="post-link">
             <h2 class="title link-hover">{{ .Config.Title }}</h2>
-            <span class="post-date">{{ .Config.Published.Format "2nd January, 2006" }}</span>
+            <span class="post-date">{{ .Config.FormattedDate }}</span>
         </a>
     {{ end }}
 </section>

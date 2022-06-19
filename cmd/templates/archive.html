@@ -1,0 +1,8 @@
+{{ define "main" }}
+    {{ range .OrderedPosts }}
+        <a class="post-link" href="/{{ .Config.Slug }}">
+            <h2 class="title">{{ .Config.Title }}</h2>
+            <span>{{ .Config.FormattedDate }}</span>
+        </a>
+    {{ end }}
+{{ end }}

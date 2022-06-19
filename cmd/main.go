@@ -21,15 +21,20 @@ type Site struct {
 	Posts  []Post
 }
 
-func (s *Site) FirstPost() Post {
-	return s.Posts[0]
-}
-
-func (s *Site) LatestPosts() []Post {
-	posts := s.Posts[1:]
+func (s *Site) OrderedPosts() []Post {
+	posts := s.Posts
 	sort.Slice(posts, func(i, j int) bool {
 		return posts[i].Config.Published.Before(posts[j].Config.Published)
 	})
+	return posts
+}
+
+func (s *Site) FirstPost() Post {
+	return s.OrderedPosts()[0]
+}
+
+func (s *Site) LatestPosts() []Post {
+	posts := s.OrderedPosts()[1:]
 	var sliceLength int
 	if len(posts) >= 5 {
 		sliceLength = 5
@@ -56,6 +61,10 @@ type PostConfig struct {
 	Slug        string
 	Published   time.Time
 	Description string
+}
+
+func (pc PostConfig) FormattedDate() string {
+	return pc.Published.Format("2nd January, 2006")
 }
 
 func (pc *PostConfig) UnmarshalJSON(data []byte) error {
@@ -204,6 +213,10 @@ func BuildSite(site Site) error {
 		return err
 	}
 
+	if err := BuildArchivePage(&site); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -243,6 +256,37 @@ func BuildHomePage(site *Site) error {
 	}
 
 	newFilePath := fmt.Sprintf("../docs/index.html")
+	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+
+	fp.WriteString(content.String())
+
+	if err := fp.Close(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func BuildArchivePage(site *Site) error {
+	template := template.Must(
+		template.ParseFiles("./templates/archive.html", "./templates/base.html"),
+	)
+
+	var content bytes.Buffer
+	templateErr := template.ExecuteTemplate(&content, "base", site)
+	if templateErr != nil {
+		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+	}
+
+	err := os.MkdirAll("../docs/archive", os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	newFilePath := fmt.Sprintf("../docs/archive/index.html")
 	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
