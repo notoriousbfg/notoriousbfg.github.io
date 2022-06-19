@@ -363,7 +363,7 @@ a {
 .container {
     width: 100%;
     max-width: 840px;
-    margin: 0 auto;
+    margin: 4rem auto 0 auto;
     padding: 0 20px;
 }
 
