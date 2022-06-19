@@ -1,4 +1,5 @@
 {{ define "main" }}
+    <h1 class="title">Archive</h1>
     {{ range .OrderedPosts }}
         <a class="post-link" href="/{{ .Config.Slug }}">
             <h2 class="title">{{ .Config.Title }}</h2>
