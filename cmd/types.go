@@ -17,7 +17,7 @@ type Site struct {
 func (s *Site) OrderedPosts() []Post {
 	posts := s.Posts
 	sort.Slice(posts, func(i, j int) bool {
-		return posts[i].Config.Published.Before(posts[j].Config.Published)
+		return posts[i].Config.Published.After(posts[j].Config.Published)
 	})
 	return posts
 }
