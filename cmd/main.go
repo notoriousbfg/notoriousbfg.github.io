@@ -42,6 +42,7 @@ func (s *Site) LatestPosts() []Post {
 type SiteConfig struct {
 	Title       string
 	Description string
+	Bio         string
 }
 
 type Post struct {
@@ -111,6 +112,7 @@ func main() {
 			Config: SiteConfig{
 				Title:       "Tim's Blog",
 				Description: "The personal blog of Tim White, Software Developer from Bournemouth.",
+				Bio:         "I’m Tim, a Software Developer from the UK. I like to program, cook, read & run.",
 			},
 		}
 
@@ -303,7 +305,7 @@ func RenderContent(filePath string, post *Post) error {
 	var content bytes.Buffer
 	templateErr := template.ExecuteTemplate(&content, "base", post)
 	if templateErr != nil {
-		return fmt.Errorf("error generating template")
+		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
 	}
 
 	post.RenderedContent = content.String()
