@@ -1,5 +1,22 @@
 {{ define "main" }}
 <main class="container">
+    <section>
+        <article class="post">        
+            <header class="post-header">
+                <a href="./{{ .FirstPost.Config.Slug }}">
+                    <h1 class="title post-title">{{ .FirstPost.Config.Title }}</h1>
+                </a>
+                <p>
+                    <span class="post-date">{{ .FirstPost.Config.Published.Format "2nd January, 2006" }}</span>
+                </p>
+            </header>
+            <div class="body">
+                <div class="posthaven-post-body">
+                    {{ .FirstPost.Content }}
+                </div>
+            </div>
+        </article>
+    </section>
     <section class="post-links">
         {{ range .LatestPosts }}
             <a href="./{{ .Config.Slug }}" class="post-link">

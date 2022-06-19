@@ -1,3 +1,15 @@
 {{ define "main" }}
-	<div class="page-content">{{ .Content }}</div>
+	<article class="post is-current">
+		<header class="post-header">
+			<h1 class="title post-title">{{ .Config.Title }}</h1>
+			<p>
+				<span class="post-date">{{ .Config.Published.Format "2nd January, 2006" }}</span>
+			</p>
+		</header>
+		<div class="body">
+			<div class="posthaven-post-body">
+				{{ .Content }}
+			</div>
+		</div>
+	</article>
 {{ end }}

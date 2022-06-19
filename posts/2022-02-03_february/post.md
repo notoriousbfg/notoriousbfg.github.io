@@ -1,5 +1,3 @@
-# February
-
 The reason it's so difficult to define the human experience without using examples is because it's so diverse, unpredictable, sporadic, _messy_. Human life is diverse by definition; When did you ever see two strangers walk past each other in the street wearing exactly the same clothes?
 
 Feel like everything is so... _boring_ lately? So samey?

@@ -21,8 +21,12 @@ type Site struct {
 	Posts  []Post
 }
 
+func (s *Site) FirstPost() Post {
+	return s.Posts[0]
+}
+
 func (s *Site) LatestPosts() []Post {
-	posts := s.Posts
+	posts := s.Posts[1:]
 	sort.Slice(posts, func(i, j int) bool {
 		return posts[i].Config.Published.Before(posts[j].Config.Published)
 	})
@@ -307,6 +311,6 @@ func RenderContent(filePath string, post *Post) error {
 }
 
 func truncatePublicDir() {
-	os.RemoveAll("../docs/**/*.html")
+	os.RemoveAll("../docs")
 	os.MkdirAll("../docs", os.ModePerm)
 }
