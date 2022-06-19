@@ -311,6 +311,6 @@ func RenderContent(filePath string, post *Post) error {
 }
 
 func truncatePublicDir() {
-	os.RemoveAll("../docs")
+	os.RemoveAll("../docs/**/*.html")
 	os.MkdirAll("../docs", os.ModePerm)
 }
