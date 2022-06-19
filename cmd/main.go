@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+
+	flag "github.com/ogier/pflag"
 )
 
 func main() {
@@ -48,7 +50,13 @@ func main() {
 			return
 		}
 
-		if err := NewPost(args[1]); err != nil {
+		title := args[1]
+
+		category := flag.String("category", "blog", "the category of the post")
+		date := flag.String("date", "", "the publish date of the post")
+		flag.Parse()
+
+		if err := NewPost(title, *category, *date); err != nil {
 			log.Printf("there was a problem creating a new post: %+v", err)
 			return
 		}

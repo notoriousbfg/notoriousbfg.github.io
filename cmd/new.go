@@ -6,10 +6,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/golang-module/carbon"
 	"github.com/gosimple/slug"
 )
 
-func NewPost(title string) error {
+func NewPost(title string, category string, date string) error {
 	slug := slug.Make(title)
 	newDir := fmt.Sprintf("../posts/%s_%s", time.Now().Format("2006-01-02"), slug)
 
@@ -18,7 +19,20 @@ func NewPost(title string) error {
 		return err
 	}
 
-	config := &PostConfig{Title: title, Slug: slug, Published: time.Now()}
+	// does this suck?
+	var published time.Time
+	if date != "" {
+		published = carbon.Parse(date).Carbon2Time()
+	} else {
+		published = time.Now()
+	}
+
+	config := &PostConfig{
+		Title:     title,
+		Slug:      slug,
+		Published: published,
+		Category:  category,
+	}
 	b, err := json.MarshalIndent(config, "", "	")
 	if err != nil {
 		return err

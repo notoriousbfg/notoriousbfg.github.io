@@ -54,6 +54,7 @@ type PostConfig struct {
 	Slug        string
 	Published   time.Time
 	Description string
+	Category    string
 }
 
 func (pc PostConfig) FormattedDate() string {
@@ -94,10 +95,12 @@ func (pc *PostConfig) MarshalJSON() ([]byte, error) {
 		Slug        string `json:"slug"`
 		Published   string `json:"published"`
 		Description string `json:"description"`
+		Category    string `json:"category"`
 	}{
 		Title:       pc.Title,
 		Slug:        pc.Slug,
 		Published:   pc.Published.Format("2006-01-02"),
 		Description: pc.Description,
+		Category:    pc.Category,
 	})
 }
