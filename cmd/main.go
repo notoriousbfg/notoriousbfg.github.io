@@ -12,6 +12,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/golang-module/carbon"
 	"github.com/gomarkdown/markdown"
 	"github.com/gosimple/slug"
 )
@@ -64,7 +65,7 @@ type PostConfig struct {
 }
 
 func (pc PostConfig) FormattedDate() string {
-	return pc.Published.Format("2nd January, 2006")
+	return carbon.Time2Carbon(pc.Published).Format("jS F, Y")
 }
 
 func (pc *PostConfig) UnmarshalJSON(data []byte) error {
