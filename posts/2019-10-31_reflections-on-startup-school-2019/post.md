@@ -11,6 +11,7 @@ Many of the companies I spoke to during these video sessions (including mine) we
 The video sessions themselves were fairly beneficial, with the exception of one or two. Quickly I realised I enjoyed discussion other founder's ideas, thinking critically and encouraging others, as much as I did my own. It was insightful to hear about how other founders had settled upon an idea, why they'd made certain assumptions about their market etc. The first session immediately made it clear to me that I needed to think more about how to describe what I was working to others (including the non-technical even though those people weren't my target audience). It even resulted in me changing my name from 'SlimDocs' to 'SwiftDocs'. Feedback from other developers in my first video call was also encouraging.
 
 The first week's lectures particularly resonated with me because they forced me to think about my problem from the perspective of prospective users and investors.
+
 - [How to Talk to Users](https://www.youtube.com/watch?v=MT4Ig2uqjTc)
 - [How to Evaluate Startup Ideas (pt 1)](https://www.youtube.com/watch?v=DOtCl5PU8F0&feature=emb_title)
 
@@ -27,6 +28,7 @@ It was important that I spend a week thinking about my problem at a granular lev
 By the time the third week's video session had come around I was better able to describe what SwiftDocs was to other founders. At the suggestion of a founder in week two, I found some stats that helped better explain the problems I was trying to solve. For example:
 
 > SwiftDocs is a code editor extension that helps development teams better understand their code. Having been a developer for the last 5 years, my experience is that codebases are typically poorly documented or not documented at all. As a result, it's much harder to bring new developers onto a project.
+
 > - On average it takes 8-12 months for new employees to gain the same proficiency in their role as co-workers.
 > - Lost productivity due to training new employees can cost a business up to 2.5% of their total revenue.
 
