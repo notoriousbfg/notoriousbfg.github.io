@@ -662,6 +662,10 @@ a {
     margin-left: auto;
 }
 
+.nav-list ul {
+    list-style-type: none;
+}
+
 .nav-list li {
     padding: 0 10px;
 }
