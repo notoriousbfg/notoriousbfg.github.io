@@ -2,12 +2,19 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ .Config.Title }}</title>
-        <meta name="description" content="{{ .Config.Description }}" />
+        <title>{{ .Site.Config.Title }}</title>
+        <meta name="description" content="{{ .Site.Config.Description }}" />
         <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/site.css">
     </head>
     <body>
+        <header>
+            <nav>
+                {{ range .Site.Categories }}
+                    <a href="#">{{ . }}</a>
+                {{ end }}
+            </nav>
+        </header>
         <main class="container">
             {{ template "main" . }}
         </main>

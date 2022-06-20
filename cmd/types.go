@@ -14,7 +14,7 @@ type Site struct {
 	Posts  []Post
 }
 
-func (s *Site) OrderedPosts() []Post {
+func (s Site) OrderedPosts() []Post {
 	posts := s.Posts
 	sort.Slice(posts, func(i, j int) bool {
 		return posts[i].Config.Published.After(posts[j].Config.Published)
@@ -22,11 +22,11 @@ func (s *Site) OrderedPosts() []Post {
 	return posts
 }
 
-func (s *Site) FirstPost() Post {
+func (s Site) FirstPost() Post {
 	return s.OrderedPosts()[0]
 }
 
-func (s *Site) LatestPosts() []Post {
+func (s Site) LatestPosts() []Post {
 	posts := s.OrderedPosts()[1:]
 	var sliceLength int
 	if len(posts) >= 5 {
@@ -35,6 +35,22 @@ func (s *Site) LatestPosts() []Post {
 		sliceLength = len(posts)
 	}
 	return posts[0:sliceLength]
+}
+
+func (s Site) Categories() []string {
+	categorySet := make(map[string]bool)
+	for _, post := range s.Posts {
+		if _, ok := categorySet[post.Config.Category]; !ok {
+			categorySet[post.Config.Category] = true
+		}
+	}
+	keys := make([]string, len(categorySet))
+	i := 0
+	for key := range categorySet {
+		keys[i] = key
+		i++
+	}
+	return keys
 }
 
 type SiteConfig struct {
@@ -67,6 +83,7 @@ func (pc *PostConfig) UnmarshalJSON(data []byte) error {
 		Slug        string
 		Published   string
 		Description string
+		Category    string
 	}
 	err := json.Unmarshal(data, &postConfig)
 	if err != nil {
@@ -74,6 +91,8 @@ func (pc *PostConfig) UnmarshalJSON(data []byte) error {
 	}
 	pc.Title = postConfig.Title
 	pc.Slug = postConfig.Slug
+	pc.Description = postConfig.Description
+	pc.Category = postConfig.Category
 
 	if len(postConfig.Published) == 0 {
 		return fmt.Errorf("post \"%s\" has no publish date", postConfig.Title)
@@ -85,7 +104,6 @@ func (pc *PostConfig) UnmarshalJSON(data []byte) error {
 	}
 
 	pc.Published = timestamp
-	pc.Description = postConfig.Description
 	return nil
 }
 
@@ -103,4 +121,13 @@ func (pc *PostConfig) MarshalJSON() ([]byte, error) {
 		Description: pc.Description,
 		Category:    pc.Category,
 	})
+}
+
+type SiteData struct {
+	Site Site
+}
+
+type PostData struct {
+	Post Post
+	Site Site
 }

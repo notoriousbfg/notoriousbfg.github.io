@@ -3,22 +3,22 @@
     <article class="post">
         <a class="home-link link-hover" href="/">Tim's Blog</a>
         <header class="post-header">
-            <a href="/{{ .FirstPost.Config.Slug }}">
-                <h1 class="title post-title">{{ .FirstPost.Config.Title }}</h1>
+            <a href="/{{ .Site.FirstPost.Config.Slug }}">
+                <h1 class="title post-title">{{ .Site.FirstPost.Config.Title }}</h1>
             </a>
             <p>
-                <span class="post-date">{{ .FirstPost.Config.FormattedDate }}</span>
+                <span class="post-date">{{ .Site.FirstPost.Config.FormattedDate }}</span>
             </p>
         </header>
         <div class="body">
             <div class="posthaven-post-body">
-                {{ .FirstPost.Content }}
+                {{ .Site.FirstPost.Content }}
             </div>
         </div>
     </article>
 </section>
 <section class="post-links">
-    {{ range .LatestPosts }}
+    {{ range .Site.LatestPosts }}
         <a href="/{{ .Config.Slug }}" class="post-link">
             <h2 class="title link-hover">{{ .Config.Title }}</h2>
             <span class="post-date">{{ .Config.FormattedDate }}</span>
