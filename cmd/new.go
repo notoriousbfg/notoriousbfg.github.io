@@ -12,19 +12,17 @@ import (
 
 func NewPost(title string, category string, date string) error {
 	slug := slug.Make(title)
-	newDir := fmt.Sprintf("../posts/%s_%s", time.Now().Format("2006-01-02"), slug)
-
-	err := os.MkdirAll(newDir, os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	// does this suck?
 	var published time.Time
 	if date != "" {
 		published = carbon.Parse(date).Carbon2Time()
 	} else {
 		published = time.Now()
+	}
+	newDir := fmt.Sprintf("../posts/%s_%s", published.Format("2006-01-02"), slug)
+
+	err := os.MkdirAll(newDir, os.ModePerm)
+	if err != nil {
+		return err
 	}
 
 	config := &PostConfig{
