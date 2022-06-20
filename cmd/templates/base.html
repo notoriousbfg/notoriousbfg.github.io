@@ -8,8 +8,6 @@
         <link rel="stylesheet" href="/site.css">
     </head>
     <body>
-        {{ $catLen := len .Site.Categories }}
-        {{ if (gt $catLen 1) }}
         <header>
             <nav class="nav">
                 <ul class="nav-list">
@@ -21,7 +19,6 @@
                 </ul>
             </nav>
         </header>
-        {{ end }}
         <main class="container">
             {{ template "main" . }}
         </main>

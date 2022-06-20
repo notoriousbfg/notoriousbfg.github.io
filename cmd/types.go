@@ -27,14 +27,14 @@ func (s Site) FirstPost() Post {
 }
 
 func (s Site) LatestPosts() []Post {
-	posts := s.OrderedPosts()[1:]
+	posts := s.OrderedPosts()
 	var sliceLength int
-	if len(posts) >= 4 {
-		sliceLength = 4
+	if len(posts) >= 5 {
+		sliceLength = 5
 	} else {
 		sliceLength = len(posts)
 	}
-	return posts[0:sliceLength]
+	return posts[1:sliceLength]
 }
 
 func (s Site) Categories() []string {
