@@ -29,8 +29,8 @@ func (s Site) FirstPost() Post {
 func (s Site) LatestPosts() []Post {
 	posts := s.OrderedPosts()[1:]
 	var sliceLength int
-	if len(posts) >= 5 {
-		sliceLength = 5
+	if len(posts) >= 4 {
+		sliceLength = 4
 	} else {
 		sliceLength = len(posts)
 	}
