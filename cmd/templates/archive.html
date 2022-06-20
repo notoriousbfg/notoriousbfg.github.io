@@ -1,5 +1,4 @@
 {{ define "main" }}
-    <a class="home-link link-hover" href="/">Tim's Blog</a>
     <h1 class="title">Archive</h1>
     {{ range .Site.OrderedPosts }}
         <a class="post-link" href="/{{ .Config.Slug }}">
