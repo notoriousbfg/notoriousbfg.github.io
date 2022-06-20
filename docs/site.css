@@ -669,6 +669,10 @@ a {
     display: inline-block;
 }
 
+.archive-title {
+    margin: 2.5rem 0;
+}
+
 @media screen and (max-width: 480px) {
     .post-link {
         flex: 0 0 100%;
