@@ -363,7 +363,7 @@ a {
 .container {
     width: 100%;
     max-width: 840px;
-    margin: 4rem auto 0 auto;
+    margin: 1rem auto 0 auto;
     padding: 0 20px;
 }
 
@@ -382,7 +382,7 @@ a {
 }
 
 .post {
-    margin: 2.5rem 0 4rem 0;
+    margin: 1rem 0 4rem 0;
 }
 
 .post.is-current {

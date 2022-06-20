@@ -81,7 +81,7 @@ func BuildPosts(site *Site) error {
 
 	site.Posts = posts
 
-	for _, post := range site.Posts {
+	for key, post := range site.Posts {
 		newDir := fmt.Sprintf("../docs/%s", post.Config.Slug)
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
@@ -103,6 +103,8 @@ func BuildPosts(site *Site) error {
 		if err := fp.Close(); err != nil {
 			return err
 		}
+
+		site.Posts[key] = post
 	}
 
 	return nil
