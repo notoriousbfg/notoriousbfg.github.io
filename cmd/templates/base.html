@@ -9,10 +9,14 @@
     </head>
     <body>
         <header>
-            <nav>
-                {{ range .Site.Categories }}
-                    <a href="#">{{ . }}</a>
-                {{ end }}
+            <nav class="nav">
+                <ul class="nav-list">
+                    {{ range .Site.Categories }}
+                        <li>
+                            <a href="#">{{ . }}</a>
+                        </li>
+                    {{ end }}
+                </ul>
             </nav>
         </header>
         <main class="container">

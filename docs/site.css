@@ -653,6 +653,19 @@ a {
     margin: 2.5rem auto 1.25rem auto;
 }
 
+.nav {
+    display: flex;
+    padding: 3px 10px;
+}
+
+.nav-list {
+    margin-left: auto;
+}
+
+.nav-list li {
+    padding: 0 10px;
+}
+
 @media screen and (max-width: 480px) {
     .post-link {
         flex: 0 0 100%;
