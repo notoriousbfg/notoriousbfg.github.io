@@ -25,14 +25,7 @@ func main() {
 			},
 		}
 
-		readErr := ReadPosts(&site)
-
-		if readErr != nil {
-			log.Printf("there was a problem reading the posts directory:\n%+v\n", readErr)
-			return
-		}
-
-		buildErr := BuildSite(site)
+		buildErr := BuildSite(&site)
 
 		if buildErr != nil {
 			log.Printf("there was a problem building the site: %+v", buildErr)

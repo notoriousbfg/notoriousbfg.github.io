@@ -11,12 +11,12 @@ import (
 	"github.com/gomarkdown/markdown"
 )
 
-func ReadPosts(site *Site) error {
+func ReadPosts() ([]Post, error) {
 	var posts []Post
 
 	items, err := ioutil.ReadDir("../posts")
 	if err != nil {
-		return fmt.Errorf("error reading posts directory")
+		return nil, fmt.Errorf("error reading posts directory")
 	}
 
 	for _, item := range items {
@@ -26,7 +26,7 @@ func ReadPosts(site *Site) error {
 			subItems, err := ioutil.ReadDir(postDirectory)
 
 			if err != nil {
-				return fmt.Errorf("error reading post directory: %v", item)
+				return nil, fmt.Errorf("error reading post directory: %v", item)
 			}
 
 			for _, subItem := range subItems {
@@ -34,18 +34,16 @@ func ReadPosts(site *Site) error {
 					filePath := fmt.Sprintf("../posts/%s/config.json", item.Name())
 					contents, err := ioutil.ReadFile(filePath)
 					if err != nil {
-						return fmt.Errorf("error reading config file: %s", filePath)
+						return nil, fmt.Errorf("error reading config file: %s", filePath)
 					}
 
 					if err = json.Unmarshal([]byte(contents), &post.Config); err != nil {
-						return fmt.Errorf("error unmarshalling JSON (%s): %+v\n", filePath, err)
+						return nil, fmt.Errorf("error unmarshalling JSON (%s): %+v\n", filePath, err)
 					}
 				}
 
 				if subItem.Name() == "post.md" {
-					if err := RenderContent(fmt.Sprintf("../posts/%s/post.md", item.Name()), &post, site); err != nil {
-						return err
-					}
+					post.Path = fmt.Sprintf("../posts/%s/post.md", item.Name())
 				}
 			}
 
@@ -53,22 +51,21 @@ func ReadPosts(site *Site) error {
 		}
 	}
 
-	site.Posts = posts
-	return nil
+	return posts, nil
 }
 
-func BuildSite(site Site) error {
+func BuildSite(site *Site) error {
 	truncatePublicDir()
 
-	if err := BuildPosts(&site); err != nil {
+	if err := BuildPosts(site); err != nil {
 		return err
 	}
 
-	if err := BuildHomePage(&site); err != nil {
+	if err := BuildHomePage(site); err != nil {
 		return err
 	}
 
-	if err := BuildArchivePage(&site); err != nil {
+	if err := BuildArchivePage(site); err != nil {
 		return err
 	}
 
@@ -76,7 +73,15 @@ func BuildSite(site Site) error {
 }
 
 func BuildPosts(site *Site) error {
-	for key, post := range site.Posts {
+	posts, readErr := ReadPosts()
+
+	if readErr != nil {
+		return readErr
+	}
+
+	site.Posts = posts
+
+	for _, post := range site.Posts {
 		newDir := fmt.Sprintf("../docs/%s", post.Config.Slug)
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
@@ -89,7 +94,11 @@ func BuildPosts(site *Site) error {
 			return err
 		}
 
-		fp.WriteString(site.Posts[key].RenderedContent)
+		if renderError := RenderContent(&post, site); renderError != nil {
+			return renderError
+		}
+
+		fp.WriteString(post.RenderedContent)
 
 		if err := fp.Close(); err != nil {
 			return err
@@ -160,11 +169,11 @@ func BuildArchivePage(site *Site) error {
 	return nil
 }
 
-func RenderContent(filePath string, post *Post, site *Site) error {
-	contents, pathErr := ioutil.ReadFile(filePath)
+func RenderContent(post *Post, site *Site) error {
+	contents, pathErr := ioutil.ReadFile(post.Path)
 
 	if pathErr != nil {
-		return fmt.Errorf("error reading file: %s", filePath)
+		return fmt.Errorf("error reading file: %s", post.Path)
 	}
 
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
