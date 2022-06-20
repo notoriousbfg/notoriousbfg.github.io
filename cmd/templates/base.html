@@ -9,11 +9,12 @@
     </head>
     <body>
         <header>
-            <nav class="nav">
+            <nav class="nav container">
                 <ul class="nav-list">
+                    <li>Tim White</li>
                     {{ range .Site.Categories }}
                         <li>
-                            <a href="#">{{ . }}</a>
+                            <a href="#" class="link hover">{{ . }}</a>
                         </li>
                     {{ end }}
                 </ul>

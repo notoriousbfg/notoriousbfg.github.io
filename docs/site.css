@@ -660,10 +660,8 @@ a {
 
 .nav-list {
     margin-left: auto;
-}
-
-.nav-list ul {
     list-style-type: none;
+    padding-left: 0;
 }
 
 .nav-list li {
