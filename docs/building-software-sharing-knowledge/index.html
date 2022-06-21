@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tim's Blog</title>
+        <meta name="description" content="The personal blog of Tim White, Software Developer from Bournemouth." />
+        <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/site.css">
+    </head>
+    <body>
+        <header style="margin-top: 2rem;">
+            <nav class="nav container">
+                <ul class="nav-list">
+                    <li>Tim White</li>
+                    
+                        <li>
+                            <a href="#" class="link hover">blog</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+        </header>
+        <main class="container">
+            
+	<article class="post is-current">
+		<header class="post-header">
+			<h1 class="title post-title">Building software, sharing knowledge</h1>
+			<p>
+				<span class="post-date">17nd April, 2020</span>
+			</p>
+		</header>
+		<div class="body">
+			<div class="posthaven-post-body">
+				<p>I have a controversial opinion: When developers say something doesn&rsquo;t work, most of the time they simply don&rsquo;t understand how it works or why it was written that way.</p>
+
+<p>Forgive me for sounding cynical. It&rsquo;s perfectly reasonable to say something doesn&rsquo;t work how it should but, all factors considered, I don&rsquo;t think this notion&rsquo;s as common we&rsquo;d like to think it is. Instead, I think we come to this conclusion because it&rsquo;s easier than struggling to comprehend a piece of work written by someone else. The challenge in attempting to get our heads around a piece of complex code or system feels insurmountable and labelling it as broken gives us more time to attempt to solve the problem at hand (or decide if there is one at all.) We also have a tendency to want to put our own stamp on things, which we wouldn&rsquo;t be able to do if everything was already perfect.</p>
+
+<p>This misunderstanding is usually a disconnect between the person who originally carried out the work and the person who&rsquo;s currently working on it. At some point in time, information was lost. This might include: a description of the original requirements (the problem), an explanation of why certain decisions were made (context) or merely an explanation of the implementation itself.</p>
+
+<p>A project&rsquo;s requirements can be relatively easily documented at its start but something most teams forget is to update these documents as the requirements change, as a product of day-to-day decision-making. It&rsquo;s important that this document or specification is maintained by someone likely to be involved in these decisions going forward and the right people are notified when it changes, which usually can be automated in some way.</p>
+
+<p>Understanding the reasoning behind (why) certain decisions were made is a little different in that it&rsquo;s everybody&rsquo;s responsibility to document it. You&rsquo;ll know it&rsquo;s failed to do this properly if at some point you hear people say &ldquo;I don&rsquo;t understand why it was built this way&rdquo;, because invariably there&rsquo;s context missing.</p>
+
+<p>The mistake is confusing this with stupidity. Rarely do we just blindly do things without giving them any thought and so it&rsquo;s always best to assume that past decisions were made with some level of consideration. Perhaps the tech lead at the time wanted to use a particular technology, or there were knowledge gaps in the team, or the deadline was too tight for the ideal solution. Perhaps the person who made the decision holds a different opinion to you.</p>
+
+<p>Unfortunately, most teams don&rsquo;t foresee a lack of documentation being an issue until it becomes one, for example when a developer makes a breaking change by deciding to refactor a piece of legacy code. In most instances, refactoring code (with the intention of making it better) is something to be celebrated and yet by trying to do something she thinks is beneficial, but acting on incomplete information, she inadvertently makes things worse. Furthermore, the situation creates a sense of fear around particular parts of the codebase, especially for new team members who introduce new abstractions instead of tackling what&rsquo;s already there head-on. As you can imagine this only exacerbates the situation and when left unaddressed, creates a precedent that it&rsquo;s better to skirt around &ldquo;ambiguous legacy feature X&rdquo; than to understand and document it.</p>
+
+<p>As I found while researching the problem of documentation in technical teams last Summer, software developers hate writing documentation. The majority of us don&rsquo;t consider it to be something that should fall under our remit, nor do we think it&rsquo;s our responsibility to write well. The majority of us don&rsquo;t even feel our code should need documenting if it&rsquo;s written in a &ldquo;clean&rdquo; way. I&rsquo;ve always thought it a little ironic that some developers obsess over the clarity and cleanliness of their code but don&rsquo;t hold written communication in as high a regard.</p>
+
+<p>I suspect that many of us simply don&rsquo;t feel we owe anything to our successors, those taking over the reigns at some point in the distant future. As developers we need only focus on what&rsquo;s happening in the present and the problem we&rsquo;ve been tasked to solve now. Any time spent dwelling on something after the matter is time we can spend solving other problems. This thinking is ignorant and short-sighted and probably more often than our successors do we need documentation to understand something we&rsquo;ve written ourselves (months or years prior). I once worked with a back-end engineer who one day was searching for the answer to a question on Stack Overflow only to realise he&rsquo;d written the nominated answer about a year before.</p>
+
+<p>While I appreciate how intimidating the blank page can be, to write something, anything, words on a page, is better than to not write anything at all, as long as the meaning is clear. Managers must do everything to lower the barriers to creating documentation, even if it means removing internal processes, leapfrogging hierarchies etc. There&rsquo;s no place for overzealous GSuite protectors here; Most modern editors have some concept of revision history so there&rsquo;s no risk of anything being &ldquo;messed up&rdquo;. Furthermore, as important as writing documentation is, ensuring teams have access to and the ability to search for relevant documentation is equally important.</p>
+
+<p>Writing documentation is just one product of a culture that encourages knowledge sharing. A senior developer who spends his time mentoring less experienced team members should have no objection to sharing his reasoning in written form (and probably enjoys it more than you&rsquo;d think, because who doesn&rsquo;t like talking about their own ideas?) A team that is continually finding opportunities to create and share knowledge is a team that continues to grow.</p>
+
+			</div>
+		</div>
+		<section class="bio">
+			<div class="profile-pic">
+				<img src="/img/me.jpg" width="72" height="72">
+			</div>
+			<p class="bio-text">I’m Tim, a Software Developer from the UK. I like to program, cook, read & run.</p>
+		</section>
+	</article>
+	<a class="link-hover" style="margin: 20px 0; display: inline-block;" href="/archive">More Posts</a>
+
+        </main>
+    </body>
+</html>

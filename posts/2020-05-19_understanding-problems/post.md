@@ -1,0 +1,19 @@
+Every six months or so I re-read Paul Graham's "How To Get Startup Ideas". Not only is it always a refreshing read but it's also a great example of a piece of writing that communicates one set of ideas really well.
+
+He writes:
+
+> "The way to get startup ideas is not to try to think of startup ideas. It's to look for problems, preferably problems you have yourself."
+
+I spend much of my spare time thinking about problems with the intention of turning some of them into side projects but the vast majority don't make it this far. I also find it interesting to talk with friends about how things (business, systems etc) can be better. 
+
+While I think I've become pretty good at analysing problems I can't claim to have any experience building successful businesses, so this article will focus solely on the former, but I'm going to use examples from my Startup School project Swiftdocs [which I've written about here before](/reflections-on-startup-school-2019).
+
+The most valuable advice I can offer would first be to ensure the problem you're working on is in fact a problem and not a solution. Many people tell themselves their problem is "the need to automate X". Automation is a solution to several problems, one of which is probably a slow or complicated process. Free your mind of any preconceived ideas about what you think a solution could be before you talk to potential users about their problems.
+
+Most of the time the first problem I think about is not the one I end up with. Usually a problem is caused by another, which might be caused by another and so on, so usually my first priority is to ask, "What's the root cause of this?" For example, Swiftdocs attempted to address the fact that developers didn't like writing technical documentation. While it's true to an extent, the root cause of this problem (that I came to realise only recently) is that capturing information from conversation is hard. Were we better able to capture information from conversation: the thought and discussion preceding a decision or set of actions; there'd be no need to write anything at all.
+
+Some complex problems may be made up of other smaller problems of varying relevance or importance. It's easy to convince yourself that the right solution relies on you building something that addresses every one of these, but my advice would be to pick the most painful of the child problems (and the one that addresses the biggest part of the parent). The problem your customers find most painful is also the one they'll most likely pay for a solution to. On Swiftdocs for example, I'd identified that developers didn't like writing documentation and some of those I'd interviewed said that they didn't feel comfortable writing grammatically correct prose. I could have built something that had grammar checking built-in but this wouldn't have addressed the greatest part of the broader problem.
+
+I think it's important to think about why some problems exist, especially if you're solving one of your own problems that pertains to say, the company you work at. In some businesses, problems merely exist because of the way it chooses to operate and may not exist at others. You must decide whether your problem is one that other people share and the best way to do this is to speak to potential users. You might also look at existing solutions, though it's important to understand that while other products exist they may not capture any of the wealth in the market.
+
+Sometimes, even after rigorously analysing your problem you may find that it doesn't even require a paid solution (if building a profit-making business was your intention). How committed to rectifying your problem you are will determine how far you take it after this point, but know that if you don't do something about it, someone else will. Perhaps you'll even use the knowledge you've acquired to help them do so.
