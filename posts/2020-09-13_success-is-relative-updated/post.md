@@ -1,0 +1,19 @@
+In 2017, on a previous version of this blog, I wrote [Success](/success). Certainly at the time the conclusion I'd come to was revelatory for me. For years I'd help up these absolute examples of what I thought success was: starting a successful business; having a novel published; winning a prestigious sporting event. If you hadn't accomplished things in this order of magnitude, you weren't successful. In fact, I'd thought only a small proportion of people could truly consider themselves successful.
+
+The realisation I came to at the time was that all forms of success are relative. There isn't one definition or "threshold" one must surpass to be successful; success pertains to the individual. Of course we can say that Usain Bolt is a successful athlete for breaking the world 100m record or that Warren Buffet is a successful businessman but these accomplishments are beyond the reach of the vast majority of mortals.
+
+A couple of weeks ago on Hacker News I asked the question: ["Is it possible to be objectively good at something?"](https://news.ycombinator.com/item?id=24364817) I was really pleased with the range of really quite thoughtful responses I got back (and my question even touched the front page for a brief moment) but my favourite answer was this one from AnimalMuppet:
+
+> "Objectively" means that someone should be able to unambiguously tell, without having to apply any judgment.
+> 
+> And yes, it's possible. Am I objectively good at calculus? I passed the AP test. That's an objective measure.
+> 
+> But it's not that simple, for at least two reasons. First, it's always possible to question the "objective measure". Is the AP test a good test of whether someone is good at calculus? AP says so, but that's not actually any help. College admissions departments think so, too. But grad school admissions people don't think so at all, and neither do math department hiring committees. This shows the problem: There is a measure that can objectively be met or failed, but is it the right measure? How can you tell? Not objectively.
+
+> Second, in many fields, there is no analog to the AP test. Is Tolkein a good writer? Is the Mona Lisa a good painting? There is no clearly objective measure. The only measure is that many people think so; more people than think, say, my daughter's watercolor is a good painting. That's subjective, but at least it has the merit of being subjectively shared by many people. And with something like Mona Lisa, it's shared by many people across many years - it's not just today's fad. That's still subjective, but it's at least a subjectivity that has widespread agreement to it. 
+
+It's a very comforting response because while they acknowledge that "there is no clearly objective measure", no test that can measure how "good" something or someone is (or that cannot be questioned), they also recognise that to be "good" is totally subjective. The closest thing to any kind of definitive measure of how good something we have is "the merit of being subjectively shared by many people."
+
+I think it's very important to focus on the subjectivity of what is good. It would be dangerous of me here to confuse being "good" at something with success, to say that an individual's success depends on the number of people to have shared and agreed that what they've done is good, especially in this current age we live in. It's perfectly possible to be good at something but not be considered "successful". Take the footballer Phil Jones for example. Despite having one of the best clean sheet records in the Premier League, most fans would not consider Jones to be a success.
+
+No, if success is subjective then it's an internal matter and hopefully this is the last time I'll ever need to write about it again.

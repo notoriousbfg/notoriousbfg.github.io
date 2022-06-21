@@ -4,7 +4,7 @@ I've been trying to use this time to focus a little more on side projects; to wr
 
 The stakes seem a little higher this time round, perhaps I posess more knowledge and I have a tendency to want to demonstrate the breadth of my ability, to overcomplicate things. But invariably I end up never releasing anything, my creativity stifled by my inner critic.
 
-One of the most revelatory ideas for me recently has been that of play, something we just don't do enough of as grown ups. (There's a fantastic Alan Watts lecture)[https://www.youtube.com/watch?v=rBpaUICxEhk] in which he likens life to the way we play music.
+One of the most revelatory ideas for me recently has been that of play, something we just don't do enough of as grown ups. [There's a fantastic Alan Watts lecture](https://www.youtube.com/watch?v=rBpaUICxEhk) in which he likens life to the way we play music.
 
 > "One doesn't make the end of the composition the point of the composition. If that were so the best conductors would be those who played fastest. And there would be composers who only played finales. People would go to concerts and only hear one crashing chord because that would be the end."
 

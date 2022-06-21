@@ -1,0 +1,7 @@
+Recently on LinkedIn (of which I'm no longer a member), a previous MD of mine wrote a post objecting to another marketer's claim that marketing needed to be measurable. His argument was that the brand impact of companies like Rolex and McDonald's was immeasurable and that the value their marketing creates extends beyond sales. It's an idea I've heard others propagate during my experience in marketing agencies and one that frankly I've never understood.
+
+Why would any profit-making company spend money on an exercise designed to generate sales, that didn't? This seems even more pertinent to the current economic situation, with businesses forced to slash their marketing budgets in an attempt to save costs.
+
+I can understand that for some large consumer brands, one aspect of their marketing might seek to create associations in customer's minds (e.g. McDonald's with needing a quick meal, Rolex with a wealthy lifestyle). However the rules that apply to these organisations simply don't apply to the vast majority of businesses.
+
+How could anyone argue (for the vast majority of businesses) that marketing didn't need to represent some kind of measurable improvement? If not sales, then engagement, leads, enquiries etc. Businesses that don't see a measurable increase in these metrics are (generally) ones that don't survive. The brands aforementioned exist because people buy their products.
