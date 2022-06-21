@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tim's Blog</title>
+        <meta name="description" content="The personal blog of Tim White, Software Developer from Bournemouth." />
+        <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/site.css">
+    </head>
+    <body>
+        <header style="margin-top: 2rem;">
+            <nav class="nav container">
+                <ul class="nav-list">
+                    <li>Tim White</li>
+                    
+                        <li>
+                            <a href="#" class="link hover">blog</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+        </header>
+        <main class="container">
+            
+	<article class="post is-current">
+		<header class="post-header">
+			<h1 class="title post-title">Code Age vs Time to Recall</h1>
+			<p>
+				<span class="post-date">3nd January, 2021</span>
+			</p>
+		</header>
+		<div class="body">
+			<div class="posthaven-post-body">
+				<p>A colleague of mine has repeatedly called for some of the controllers in our project to be refactored. He says they&rsquo;re messy, but what I think he means is that they&rsquo;re hard to understand. At first glance they do seem complex yes but upon closer inspection:</p>
+
+<ul>
+<li>There are step-by-step instructions in the comments explaining what&rsquo;s going on.</li>
+<li>Variable and method names are descriptive but not overly verbose.</li>
+<li>The code is spaced, formatted and indented correctly.</li>
+</ul>
+
+<p>I can see why my colleague might see the code this way; it does have multiple concerns, but it came to be this way iteratively over the course of two years. Everything it does relates to a previously-defined requirement i.e. it does what it&rsquo;s supposed to. We also haven&rsquo;t made any changes to it for several months because it hasn&rsquo;t caused any bugs nor are there any major performance bottlenecks.</p>
+
+<p>One common developer bias is that old code is bad. You&rsquo;ve never heard anyone say the phrase &ldquo;legacy code&rdquo; without contempt in their tone. I can appreciate that sometimes old code doesn&rsquo;t conform to newer practices agreed on by a team. For example, legacy PHP code might use the now-deprecated PSR-2 standard, but the tech lead might want everyone to write PSR-12. But is this really a good enough reason to potentially jeopardise a piece of working functionality?</p>
+
+<p>I think the reason old code is often seen this way is because it takes longer to remember. Developers yearn for clarity but if they&rsquo;re not immediately able to recall <a href="/building-software-sharing-knowledge">under what circumstances some code was written</a> (in a few seconds or less), they only see ambiguity.</p>
+
+<p><img src="/img/time_to_recall.jpg" alt="Code Age vs Time To Recall" /></p>
+
+<p>Even when we talk about code, when we&rsquo;re able to recall previous conversations/decisions/motivations quickly, we can talk about it confidently and convey to others that we understand it well. Unfortunately saying, &ldquo;I need five to ten minutes to refresh my memory of this&rdquo; doesn&rsquo;t convey the same sense of confidence. Always prepare.</p>
+
+<p>Part of the solution to reducing this &ldquo;time to recall&rdquo; is through better internal documentation. We use a tool like Codestream but I&rsquo;ll admit that context is not always captured; sometimes it&rsquo;s the &ldquo;why&rdquo; not the &ldquo;what&rdquo; that&rsquo;s relevant. In my opinion, good old-fashioned comments work best; I try to write mine like a numbered set of instructions. Of course you can also convey meaning with your git commit message.</p>
+
+<p>The other part of the solution is to agree as a team under what circumstances code should be refactored. If your team collectively agrees that stable, well-documented code should be refactored, run.</p>
+
+			</div>
+		</div>
+		<section class="bio">
+			<div class="profile-pic">
+				<img src="/img/me.jpg" width="72" height="72">
+			</div>
+			<p class="bio-text">I’m Tim, a Software Developer from the UK. I like to program, cook, read & run.</p>
+		</section>
+	</article>
+	<a class="link-hover" style="margin: 20px 0; display: inline-block;" href="/archive">More Posts</a>
+
+        </main>
+    </body>
+</html>
