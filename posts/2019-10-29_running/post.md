@@ -1,6 +1,7 @@
 The best way to improve at running is to not get injured. Injuries stop you running for long periods, during which you'll see the biggest improvement.
 
 Ways to not get injured (in no particular order) include:
+
 - Buying shoes that fit.
 - Not overdoing it. Taking rest days. Giving small injuries time to heal.
 - Running on the middle to front part of your feet. Not overextending your leg.

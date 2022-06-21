@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tim's Blog</title>
+        <meta name="description" content="The personal blog of Tim White, Software Developer from Bournemouth." />
+        <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/site.css">
+    </head>
+    <body>
+        <header style="margin-top: 2rem;">
+            <nav class="nav container">
+                <ul class="nav-list">
+                    <li>Tim White</li>
+                    
+                        <li>
+                            <a href="#" class="link hover">blog</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+        </header>
+        <main class="container">
+            
+	<article class="post is-current">
+		<header class="post-header">
+			<h1 class="title post-title">Recurrence in PHP</h1>
+			<p>
+				<span class="post-date">7nd November, 2019</span>
+			</p>
+		</header>
+		<div class="body">
+			<div class="posthaven-post-body">
+				<p>Earlier this year I spent many months working on a web app for a client. Without giving too much away, one of the requirements was that the app gave users the ability to create recurring events. These would need to be scheduled weekly, biweekly (with specific dates), monthly, bimonthly and annually.</p>
+
+<p>If you search for &ldquo;software architecture recurring events&rdquo; (or something to that effect), you&rsquo;ll most likely come across <a href="https://stackoverflow.com/questions/5183630/calendar-recurring-repeating-events-best-storage-method/5186095#5186095">this Stack Overflow answer</a>. The approach it describes seems like it should work, but it&rsquo;s hard to tell merely from reading the code whether it&rsquo;s a good solution.</p>
+
+<p>Having spent many days trying this solution (and many others) the best method for creating recurring events I could find was to use the iCalendar RRule standard.</p>
+
+<p>The RRule is a written as a semicolon-separated string of key-value pairs that describe different parts of the recurrence pattern. It&rsquo;s especially useful because it allows for irregular intervals and specific dates. For example, the following describes an event that occurs on Monday biweekly.</p>
+
+<blockquote>
+<p>FREQ=WEEKLY;BYDAY=MO;INTERVAL=2</p>
+</blockquote>
+
+<p>The following describes an event that occurs on the 12th of every month.</p>
+
+<blockquote>
+<p>FREQ=MONTHLY;BYMONTHDAY=12;INTERVAL=1</p>
+</blockquote>
+
+<p>In PHP, I found the <a href="https://github.com/tplaner/When">When</a> library to be the easiest way to generate a range of dates with RRules. We can restrict our ranges with a start and end date too.</p>
+
+<p>Traditionally when building a calendar application, you&rsquo;d generate recurring events dynamically and view them on a calendar-like interface so that your events would appear to reoccur indefinitely. In my app however, future events would have associated data and therefore need to be queried against in a database, so as to avoid holding everything in memory.</p>
+
+<p>I chose to design a scheduled daily process that would generate recurring events for up to a year at a time and store them in the database. If an RRule interval occurred on the current day, a new interval row would be added to the database for a year&rsquo;s time.</p>
+
+<p>The purpose of this post was to help others should they ever find themselves in a similar position. Having spent a great deal of time trialling several different ideas, this was the one that allowed me to come closest to a fairly efficient, working solution.</p>
+
+			</div>
+		</div>
+		<section class="bio">
+			<div class="profile-pic">
+				<img src="/img/me.jpg" width="72" height="72">
+			</div>
+			<p class="bio-text">I’m Tim, a Software Developer from the UK. I like to program, cook, read & run.</p>
+		</section>
+	</article>
+	<a class="link-hover" style="margin: 20px 0; display: inline-block;" href="/archive">More Posts</a>
+
+        </main>
+    </body>
+</html>
