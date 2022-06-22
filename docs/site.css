@@ -389,6 +389,11 @@ a {
     margin: 2.5rem 0 2rem 0;
 }
 
+.post.home-post {
+    border-bottom: 1px solid #bdbdbd2b;
+    padding-bottom: 2rem;
+}
+
 .post-header {
     margin-bottom: 2rem;
 }

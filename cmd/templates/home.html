@@ -1,27 +1,21 @@
 {{ define "main" }}
 <section>
-    <article class="post is-current">
-        <header class="post-header">
-            <a href="/{{ .Site.FirstPost.Config.Slug }}">
-                <h1 class="title post-title">{{ .Site.FirstPost.Config.Title }}</h1>
-            </a>
-            <p>
-                <span class="post-date">{{ .Site.FirstPost.Config.FormattedDate }}</span>
-            </p>
-        </header>
-        <div class="body">
-            <div class="posthaven-post-body">
-                {{ .Site.FirstPost.Content }}
-            </div>
-        </div>
-    </article>
-</section>
-<section class="post-links">
     {{ range .Site.LatestPosts }}
-        <a href="/{{ .Config.Slug }}" class="post-link">
-            <h2 class="title link-hover">{{ .Config.Title }}</h2>
-            <span class="post-date">{{ .Config.FormattedDate }}</span>
-        </a>
+        <article class="post is-current home-post">
+            <header class="post-header">
+                <a href="/{{ .Config.Slug }}">
+                    <h1 class="title post-title">{{ .Config.Title }}</h1>
+                </a>
+                <p>
+                    <span class="post-date">{{ .Config.FormattedDate }}</span>
+                </p>
+            </header>
+            <div class="body">
+                <div class="posthaven-post-body">
+                    {{ .Content }}
+                </div>
+            </div>
+        </article>
     {{ end }}
 </section>
 <a class="link-hover" style="margin: 20px 0; display: inline-block;" href="/archive">More Posts</a>

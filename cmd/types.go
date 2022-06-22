@@ -27,10 +27,6 @@ func (s Site) PublishedPosts() []Post {
 	return published
 }
 
-func (s Site) FirstPost() Post {
-	return s.PublishedPosts()[0]
-}
-
 func (s Site) LatestPosts() []Post {
 	posts := s.PublishedPosts()
 	var sliceLength int
@@ -39,7 +35,7 @@ func (s Site) LatestPosts() []Post {
 	} else {
 		sliceLength = len(posts)
 	}
-	return posts[1:sliceLength]
+	return posts[0:sliceLength]
 }
 
 func (s Site) Categories() []string {
