@@ -2,8 +2,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ .Site.Config.Title }}</title>
-        <meta name="description" content="{{ .Site.Config.Description }}" />
+        {{ if .HasPost }}
+            <title>{{ .Post.Config.Title }}</title>
+            <meta name="description" content="{{ .Post.Config.Description }}" />
+        {{ else }}
+            <title>{{ .Site.Config.Title }}</title>
+            <meta name="description" content="{{ .Site.Config.Description }}" />
+        {{ end }}
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/site.css">
     </head>

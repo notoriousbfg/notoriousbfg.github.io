@@ -120,7 +120,7 @@ func BuildHomePage(site *Site) error {
 	)
 
 	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", SiteData{
+	templateErr := template.ExecuteTemplate(&content, "base", PageData{
 		Site: *site,
 	})
 	if templateErr != nil {
@@ -148,7 +148,7 @@ func BuildArchivePage(site *Site) error {
 	)
 
 	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", SiteData{
+	templateErr := template.ExecuteTemplate(&content, "base", PageData{
 		Site: *site,
 	})
 	if templateErr != nil {
@@ -189,7 +189,7 @@ func RenderContent(post *Post, site *Site) error {
 	)
 
 	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PostData{
+	templateErr := template.ExecuteTemplate(&content, "base", PageData{
 		Post: *post,
 		Site: *site,
 	})

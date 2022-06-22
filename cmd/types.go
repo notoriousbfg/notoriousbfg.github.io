@@ -134,11 +134,11 @@ func (pc *PostConfig) MarshalJSON() ([]byte, error) {
 	})
 }
 
-type SiteData struct {
+type PageData struct {
+	Post Post
 	Site Site
 }
 
-type PostData struct {
-	Post Post
-	Site Site
+func (pd PageData) HasPost() bool {
+	return pd.Post.Config.Title != ""
 }
