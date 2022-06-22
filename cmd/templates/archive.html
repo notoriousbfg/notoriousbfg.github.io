@@ -1,6 +1,6 @@
 {{ define "main" }}
     <h1 class="title archive-title">Archive</h1>
-    {{ range .Site.OrderedPosts }}
+    {{ range .Site.PublishedPosts }}
         <a class="post-link" href="/{{ .Config.Slug }}">
             <h2 class="title">{{ .Config.Title }}</h2>
             <span>{{ .Config.FormattedDate }}</span>

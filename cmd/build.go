@@ -82,6 +82,10 @@ func BuildPosts(site *Site) error {
 	site.Posts = posts
 
 	for key, post := range site.Posts {
+		if post.Config.Draft {
+			continue
+		}
+
 		newDir := fmt.Sprintf("../docs/%s", post.Config.Slug)
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
@@ -198,6 +202,21 @@ func RenderContent(post *Post, site *Site) error {
 }
 
 func truncatePublicDir() {
-	os.RemoveAll("../docs/**/*.html")
-	os.MkdirAll("../docs", os.ModePerm)
+	dir, _ := ioutil.ReadDir("../docs")
+	exclude := []string{"img", "site.css"}
+	for _, d := range dir {
+		if contains(exclude, d.Name()) {
+			continue
+		}
+		os.RemoveAll(fmt.Sprintf("../docs/%s", d.Name()))
+	}
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

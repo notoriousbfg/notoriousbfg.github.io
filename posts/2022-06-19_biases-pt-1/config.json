@@ -3,5 +3,6 @@
 	"slug": "biases-vol-1",
 	"published": "2022-06-19",
 	"description": "",
-	"category": "blog"
+	"category": "blog",
+	"draft": true
 }

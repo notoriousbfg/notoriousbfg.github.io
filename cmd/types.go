@@ -14,20 +14,25 @@ type Site struct {
 	Posts  []Post
 }
 
-func (s Site) OrderedPosts() []Post {
-	posts := s.Posts
-	sort.Slice(posts, func(i, j int) bool {
-		return posts[i].Config.Published.After(posts[j].Config.Published)
+func (s Site) PublishedPosts() []Post {
+	var published []Post
+	for _, post := range s.Posts {
+		if !post.Config.Draft {
+			published = append(published, post)
+		}
+	}
+	sort.Slice(published, func(i, j int) bool {
+		return published[i].Config.Published.After(published[j].Config.Published)
 	})
-	return posts
+	return published
 }
 
 func (s Site) FirstPost() Post {
-	return s.OrderedPosts()[0]
+	return s.PublishedPosts()[0]
 }
 
 func (s Site) LatestPosts() []Post {
-	posts := s.OrderedPosts()
+	posts := s.PublishedPosts()
 	var sliceLength int
 	if len(posts) >= 5 {
 		sliceLength = 5
@@ -72,6 +77,7 @@ type PostConfig struct {
 	Published   time.Time
 	Description string
 	Category    string
+	Draft       bool
 }
 
 func (pc PostConfig) FormattedDate() string {
@@ -85,6 +91,7 @@ func (pc *PostConfig) UnmarshalJSON(data []byte) error {
 		Published   string
 		Description string
 		Category    string
+		Draft       bool
 	}
 	err := json.Unmarshal(data, &postConfig)
 	if err != nil {
@@ -94,6 +101,7 @@ func (pc *PostConfig) UnmarshalJSON(data []byte) error {
 	pc.Slug = postConfig.Slug
 	pc.Description = postConfig.Description
 	pc.Category = postConfig.Category
+	pc.Draft = postConfig.Draft
 
 	if len(postConfig.Published) == 0 {
 		return fmt.Errorf("post \"%s\" has no publish date", postConfig.Title)
@@ -115,12 +123,14 @@ func (pc *PostConfig) MarshalJSON() ([]byte, error) {
 		Published   string `json:"published"`
 		Description string `json:"description"`
 		Category    string `json:"category"`
+		Draft       bool   `json:"draft"`
 	}{
 		Title:       pc.Title,
 		Slug:        pc.Slug,
 		Published:   pc.Published.Format("2006-01-02"),
 		Description: pc.Description,
 		Category:    pc.Category,
+		Draft:       pc.Draft,
 	})
 }
 
