@@ -52,4 +52,8 @@ func main() {
 			return
 		}
 	}
+
+	if args[0] == "serve" {
+		StartServer()
+	}
 }
