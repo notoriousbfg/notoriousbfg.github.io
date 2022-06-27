@@ -14,10 +14,10 @@ type Site struct {
 	Posts  []Post
 }
 
-func (s Site) PublishedPosts() []Post {
+func (s Site) PublishedBlogPosts() []Post {
 	var published []Post
 	for _, post := range s.Posts {
-		if !post.Config.Draft {
+		if !post.Config.Draft && post.Config.Category == "blog" {
 			published = append(published, post)
 		}
 	}
@@ -27,8 +27,8 @@ func (s Site) PublishedPosts() []Post {
 	return published
 }
 
-func (s Site) LatestPosts() []Post {
-	posts := s.PublishedPosts()
+func (s Site) LatestBlogPosts() []Post {
+	posts := s.PublishedBlogPosts()
 	var sliceLength int
 	if len(posts) >= 5 {
 		sliceLength = 5

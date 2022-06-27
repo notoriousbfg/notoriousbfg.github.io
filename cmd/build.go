@@ -21,9 +21,11 @@ func ReadPosts() ([]Post, error) {
 
 	for _, item := range items {
 		if item.IsDir() {
-			post := Post{}
-			postDirectory := fmt.Sprintf("../posts/%s", item.Name())
-			subItems, err := ioutil.ReadDir(postDirectory)
+			post := Post{
+				Path: fmt.Sprintf("../posts/%s", item.Name()),
+			}
+
+			subItems, err := ioutil.ReadDir(post.Path)
 
 			if err != nil {
 				return nil, fmt.Errorf("error reading post directory: %v", item)
@@ -31,7 +33,7 @@ func ReadPosts() ([]Post, error) {
 
 			for _, subItem := range subItems {
 				if subItem.Name() == "config.json" {
-					filePath := fmt.Sprintf("../posts/%s/config.json", item.Name())
+					filePath := fmt.Sprintf("%s/config.json", post.Path)
 					contents, err := ioutil.ReadFile(filePath)
 					if err != nil {
 						return nil, fmt.Errorf("error reading config file: %s", filePath)
@@ -40,10 +42,6 @@ func ReadPosts() ([]Post, error) {
 					if err = json.Unmarshal([]byte(contents), &post.Config); err != nil {
 						return nil, fmt.Errorf("error unmarshalling JSON (%s): %+v\n", filePath, err)
 					}
-				}
-
-				if subItem.Name() == "post.md" {
-					post.Path = fmt.Sprintf("../posts/%s/post.md", item.Name())
 				}
 			}
 
@@ -96,6 +94,12 @@ func BuildPosts(site *Site) error {
 		fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
 			return err
+		}
+
+		if post.Config.Category == "photo" {
+			if photoErr := BuildImage(&post); photoErr != nil {
+				return photoErr
+			}
 		}
 
 		if renderError := RenderContent(&post, site); renderError != nil {
@@ -176,10 +180,11 @@ func BuildArchivePage(site *Site) error {
 }
 
 func RenderContent(post *Post, site *Site) error {
-	contents, pathErr := ioutil.ReadFile(post.Path)
+	postPath := fmt.Sprintf("%s/post.md", post.Path)
+	contents, pathErr := ioutil.ReadFile(postPath)
 
 	if pathErr != nil {
-		return fmt.Errorf("error reading file: %s", post.Path)
+		return fmt.Errorf("error reading file: %s", postPath)
 	}
 
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
@@ -198,6 +203,12 @@ func RenderContent(post *Post, site *Site) error {
 	}
 
 	post.RenderedContent = content.String()
+	return nil
+}
+
+func BuildImage(post *Post) error {
+	imagePath := fmt.Sprintf("%s/img.jpg", post.Path)
+
 	return nil
 }
 
