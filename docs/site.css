@@ -658,6 +658,10 @@ a {
     margin: 2.5rem auto 1.25rem auto;
 }
 
+.logo {
+    color: #CECBCB;
+}
+
 .nav {
     display: flex;
     padding: 3px 10px;
@@ -676,6 +680,23 @@ a {
 
 .archive-title {
     margin: 2.5rem 0;
+}
+
+.feed-item {
+    border-bottom: 1px solid #bdbdbd2b;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+}
+
+.feed-item .post-title {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+}
+
+.feed-item .post-date {
+    margin-bottom: 1.25rem;
 }
 
 @media screen and (max-width: 480px) {

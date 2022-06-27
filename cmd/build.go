@@ -8,6 +8,7 @@ import (
 	"os"
 	"text/template"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gomarkdown/markdown"
 	"github.com/h2non/bimg"
 )
@@ -65,6 +66,10 @@ func BuildSite(site *Site) error {
 	}
 
 	if err := BuildArchivePage(site); err != nil {
+		return err
+	}
+
+	if err := BuildPhotoFeedPage(site); err != nil {
 		return err
 	}
 
@@ -184,6 +189,39 @@ func BuildArchivePage(site *Site) error {
 	return nil
 }
 
+func BuildPhotoFeedPage(site *Site) error {
+	template := template.Must(
+		template.ParseFiles("./templates/photo/feed.html", "./templates/base.html"),
+	)
+
+	var content bytes.Buffer
+	templateErr := template.ExecuteTemplate(&content, "base", PageData{
+		Site: *site,
+	})
+	if templateErr != nil {
+		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+	}
+
+	err := os.MkdirAll("../docs/photo", os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	newFilePath := fmt.Sprintf("../docs/photo/index.html")
+	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+
+	fp.WriteString(content.String())
+
+	if err := fp.Close(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func RenderPost(post *Post, site *Site) error {
 	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
 	contents, pathErr := ioutil.ReadFile(postPath)
@@ -244,13 +282,25 @@ func ResizeImage(post *Post) (string, error) {
 		return "", err
 	}
 
-	newImage, err := bimg.NewImage(buffer).Resize(600, 800)
+	newImage := bimg.NewImage(buffer)
+	imageSize, _ := newImage.Size()
+
+	var dimensions [2]int
+	if imageSize.Width > imageSize.Height {
+		dimensions = [...]int{800, 600}
+	} else {
+		dimensions = [...]int{600, 800}
+	}
+
+	spew.Dump()
+
+	resizedImage, err := newImage.Resize(dimensions[0], dimensions[1])
 	if err != nil {
 		return "", err
 	}
 
 	newImagePath := fmt.Sprintf("%s/resized.jpg", post.RenderPath)
-	bimg.Write(newImagePath, newImage)
+	bimg.Write(newImagePath, resizedImage)
 
 	return newImagePath, nil
 }
