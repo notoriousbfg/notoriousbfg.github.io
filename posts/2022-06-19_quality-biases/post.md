@@ -23,3 +23,5 @@ To see that other people liked or disliked something usually influences how we f
 > walk by without giving it a second look.
 
 Social media often makes opinions appear "true" because they have many thousands of upvotes. It's rare that we go against the popular opinion.
+
+It's for this reason that in the recent rebuild of my blog I removed a views counter.
