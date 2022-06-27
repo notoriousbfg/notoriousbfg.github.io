@@ -1,4 +1,4 @@
-It's so often that topics like "why film X is better than film Y" come up in conversations with friends. "Better" is an assessment of quality, something I've been thinking about often ever since reading Robert Pirsig's "Zen and the Art of Motorcyle Maintenance" a few years ago.
+It's so often that topics like "why film X is better than film Y" come up in conversations with friends. "Better" is an assessment of quality, something I've been thinking about ever since reading Robert Pirsig's "Zen and the Art of Motorcyle Maintenance" a few years ago.
 
 According to Pirsig, quality is a "perceptual experience preceding intellectual thought". If one's to believe this, there can be no universal measure for quality; It must be an internal matter.
 
