@@ -339,7 +339,7 @@ template {
 
 html,
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, “Segoe UI”, Roboto, Ubuntu, sans-serif;
     color: #999;
     font-size: 16px;
     line-height: 1.875rem;
