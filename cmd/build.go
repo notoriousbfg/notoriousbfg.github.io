@@ -203,7 +203,7 @@ func RenderContent(post *Post, site *Site) error {
 
 func truncatePublicDir() {
 	dir, _ := ioutil.ReadDir("../docs")
-	exclude := []string{"img", "site.css"}
+	exclude := []string{"img", "site.css", "CNAME"}
 	for _, d := range dir {
 		if contains(exclude, d.Name()) {
 			continue
