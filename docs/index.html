@@ -8,7 +8,6 @@
         
         
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/site.css">
     </head>
     <body>
@@ -37,6 +36,51 @@
     
         <article class="post is-current home-post">
             <header class="post-header">
+                <a href="/some-quality-biases">
+                    <h1 class="title post-title">Some Quality Biases</h1>
+                </a>
+                <p>
+                    <span class="post-date">19th June, 2022</span>
+                </p>
+            </header>
+            <div class="body">
+                <div class="posthaven-post-body">
+                    <p>It&rsquo;s so often that topics like &ldquo;why film X is better than film Y&rdquo; come up in conversations with friends. &ldquo;Better&rdquo; is an assessment of quality, something I&rsquo;ve been thinking about ever since reading Robert Pirsig&rsquo;s &ldquo;Zen and the Art of Motorcyle Maintenance&rdquo; a few years ago.</p>
+
+<p>According to Pirsig, quality is a &ldquo;perceptual experience preceding intellectual thought&rdquo;. If one&rsquo;s to believe this, there can be no universal measure for quality; It must be an internal matter.</p>
+
+<p>We often don&rsquo;t consider our own personal biases when deciding whether something&rsquo;s good or not (good meaning &ldquo;high in quality&rdquo;), but in this post I&rsquo;ll describe some common ones I&rsquo;ve encountered.</p>
+
+<h3>Complexity</h3>
+
+<p>When something has been created in a complex way we often assume it&rsquo;s because a great deal of thought has gone into its creation. This is especially true in programming where complex code can appear quite impressive. However it&rsquo;s usually the simplest code that is the highest quality; that has been refactored.</p>
+
+<h3>Content</h3>
+
+<p>It&rsquo;s perfectly possible to dislike the themes discussed in a novel but still consider it to be well written. Conversely, it&rsquo;s possible to like the content and think the writing poor. However this is usually not the case: more often we think of things we like as being well executed and things we don&rsquo;t like as being bad. The same can be said of most arts.</p>
+
+<h3>Popularity</h3>
+
+<p>To see that other people liked or disliked something usually influences how we feel about it. In &ldquo;How Art Can Be Good&rdquo;, Paul Graham says:</p>
+
+<blockquote>
+<p>And yet the Mona Lisa is a small, dark painting. If you found
+people who&rsquo;d never seen an image of it and sent them to a museum
+in which it was hanging among other paintings with a tag labelling
+it as a portrait by an unknown fifteenth century artist, most would
+walk by without giving it a second look.</p>
+</blockquote>
+
+<p>Social media often makes opinions appear &ldquo;true&rdquo; because they have many thousands of upvotes. It&rsquo;s rare that we go against the popular opinion.</p>
+
+<p>It&rsquo;s for this reason that in the recent rebuild of my blog I removed a views counter.</p>
+
+                </div>
+            </div>
+        </article>
+    
+        <article class="post is-current home-post">
+            <header class="post-header">
                 <a href="/constraint-breeds-creativity">
                     <h1 class="title post-title">Constraint Breeds Creativity</h1>
                 </a>
@@ -46,7 +90,7 @@
             </header>
             <div class="body">
                 <div class="posthaven-post-body">
-                    <p>As a grow a little older views I once held collapse like a stack of cards under the gentle prod of criticism. No longer do I think creativity solely occupies the arts; anyone can be creative no matter what (or even in what) they do. It&rsquo;s only apt that I&rsquo;ll use one example in this post from another domain.</p>
+                    <p>As I grow a little older views I once held collapse like a stack of cards under the gentle prod of criticism. No longer do I think creativity solely occupies the arts; anyone can be creative no matter what (or even in what) they do. It&rsquo;s only apt that I&rsquo;ll use one example in this post from another domain.</p>
 
 <p>For some time I&rsquo;ve held the view that removing creative variables from a creative problem actually <em>encourages</em> creativity. In programming, the simpler solution to a complex problem is usually the best one. Writing code with fewer abstractions in mind (and writing simple tests) can allow programmers to think more creatively.</p>
 
@@ -126,37 +170,6 @@
 <p>Software Engineers are very good at identifying patterns but I think an unfortunate trap we often fall into is linking disparate ideas, especially in the absence of a complete picture. Often I hear engineers say that because they&rsquo;ve found a bug today, the bug has existed since the feature was created. It&rsquo;s an easy (and quite egotistical) assumption but invariably a flawed one.</p>
 
 <p>How can we know whether an assumption is right if we&rsquo;re acting on incomplete information? All correct assumptions (that we may not discover were right until some time has passed) have a clear, reproducible line of reasoning. While there might be huge gaps in the breadcrumb trail between two seemingly unrelated ideas, bread fragments will always line the path between logical assumptions.</p>
-
-                </div>
-            </div>
-        </article>
-    
-        <article class="post is-current home-post">
-            <header class="post-header">
-                <a href="/code-and-context">
-                    <h1 class="title post-title">Code and Context</h1>
-                </a>
-                <p>
-                    <span class="post-date">7th January, 2021</span>
-                </p>
-            </header>
-            <div class="body">
-                <div class="posthaven-post-body">
-                    <p>Last week I wrote a post called <a href="/code-age-vs-time-to-recall">&ldquo;Code Age vs Time to Recall&rdquo;</a> that briefly graced the front page of Hacker News. I&rsquo;d recommend you read it before this one. Ironically it&rsquo;s one of the few posts I&rsquo;ve written that didn&rsquo;t call for at least one redraft; at the time of writing it&rsquo;s been viewed nearly 4000 times (my most-viewed post by far.) In summary, I spoke about the way old code is often perceived to be bad in development teams because it takes longer to recall. How can we reduce this &ldquo;time to recall&rdquo; by writing code that&rsquo;s easy to remember? And to what extent are we responsible for sharing the context around our decisions with others?</p>
-
-<p>Remembering things plays such an important role in our work as developers: strands of conversations, Slack messages, Trello cards, spec documents. All of these different sources only increase our cognitive load; at some point we&rsquo;re bound to forget something. I think if we&rsquo;re able to parse and condense a complex set of requirements into code form, we owe a courtesy to our colleagues (and future selves) to explain the context to our decisions, to help them understand why we did things a certain way.</p>
-
-<p>While it would be futile to attempt to commit to memory code we didn&rsquo;t interact with very often, we can speed up the process of recall by writing code that&rsquo;s easy to understand. Doing so might involve using certain build tools or linters or ensuring the formatting of our files is correct; as one HN commenter said, &ldquo;Painful now, pleasurable later, hopefully.&rdquo;</p>
-
-<p>Where a few years ago I might have scoffed at the idea of a temporary variable, variable names can themselves convey meaning (assuming creating one isn&rsquo;t detrimental to performance) and the same applies to class and function names (language permitting) which serve to structure and expound the code they encapsulate. We often talk about names being too verbose (wordy) but sometimes verbosity is a superpower. Much better is it, in my opinion, to overcommunicate what something does and why it is, than to risk its purpose being unclear in a month or year&rsquo;s time.</p>
-
-<p>Git commit messages are extremely valuable sources of context. An underappreciated feature of Sourcetree is that you can search for past commits by message (and file change.) A well written commit message should both describe what changed and why, for example, &ldquo;Replace duplicate Task markup with CommentList component&rdquo;. If I can understand the context to a decision merely by reading a commit message, my time to recall is significantly reduced. Alternatively there is some context to be found in the date of the commit and the branch name, which might also tie in with a pull request. As an aside, I&rsquo;ve always written my commit messages as imperatives (so they can be read in order as a list of instructions) but I&rsquo;m sure there are other conventions for this.</p>
-
-<p>Some of the comments on last week&rsquo;s HN post spoke of automated testing, which itself serves as a form of &ldquo;functional documentation&rdquo;. Tests are the link between a set of requirements (potentially a non-technical document) and code. Again, if we&rsquo;re able to understand the requirements surrounding code, the time to recall is lessened. In many ways, tests also provide a kind of &ldquo;entrenchment&rdquo; in that they prevent unnecessary changes being made later on. If a test fails as a result of a refactor, the code no longer meets the requirement.</p>
-
-<p>Not only do we often make decisions in code as individuals, but often we make decisions with other developers in pull requests. Not only is the clarity of what you say important to the developer making the changes but the more information you can supply (references to files by name, line numbers etc), the more easily you or one of your colleagues will find what they need at some point in the distant future. I&rsquo;d go as far to say that you should write your PR comments with the assumption that they&rsquo;ll be read again by someone else at a later time.</p>
-
-<p>Whether formally acknowledged or not, I think all developers are responsible to some extent for reducing the &ldquo;time to recall&rdquo; the context surrounding our code. We owe it to ourselves and our colleagues to share as much of this context as possible, in code, in commit messages, in tests and in pull requests so that old code can be understood just as well as the new.</p>
 
                 </div>
             </div>
