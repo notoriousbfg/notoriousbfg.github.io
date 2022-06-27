@@ -15,9 +15,17 @@ type Site struct {
 }
 
 func (s Site) PublishedBlogPosts() []Post {
+	return s.PublishedPosts("blog")
+}
+
+func (s Site) PublishedPhotos() []Post {
+	return s.PublishedPosts("photo")
+}
+
+func (s Site) PublishedPosts(category string) []Post {
 	var published []Post
 	for _, post := range s.Posts {
-		if !post.Config.Draft && post.Config.Category == "blog" {
+		if !post.Config.Draft && post.Config.Category == category {
 			published = append(published, post)
 		}
 	}

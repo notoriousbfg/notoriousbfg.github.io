@@ -212,13 +212,13 @@ func RenderPost(post *Post, site *Site) error {
 }
 
 func RenderPhoto(post *Post, site *Site) error {
-	imagePath, err := ResizeImage(post)
+	_, err := ResizeImage(post)
 	if err != nil {
 		return err
 	}
 
 	post.Content = ""
-	post.Image = imagePath
+	post.Image = fmt.Sprintf("/%s/resized.jpg", post.Config.Slug)
 
 	template := template.Must(
 		template.ParseFiles("./templates/photo/photo.html", "./templates/base.html"),

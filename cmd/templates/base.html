@@ -17,17 +17,12 @@
         <header style="margin-top: 2rem;">
             <nav class="nav container">
                 <ul class="nav-list">
-                    {{ range .Site.Categories }}
-                        {{ if eq . "blog" }}
-                            <li>
-                                <a href="/" class="link hover">Tim White</a>
-                            </li>
-                        {{ else }}
-                            <li>
-                                <a href="#" class="link hover">{{ . }}</a>
-                            </li>
-                        {{ end }}
-                    {{ end }}
+                    <li>
+                        <a href="/" class="link hover">Tim White</a>
+                    </li>
+                    <li>
+                        <a href="#" class="link hover">photo</a>
+                    </li>
                 </ul>
             </nav>
         </header>

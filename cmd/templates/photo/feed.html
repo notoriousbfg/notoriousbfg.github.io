@@ -1,0 +1,7 @@
+{{ define "main" }}
+    {{ range .Site.PublishedPhotos }}
+        <section>
+            <img src="{{ .Post.Image }}" alt="{{ .Post.Config.Title }}">
+        </section>
+    {{ end }}
+{{ end }}
