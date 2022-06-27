@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/gomarkdown/markdown"
+	"github.com/h2non/bimg"
 )
 
 func ReadPosts() ([]Post, error) {
@@ -22,10 +23,10 @@ func ReadPosts() ([]Post, error) {
 	for _, item := range items {
 		if item.IsDir() {
 			post := Post{
-				Path: fmt.Sprintf("../posts/%s", item.Name()),
+				SrcPath: fmt.Sprintf("../posts/%s", item.Name()),
 			}
 
-			subItems, err := ioutil.ReadDir(post.Path)
+			subItems, err := ioutil.ReadDir(post.SrcPath)
 
 			if err != nil {
 				return nil, fmt.Errorf("error reading post directory: %v", item)
@@ -33,7 +34,7 @@ func ReadPosts() ([]Post, error) {
 
 			for _, subItem := range subItems {
 				if subItem.Name() == "config.json" {
-					filePath := fmt.Sprintf("%s/config.json", post.Path)
+					filePath := fmt.Sprintf("%s/config.json", post.SrcPath)
 					contents, err := ioutil.ReadFile(filePath)
 					if err != nil {
 						return nil, fmt.Errorf("error reading config file: %s", filePath)
@@ -90,19 +91,23 @@ func BuildPosts(site *Site) error {
 			return err
 		}
 
+		post.RenderPath = newDir
+
 		newFilePath := fmt.Sprintf("%s/index.html", newDir)
 		fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
 			return err
 		}
 
-		if post.Config.Category == "photo" {
-			if photoErr := BuildImage(&post); photoErr != nil {
-				return photoErr
-			}
+		var renderError error
+		switch post.Config.Category {
+		case "photo":
+			renderError = RenderPhoto(&post, site)
+		case "blog":
+			renderError = RenderPost(&post, site)
 		}
 
-		if renderError := RenderContent(&post, site); renderError != nil {
+		if renderError != nil {
 			return renderError
 		}
 
@@ -179,8 +184,8 @@ func BuildArchivePage(site *Site) error {
 	return nil
 }
 
-func RenderContent(post *Post, site *Site) error {
-	postPath := fmt.Sprintf("%s/post.md", post.Path)
+func RenderPost(post *Post, site *Site) error {
+	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
 	contents, pathErr := ioutil.ReadFile(postPath)
 
 	if pathErr != nil {
@@ -206,10 +211,48 @@ func RenderContent(post *Post, site *Site) error {
 	return nil
 }
 
-func BuildImage(post *Post) error {
-	imagePath := fmt.Sprintf("%s/img.jpg", post.Path)
+func RenderPhoto(post *Post, site *Site) error {
+	imagePath, err := ResizeImage(post)
+	if err != nil {
+		return err
+	}
 
+	post.Content = ""
+	post.Image = imagePath
+
+	template := template.Must(
+		template.ParseFiles("./templates/photo/photo.html", "./templates/base.html"),
+	)
+
+	var content bytes.Buffer
+	templateErr := template.ExecuteTemplate(&content, "base", PageData{
+		Post: *post,
+		Site: *site,
+	})
+	if templateErr != nil {
+		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+	}
+
+	post.RenderedContent = content.String()
 	return nil
+}
+
+func ResizeImage(post *Post) (string, error) {
+	imagePath := fmt.Sprintf("%s/img.jpg", post.SrcPath)
+	buffer, err := bimg.Read(imagePath)
+	if err != nil {
+		return "", err
+	}
+
+	newImage, err := bimg.NewImage(buffer).Resize(600, 800)
+	if err != nil {
+		return "", err
+	}
+
+	newImagePath := fmt.Sprintf("%s/resized.jpg", post.RenderPath)
+	bimg.Write(newImagePath, newImage)
+
+	return newImagePath, nil
 }
 
 func truncatePublicDir() {

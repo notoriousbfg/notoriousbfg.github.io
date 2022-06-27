@@ -64,7 +64,9 @@ type Post struct {
 	Config          PostConfig
 	Content         string
 	RenderedContent string
-	Path            string
+	SrcPath         string
+	RenderPath      string
+	Image           string
 }
 
 type PostConfig struct {
