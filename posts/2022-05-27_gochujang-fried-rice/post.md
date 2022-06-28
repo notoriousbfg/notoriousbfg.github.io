@@ -1,0 +1,1 @@
+This goes well with everything, but especially two day old rice. Fried some peppers, an egg with soy sauce then broke it all up with the rice and a tablespoon of Gochujang. Gave it a nice sweet, spicy flavour with a sticky texture. Looked even tastier in this light.
