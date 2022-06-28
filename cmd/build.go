@@ -7,9 +7,11 @@ import (
 	"io/ioutil"
 	"os"
 	"text/template"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gomarkdown/markdown"
+	"github.com/gorilla/feeds"
 	"github.com/h2non/bimg"
 )
 
@@ -70,6 +72,10 @@ func BuildSite(site *Site) error {
 	}
 
 	if err := BuildPhotoFeedPage(site); err != nil {
+		return err
+	}
+
+	if err := BuildRSSFeed(site); err != nil {
 		return err
 	}
 
@@ -317,6 +323,46 @@ func ResizeImage(post *Post) (string, error) {
 	bimg.Write(newImagePath, resizedImage)
 
 	return newImagePath, nil
+}
+
+func BuildRSSFeed(site *Site) error {
+	now := time.Now()
+	feed := &feeds.Feed{
+		Title:       site.Config.Title,
+		Link:        &feeds.Link{Href: "https://notoriousbfg.com"},
+		Description: site.Config.Description,
+		Author:      &feeds.Author{Name: "Tim White"},
+		Created:     now,
+	}
+	var feedItems []*feeds.Item
+	for _, post := range site.PublishedBlogPosts() {
+		feedItems = append(feedItems, &feeds.Item{
+			Title:       post.Config.Title,
+			Link:        &feeds.Link{Href: fmt.Sprintf("http://notoriousbfg.com/%s", post.Config.Slug)},
+			Description: post.Config.Description,
+			Author:      &feeds.Author{Name: "Tim White"},
+			Created:     post.Config.Published,
+		})
+	}
+	feed.Items = feedItems
+	rss, err := feed.ToRss()
+	if err != nil {
+		return err
+	}
+
+	newFilePath := fmt.Sprintf("../docs/rss.xml")
+	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+
+	fp.WriteString(rss)
+
+	if err := fp.Close(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func truncatePublicDir() {
