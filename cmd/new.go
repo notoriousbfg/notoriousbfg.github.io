@@ -48,7 +48,11 @@ func NewPost(title string, category string, date string) error {
 	if err != nil {
 		return err
 	}
-	mdFilePointer.WriteString(fmt.Sprintf("# %s", title))
+
+	if category != "photo" {
+		mdFilePointer.WriteString(fmt.Sprintf("# %s", title))
+	}
+
 	fmt.Printf("post \"%s\" successfully created\n", title)
 	return nil
 }

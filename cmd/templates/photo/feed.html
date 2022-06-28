@@ -1,7 +1,9 @@
 {{ define "main" }}
     {{ range .Site.PublishedPhotos }}
         <section class="feed-item">
-            <h2 class="post-title">{{ .Config.Title }}</h2>
+            <a href="/photo/{{ .Config.Slug }}">
+                <h2 class="post-title">{{ .Config.Title }}</h2>
+            </a>
             <p class="post-date">{{ .Config.FormattedDate }}</p>
             <img src="{{ .Image }}" alt="{{ .Config.Title }}" style="max-width: 100%;">
         </section>

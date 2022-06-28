@@ -1,1 +1,0 @@
-# Gochujang Fried Rice

@@ -699,6 +699,14 @@ a {
     margin-bottom: 1.25rem;
 }
 
+.photo-content {
+    margin-bottom: 1.5rem;
+}
+
+.photo-content p {
+    margin: 0;
+}
+
 @media screen and (max-width: 480px) {
     .post-link {
         flex: 0 0 100%;

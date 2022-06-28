@@ -90,7 +90,13 @@ func BuildPosts(site *Site) error {
 			continue
 		}
 
-		newDir := fmt.Sprintf("../docs/%s", post.Config.Slug)
+		var newDir string
+		if post.Config.Category == "photo" {
+			newDir = fmt.Sprintf("../docs/photo/%s", post.Config.Slug)
+		} else {
+			newDir = fmt.Sprintf("../docs/%s", post.Config.Slug)
+		}
+
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
 			return err
@@ -255,8 +261,16 @@ func RenderPhoto(post *Post, site *Site) error {
 		return err
 	}
 
-	post.Content = ""
-	post.Image = fmt.Sprintf("/%s/resized.jpg", post.Config.Slug)
+	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
+	contents, pathErr := ioutil.ReadFile(postPath)
+
+	if pathErr != nil {
+		return fmt.Errorf("error reading file: %s", postPath)
+	}
+
+	post.Content = string(markdown.ToHTML(contents, nil, nil))
+
+	post.Image = fmt.Sprintf("/photo/%s/resized.jpg", post.Config.Slug)
 
 	template := template.Must(
 		template.ParseFiles("./templates/photo/photo.html", "./templates/base.html"),
