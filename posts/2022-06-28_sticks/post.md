@@ -1,3 +1,3 @@
 Found a stick for Ellie's tomato plant. 
 
-I really enjoyed the slow pace of this walk.
+I really enjoyed the slow pace of this walk, searching for the right one.
