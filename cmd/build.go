@@ -287,9 +287,9 @@ func ResizeImage(post *Post) (string, error) {
 
 	var dimensions [2]int
 	if imageSize.Width > imageSize.Height {
-		dimensions = [...]int{800, 600}
+		dimensions = [...]int{1000, 750}
 	} else {
-		dimensions = [...]int{600, 800}
+		dimensions = [...]int{750, 1000}
 	}
 
 	spew.Dump()
