@@ -4,7 +4,7 @@
             <h2 class="post-title">{{ .Post.Config.Title }}</h2>
             <p class="post-date">{{ .Post.Config.FormattedDate }}</p>
             {{ if .Post.Content }}
-            <div class="photo-content">{{ .Post.Content }}</div>
+            <div class="photo-content posthaven-post-body">{{ .Post.Content }}</div>
             {{ end }}
             <img src="{{ .Post.Image }}" alt="{{ .Post.Config.Title }}" style="width: 100%;">
         </section>
