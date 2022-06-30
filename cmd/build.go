@@ -9,7 +9,6 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gomarkdown/markdown"
 	"github.com/gorilla/feeds"
 	"github.com/h2non/bimg"
@@ -301,14 +300,7 @@ func ResizeImage(post *Post) (string, error) {
 	newImage := bimg.NewImage(buffer)
 	imageSize, _ := newImage.Size()
 
-	var dimensions [2]int
-	if imageSize.Width > imageSize.Height {
-		dimensions = [...]int{1000, 750}
-	} else {
-		dimensions = [...]int{750, 1000}
-	}
-
-	spew.Dump()
+	dimensions := getDimensions(imageSize)
 
 	resizedImage, err := newImage.Resize(dimensions[0], dimensions[1])
 	if err != nil {
@@ -379,4 +371,20 @@ func contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func getDimensions(imageSize bimg.ImageSize) []int {
+	var dimensions [2]int
+	var aspectRatio int
+	if imageSize.Width < imageSize.Height {
+		aspectRatio = imageSize.Width / imageSize.Height
+	} else if imageSize.Width > imageSize.Height {
+		aspectRatio = imageSize.Height / imageSize.Width
+	} else {
+		aspectRatio = 1
+	}
+	newWidth := 1000
+	newHeight := newWidth * aspectRatio
+	dimensions = [...]int{newWidth, newHeight}
+	return dimensions[:]
 }
