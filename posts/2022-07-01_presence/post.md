@@ -18,4 +18,4 @@ Sometimes when I'm alone in the forest I close my eyes and listen.
 
 If my sense of presence is perceptual then it cannot be measured, but I suspect that it is noticeable to those around me. However it's a state of mind only I feel and understand.
 
-The benefits I have found to being more present include: building clearer, more distinct memories; stronger relationships with those around me; no longer a desire to be elsewhere or thinking about the next thing; noticing things I wouldn't have otherwise noticed.
+The benefits I have found to being more present include: remembering things more clearly; stronger relationships with those around me; no longer a desire to be elsewhere or thinking about the next thing; noticing things I wouldn't have otherwise noticed.
