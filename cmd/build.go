@@ -92,10 +92,6 @@ func BuildPosts(site *Site) error {
 	site.Posts = posts
 
 	for key, post := range site.Posts {
-		if post.Config.Draft {
-			continue
-		}
-
 		var newDir string
 		if post.Config.Category == "photo" {
 			newDir = fmt.Sprintf("../docs/photo/%s", post.Config.Slug)
