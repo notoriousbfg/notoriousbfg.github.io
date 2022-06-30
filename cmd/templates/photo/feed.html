@@ -5,6 +5,9 @@
                 <h2 class="post-title">{{ .Config.Title }}</h2>
             </a>
             <p class="post-date">{{ .Config.FormattedDate }}</p>
+            {{ if .Content }}
+            <div class="photo-content posthaven-post-body">{{ .Content }}</div>
+            {{ end }}
             <img src="{{ .Image }}" alt="{{ .Config.Title }}" style="max-width: 100%;">
         </section>
     {{ end }}
