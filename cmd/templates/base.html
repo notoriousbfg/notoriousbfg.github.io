@@ -4,7 +4,11 @@
     <head>
         {{ if .HasPost }}
             <title>{{ .Post.Config.Title }}</title>
+            {{ if eq (len .Post.Config.Description) 0 }}
+            <meta name="description" content="{{ .Site.Config.Description }}" />
+            {{ else }}
             <meta name="description" content="{{ .Post.Config.Description }}" />
+            {{ end }}
         {{ else }}
             <title>{{ .Site.Config.Title }}</title>
             <meta name="description" content="{{ .Site.Config.Description }}" />
