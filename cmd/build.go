@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sync"
 	"text/template"
 	"time"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gorilla/feeds"
 	"github.com/h2non/bimg"
+	"github.com/hashicorp/go-multierror"
 )
 
 func ReadPosts() ([]Post, error) {
@@ -58,30 +60,6 @@ func ReadPosts() ([]Post, error) {
 func BuildSite(site *Site) error {
 	truncatePublicDir()
 
-	if err := BuildPosts(site); err != nil {
-		return err
-	}
-
-	if err := BuildHomePage(site); err != nil {
-		return err
-	}
-
-	if err := BuildArchivePage(site); err != nil {
-		return err
-	}
-
-	if err := BuildPhotoFeedPage(site); err != nil {
-		return err
-	}
-
-	if err := BuildRSSFeed(site); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func BuildPosts(site *Site) error {
 	posts, readErr := ReadPosts()
 
 	if readErr != nil {
@@ -90,6 +68,59 @@ func BuildPosts(site *Site) error {
 
 	site.Posts = posts
 
+	var buildErr error
+
+	if err := BuildPosts(site); err != nil {
+		buildErr = multierror.Append(buildErr, err)
+	}
+
+	if err := BuildHomePage(site); err != nil {
+		buildErr = multierror.Append(buildErr, err)
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	go func() {
+		defer wg.Done()
+		if err := BuildArchivePage(site); err != nil {
+			buildErr = multierror.Append(buildErr, err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := BuildPhotoFeedPage(site); err != nil {
+			buildErr = multierror.Append(buildErr, err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := BuildRSSFeed(site); err != nil {
+			buildErr = multierror.Append(buildErr, err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := BuildBookRecommendations(site); err != nil {
+			buildErr = multierror.Append(buildErr, err)
+		}
+	}()
+
+	wg.Wait()
+
+	if buildErr != nil {
+		return buildErr
+	}
+
+	fmt.Println("build finished")
+
+	return nil
+}
+
+func BuildPosts(site *Site) error {
 	for key, post := range site.Posts {
 		var newDir string
 		if post.Config.Category == "photo" {
