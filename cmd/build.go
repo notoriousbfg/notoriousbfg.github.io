@@ -102,12 +102,12 @@ func BuildSite(site *Site) error {
 		}
 	}()
 
-	go func() {
-		defer wg.Done()
-		if err := BuildBookRecommendations(site); err != nil {
-			buildErr = multierror.Append(buildErr, err)
-		}
-	}()
+	// go func() {
+	// 	defer wg.Done()
+	// 	if err := BuildBookRecommendations(site); err != nil {
+	// 		buildErr = multierror.Append(buildErr, err)
+	// 	}
+	// }()
 
 	wg.Wait()
 
