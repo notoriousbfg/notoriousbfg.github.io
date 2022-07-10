@@ -7,11 +7,13 @@ import (
 	"time"
 
 	"github.com/golang-module/carbon"
+	"github.com/mmcdole/gofeed"
 )
 
 type Site struct {
 	Config SiteConfig
 	Posts  []Post
+	Books  []*gofeed.Item
 }
 
 func (s Site) PublishedBlogPosts() []Post {

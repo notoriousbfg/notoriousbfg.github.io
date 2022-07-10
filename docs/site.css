@@ -707,6 +707,10 @@ a {
     margin: 0;
 }
 
+.clear-format * {
+    font-weight: 400;
+}
+
 @media screen and (max-width: 480px) {
     .post-link {
         flex: 0 0 100%;
