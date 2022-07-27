@@ -20,4 +20,4 @@ The reason why a lot of us don't seem to care very much about climate change is 
 
 What I find overwhelmingly sad is the people who truly believe this (whom I so desperately want to be wrong) are in some ways right. The first people to be affected by climate change, to die, to be displaced, to starve aren't anywhere near the UK. They're in Africa, the Middle East, Asia and the hottest regions of the planet.
 
-It will take a majority of people challenging our notion of what is "correct" for us to figure out how to slow down the effects of climate change, to embrace the heterodox ideas, to remove the carbon already in our atmosphere.
+It will take a majority of people challenging our notion of what is "correct" for us to figure out how to slow down the effects of climate change, to embrace the heterodox ideas and the moonshots, to remove the carbon already in our atmosphere.
