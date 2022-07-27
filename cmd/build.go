@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"sync"
 	"text/template"
 	"time"
@@ -19,7 +20,8 @@ import (
 func ReadPosts() ([]Post, error) {
 	var posts []Post
 
-	items, err := ioutil.ReadDir("../posts")
+	postsPath, _ := filepath.Abs("../posts")
+	items, err := ioutil.ReadDir(postsPath)
 	if err != nil {
 		return nil, fmt.Errorf("error reading posts directory")
 	}
