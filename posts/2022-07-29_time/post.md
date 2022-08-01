@@ -9,3 +9,16 @@ Typically when we write about time in a romantic way it's to describe its fleeti
 Recently I've come to think the opposite. For most of us, the passing of time helps us see things in a different light; It helps us recover from trauma and pain; It helps us save what we want to, forget what we want to; It changes how we perceive our own lives.
 
 More time can be a wonderful elixir for regret, which is simply sadness at the passing of time. Whether we regret something we said, did, or didn't do more time would allow us to correct our mistakes (or so we think).  But to live life with regret is itself regrettable.
+
+In recent years I've come to love the music of John Prine, who sadly passed away in 2020. But while much of his music is tinged with sadness, there is hope in the song "I Remember Everything", which describes brief snapshots throughout his life.
+
+> I've been down this road before  
+> Alone as I can be  
+> Careful not to let my past  
+> Go sneaking up on me  
+> Got no future in my happiness  
+> Though regrets are very few  
+> Sometimes a little tenderness  
+> Was the best that I could do  
+
+It's a pleasant reminder that we can remember all the good in our lives, free from regret if we try.
