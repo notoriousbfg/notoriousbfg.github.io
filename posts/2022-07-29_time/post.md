@@ -12,13 +12,14 @@ More time can be a wonderful elixir for regret, which is simply sadness at the p
 
 In recent years I've come to love the music of John Prine, who sadly passed away in 2020. But while many of his songs are tinged with sadness, there is hope in "I Remember Everything" which describes brief periods in his life.
 
-> I've been down this road before  
-> Alone as I can be  
-> Careful not to let my past  
-> Go sneaking up on me  
 > Got no future in my happiness  
 > Though regrets are very few  
 > Sometimes a little tenderness  
-> Was the best that I could do  
+> Was the best that I could do...  
+> 
+> I remember everything  
+> Things I can't forget  
+> Swimming pools of butterflies  
+> That slipped right through the net
 
 It's a pleasant reminder that we can remember all the good in our lives free from regret, if we try.
