@@ -10,7 +10,7 @@ Recently I've come to think the opposite. For most of us, the passing of time he
 
 More time can be a wonderful elixir for regret, which is simply sadness at the passing of time. Whether we regret something we said, did, or didn't do more time would allow us to correct our mistakes (or so we think).  But to live life with regret is itself regrettable.
 
-In recent years I've come to love the music of John Prine, who sadly passed away in 2020. But while much of his music is tinged with sadness, there is hope in the song "I Remember Everything", which describes brief snapshots throughout his life.
+In recent years I've come to love the music of John Prine, who sadly passed away in 2020. But while many of his songs are tinged with sadness, there is hope in "I Remember Everything" which describes brief periods in his life.
 
 > I've been down this road before  
 > Alone as I can be  
@@ -21,4 +21,4 @@ In recent years I've come to love the music of John Prine, who sadly passed away
 > Sometimes a little tenderness  
 > Was the best that I could do  
 
-It's a pleasant reminder that we can remember all the good in our lives, free from regret if we try.
+It's a pleasant reminder that we can remember all the good in our lives free from regret, if we try.
