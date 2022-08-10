@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/gorilla/feeds"
 	"github.com/h2non/bimg"
 	"github.com/hashicorp/go-multierror"
@@ -270,7 +271,11 @@ func RenderPost(post *Post, site *Site) error {
 		return fmt.Errorf("error reading file: %s", postPath)
 	}
 
-	post.Content = string(markdown.ToHTML(contents, nil, nil))
+	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+	opts := html.RendererOptions{Flags: htmlFlags}
+	renderer := html.NewRenderer(opts)
+
+	post.Content = string(markdown.ToHTML(contents, nil, renderer))
 
 	template := template.Must(
 		template.ParseFiles("./templates/post.html", "./templates/base.html"),
@@ -282,7 +287,7 @@ func RenderPost(post *Post, site *Site) error {
 		Site: *site,
 	})
 	if templateErr != nil {
-		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+		return fmt.Errorf("error generating template: \n%+v", templateErr)
 	}
 
 	post.RenderedContent = content.String()
