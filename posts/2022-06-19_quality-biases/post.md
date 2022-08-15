@@ -12,7 +12,7 @@ When something has been created in a complex way we often assume it's because a 
 
 It's perfectly possible to dislike the themes discussed in a novel but still consider it to be well written. Conversely, it's possible to like the content and think the writing poor. However this is usually not the case: more often we think of things we like as being well executed and things we don't like as being bad. The same can be said of most of the arts.
 
-It would be negligent of me to make no mention of "The Last of Us: Part 2", which I wrote about here when I played it first. I've since played it several times and still do not believe that the story choices (as sad as they may be) do not make this game "bad". Our feelings about a story make our perceptions about the quality of writing biased.
+It would be negligent of me to make no mention of "The Last of Us: Part 2", which I wrote about here when I [played it first](/the-last-of-us-part-ii). I've since played it several times and still do not believe that the story choices (as sad as they may be) make this game "bad". Our feelings about a story make our perceptions about the quality of writing biased.
 
 ### Popularity
 
