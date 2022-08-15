@@ -1,6 +1,6 @@
 When my girlfriend and I go on walks in the New Forest we regularly talk about the sense of presence we have.
 
-We note the colour of flowers and the different types of tree. We comment on the smell of sap. We see birds dart across our path and listen for each of their distinct calls. We keep our eyes peeled for deer, taking care not to step on any dry twigs, the crack of which would resonate through the forest.
+We note the colour of flowers and the different types of tree. We comment on the smell of sap. We see birds dart across our path and listen for each of their distinct calls. We keep our eyes peeled for deer, taking care not to step on any dry twigs, the crack of which would reverberate through the forest.
 
 I feel the warmth of her hand in mine.
 
