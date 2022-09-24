@@ -8,7 +8,7 @@ We use truths or absolutes for convenience, to communicate, because describing e
 
 Is Time a human construct, or would it exist if humans didn't? Or is time merely perceived? Does it merely pertain to the individual? Are we born with a sense of time or do we learn it? Or does our idea of time change across our lifetimes?
 
-The most popular criticism of relativism is that "There cannot be absolutes" is itself an absolute statement. Some things must be true or at least in a relativistic sense we must _consider_ them to be true if we're to move forward. I wonder if we create "footholds" in our minds: things we assume to be true, without really ever delving into. It's more convenient. It's hard to even find a clear-cut definition of truth online:
+The most popular criticism of relativism is that "There cannot be absolutes" is itself an absolute statement. Some things must be true or at least in a relativistic sense we must _consider_ them to be true if we're to move forward. I wonder if we create "footholds" in our minds: things we assume to be true, without really ever delving into. It's more convenient to think this way. It's hard to even find a clear-cut definition of truth online:
 
 > "...that which is true or in accordance with fact or reality"
 
@@ -16,7 +16,7 @@ But we know from the war in Ukraine that reality can be distorted, and there see
 
 Is everything then perceptual? In our minds? There are 7 billions humans on this planet all thinking and doing different things at the same time. How does one capture collective conscience? How do we agree on anything? How do we get anything done together if nothing is true?
 
-Take Love, which forms the basis of so much of our culture and understanding. Love is a perceptual experience (which isn't to say that it's not real) because our idea of what it means varies so wildly, influenced by so many other perceptions. It can be framed as: high levels of dopamine and norepinephrine in the brain, or sung about and visualised in music and art. Love is one of the pillars of civilisation and we all have a different idea of what it means. (Doesn't that feel so _chaotic_?)
+Take Love, which forms the basis of so much of our culture and understanding. Love is a perceptual experience (which isn't to say that it's not real) because our idea of what it means varies so wildly, influenced by so many other perceptions. It can be framed as: high levels of dopamine and norepinephrine in the brain, or sung about and visualised in music and art. Love is one of the pillars of civilisation and we all have a different idea of what it means. Doesn't that feel so... _chaotic_?
 
 
 
