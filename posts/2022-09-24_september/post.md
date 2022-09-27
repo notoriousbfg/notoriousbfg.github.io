@@ -14,5 +14,3 @@ Take love, which forms the basis of so much of our culture and understanding. Lo
 
 Art
 
-Life isn't supposed to be as meaningful as we think it is, but that isn't to say meaning can't be perceived. If it makes you content to think this way
-

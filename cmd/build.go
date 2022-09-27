@@ -48,7 +48,7 @@ func ReadPosts() ([]Post, error) {
 					}
 
 					if err = json.Unmarshal([]byte(contents), &post.Config); err != nil {
-						return nil, fmt.Errorf("error unmarshalling JSON (%s): %+v\n", filePath, err)
+						return nil, fmt.Errorf("error unmarshalling JSON (%s): %+v", filePath, err)
 					}
 				}
 			}
@@ -125,6 +125,10 @@ func BuildSite(site *Site) error {
 
 func BuildPosts(site *Site) error {
 	for key, post := range site.Posts {
+		if post.Config.Draft {
+			continue
+		}
+
 		var newDir string
 		if post.Config.Category == "photo" {
 			newDir = fmt.Sprintf("../docs/photo/%s", post.Config.Slug)
@@ -179,10 +183,10 @@ func BuildHomePage(site *Site) error {
 		Site: *site,
 	})
 	if templateErr != nil {
-		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+		return fmt.Errorf("error generating template: %+v", templateErr)
 	}
 
-	newFilePath := fmt.Sprintf("../docs/index.html")
+	newFilePath := "../docs/index.html"
 	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
