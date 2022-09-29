@@ -44,7 +44,7 @@
 			<div class="posthaven-post-body">
 				<p>Earlier this year I spent many months working on a web app for a client. Without giving too much away, one of the requirements was that the app gave users the ability to create recurring events. These would need to be scheduled weekly, biweekly (with specific dates), monthly, bimonthly and annually.</p>
 
-<p>If you search for &ldquo;software architecture recurring events&rdquo; (or something to that effect), you&rsquo;ll most likely come across <a href="https://stackoverflow.com/questions/5183630/calendar-recurring-repeating-events-best-storage-method/5186095#5186095">this Stack Overflow answer</a>. The approach it describes seems like it should work, but it&rsquo;s hard to tell merely from reading the code whether it&rsquo;s a good solution.</p>
+<p>If you search for &ldquo;software architecture recurring events&rdquo; (or something to that effect), you&rsquo;ll most likely come across <a href="https://stackoverflow.com/questions/5183630/calendar-recurring-repeating-events-best-storage-method/5186095#5186095" target="_blank">this Stack Overflow answer</a>. The approach it describes seems like it should work, but it&rsquo;s hard to tell merely from reading the code whether it&rsquo;s a good solution.</p>
 
 <p>Having spent many days trying this solution (and many others) the best method for creating recurring events I could find was to use the iCalendar RRule standard.</p>
 
@@ -60,7 +60,7 @@
 <p>FREQ=MONTHLY;BYMONTHDAY=12;INTERVAL=1</p>
 </blockquote>
 
-<p>In PHP, I found the <a href="https://github.com/tplaner/When">When</a> library to be the easiest way to generate a range of dates with RRules. We can restrict our ranges with a start and end date too.</p>
+<p>In PHP, I found the <a href="https://github.com/tplaner/When" target="_blank">When</a> library to be the easiest way to generate a range of dates with RRules. We can restrict our ranges with a start and end date too.</p>
 
 <p>Traditionally when building a calendar application, you&rsquo;d generate recurring events dynamically and view them on a calendar-like interface so that your events would appear to reoccur indefinitely. In my app however, future events would have associated data and therefore need to be queried against in a database, so as to avoid holding everything in memory.</p>
 
