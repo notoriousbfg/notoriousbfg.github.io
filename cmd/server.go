@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os/exec"
 	"runtime"
+	"time"
+
+	"github.com/radovskyb/watcher"
 )
 
 func StartServer() {
@@ -13,6 +17,30 @@ func StartServer() {
 	fmt.Printf("Listening at %s...\n", url)
 	go open(url)
 	http.ListenAndServe(":3000", nil)
+	watchFiles()
+}
+
+func watchFiles() {
+	w := watcher.New()
+	w.SetMaxEvents(1)
+	if err := w.AddRecursive("../posts"); err != nil {
+		log.Fatalln(err)
+	}
+	go func() {
+		for {
+			select {
+			case <-w.Event:
+				BuildSite(&site, false)
+			case err := <-w.Error:
+				log.Fatalln(err)
+			case <-w.Closed:
+				return
+			}
+		}
+	}()
+	if err := w.Start(time.Millisecond * 100); err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func open(url string) error {

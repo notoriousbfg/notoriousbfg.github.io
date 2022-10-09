@@ -9,6 +9,16 @@ import (
 	flag "github.com/ogier/pflag"
 )
 
+var (
+	site = Site{
+		Config: SiteConfig{
+			Title:       "Tim's Blog",
+			Description: "The personal blog of Tim White, Software Developer from Bournemouth.",
+			Bio:         "I’m Tim, a Software Developer from the UK. I like to program, cook, read & run.",
+		},
+	}
+)
+
 func main() {
 	args := os.Args[1:]
 
@@ -17,14 +27,6 @@ func main() {
 	}
 
 	if args[0] == "build" {
-		site := Site{
-			Config: SiteConfig{
-				Title:       "Tim's Blog",
-				Description: "The personal blog of Tim White, Software Developer from Bournemouth.",
-				Bio:         "I’m Tim, a Software Developer from the UK. I like to program, cook, read & run.",
-			},
-		}
-
 		nuke := flag.Bool("nuke", false, "whether to truncate docs directory")
 		flag.Parse()
 
