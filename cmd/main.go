@@ -25,7 +25,10 @@ func main() {
 			},
 		}
 
-		buildErr := BuildSite(&site)
+		nuke := flag.Bool("nuke", false, "whether to truncate docs directory")
+		flag.Parse()
+
+		buildErr := BuildSite(&site, *nuke)
 
 		if buildErr != nil {
 			log.Printf("there was a problem building the site: %+v", buildErr)

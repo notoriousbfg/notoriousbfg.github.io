@@ -61,8 +61,10 @@ func ReadPosts() ([]Post, error) {
 	return posts, nil
 }
 
-func BuildSite(site *Site) error {
-	// truncatePublicDir()
+func BuildSite(site *Site, nuke bool) error {
+	if nuke {
+		truncatePublicDir()
+	}
 
 	posts, readErr := ReadPosts()
 
@@ -74,7 +76,7 @@ func BuildSite(site *Site) error {
 
 	var buildErr error
 
-	if err := BuildPosts(site); err != nil {
+	if err := BuildPosts(site, nuke); err != nil {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
@@ -124,7 +126,7 @@ func BuildSite(site *Site) error {
 	return nil
 }
 
-func BuildPosts(site *Site) error {
+func BuildPosts(site *Site, nuke bool) error {
 	buildCache, _ := BuildCache()
 
 	for key, post := range site.Posts {
@@ -160,9 +162,9 @@ func BuildPosts(site *Site) error {
 		var renderError error
 		switch post.Config.Category {
 		case "photo":
-			renderError = RenderPhoto(&post, site, buildCache)
+			renderError = RenderPhoto(&post, site, buildCache, nuke)
 		case "video":
-			renderError = RenderVideo(&post, site, buildCache)
+			renderError = RenderVideo(&post, site, buildCache, nuke)
 		case "blog":
 			renderError = RenderPost(&post, site)
 		}
@@ -310,8 +312,8 @@ func RenderPost(post *Post, site *Site) error {
 	return nil
 }
 
-func RenderPhoto(post *Post, site *Site, cache []CachedPost) error {
-	if post.HasChanged(cache) {
+func RenderPhoto(post *Post, site *Site, cache []CachedPost, nuke bool) error {
+	if post.HasChanged(cache) || nuke {
 		_, err := ResizeImage(post)
 		if err != nil {
 			return err
@@ -345,8 +347,8 @@ func RenderPhoto(post *Post, site *Site, cache []CachedPost) error {
 	return nil
 }
 
-func RenderVideo(post *Post, site *Site, cache []CachedPost) error {
-	if post.HasChanged(cache) {
+func RenderVideo(post *Post, site *Site, cache []CachedPost, nuke bool) error {
+	if post.HasChanged(cache) || nuke {
 		_, err := CompressVideo(post)
 		if err != nil {
 			return err
