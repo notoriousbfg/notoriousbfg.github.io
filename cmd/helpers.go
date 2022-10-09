@@ -7,7 +7,7 @@ import (
 	"text/template"
 )
 
-func buildFromTemplate(templateFile string, data PageData, dirName string) error {
+func BuildFromTemplate(templateFile string, data PageData, dirName string) error {
 	template := template.Must(
 		template.ParseFiles(templateFile, "./templates/base.html"),
 	)
@@ -15,7 +15,7 @@ func buildFromTemplate(templateFile string, data PageData, dirName string) error
 	var content bytes.Buffer
 	templateErr := template.ExecuteTemplate(&content, "base", data)
 	if templateErr != nil {
-		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+		return fmt.Errorf("error generating template: %+v", templateErr)
 	}
 
 	dirErr := os.MkdirAll(dirName, os.ModePerm)
@@ -32,4 +32,13 @@ func buildFromTemplate(templateFile string, data PageData, dirName string) error
 	fp.WriteString(content.String())
 
 	return nil
+}
+
+func Contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

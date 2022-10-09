@@ -16,6 +16,7 @@ import (
 	"github.com/gorilla/feeds"
 	"github.com/h2non/bimg"
 	"github.com/hashicorp/go-multierror"
+	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
 func ReadPosts() ([]Post, error) {
@@ -93,7 +94,7 @@ func BuildSite(site *Site) error {
 
 	go func() {
 		defer wg.Done()
-		if err := BuildPhotoFeedPage(site); err != nil {
+		if err := BuildFeedPage(site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
@@ -130,8 +131,8 @@ func BuildPosts(site *Site) error {
 		}
 
 		var newDir string
-		if post.Config.Category == "photo" {
-			newDir = fmt.Sprintf("../docs/photo/%s", post.Config.Slug)
+		if post.Config.Category == "photo" || post.Config.Category == "video" {
+			newDir = fmt.Sprintf("../docs/feed/%s", post.Config.Slug)
 		} else {
 			newDir = fmt.Sprintf("../docs/%s", post.Config.Slug)
 		}
@@ -153,6 +154,8 @@ func BuildPosts(site *Site) error {
 		switch post.Config.Category {
 		case "photo":
 			renderError = RenderPhoto(&post, site)
+		case "video":
+			renderError = RenderVideo(&post, site)
 		case "blog":
 			renderError = RenderPost(&post, site)
 		}
@@ -211,7 +214,7 @@ func BuildArchivePage(site *Site) error {
 		Site: *site,
 	})
 	if templateErr != nil {
-		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+		return fmt.Errorf("error generating template: %+v", templateErr)
 	}
 
 	err := os.MkdirAll("../docs/archive", os.ModePerm)
@@ -219,7 +222,7 @@ func BuildArchivePage(site *Site) error {
 		return err
 	}
 
-	newFilePath := fmt.Sprintf("../docs/archive/index.html")
+	newFilePath := "../docs/archive/index.html"
 	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
@@ -234,9 +237,9 @@ func BuildArchivePage(site *Site) error {
 	return nil
 }
 
-func BuildPhotoFeedPage(site *Site) error {
+func BuildFeedPage(site *Site) error {
 	template := template.Must(
-		template.ParseFiles("./templates/photo/feed.html", "./templates/base.html"),
+		template.ParseFiles("./templates/feed/feed.html", "./templates/base.html"),
 	)
 
 	var content bytes.Buffer
@@ -244,15 +247,15 @@ func BuildPhotoFeedPage(site *Site) error {
 		Site: *site,
 	})
 	if templateErr != nil {
-		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+		return fmt.Errorf("error generating template: %+v", templateErr)
 	}
 
-	err := os.MkdirAll("../docs/photo", os.ModePerm)
+	err := os.MkdirAll("../docs/feed", os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	newFilePath := fmt.Sprintf("../docs/photo/index.html")
+	newFilePath := "../docs/feed/index.html"
 	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
@@ -312,11 +315,10 @@ func RenderPhoto(post *Post, site *Site) error {
 	}
 
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
-
-	post.Image = fmt.Sprintf("/photo/%s/resized.jpg", post.Config.Slug)
+	post.Image = fmt.Sprintf("/feed/%s/resized.jpg", post.Config.Slug)
 
 	template := template.Must(
-		template.ParseFiles("./templates/photo/photo.html", "./templates/base.html"),
+		template.ParseFiles("./templates/feed/photo.html", "./templates/base.html"),
 	)
 
 	var content bytes.Buffer
@@ -325,7 +327,40 @@ func RenderPhoto(post *Post, site *Site) error {
 		Site: *site,
 	})
 	if templateErr != nil {
-		return fmt.Errorf("error generating template: \n%+v\n", templateErr)
+		return fmt.Errorf("error generating template: %+v", templateErr)
+	}
+
+	post.RenderedContent = content.String()
+	return nil
+}
+
+func RenderVideo(post *Post, site *Site) error {
+	_, err := CompressVideo(post)
+	if err != nil {
+		return err
+	}
+
+	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
+	contents, pathErr := ioutil.ReadFile(postPath)
+
+	if pathErr != nil {
+		return fmt.Errorf("error reading file: %s", postPath)
+	}
+
+	post.Content = string(markdown.ToHTML(contents, nil, nil))
+	post.Video = fmt.Sprintf("/feed/%s/resized.mp4", post.Config.Slug)
+
+	template := template.Must(
+		template.ParseFiles("./templates/feed/video.html", "./templates/base.html"),
+	)
+
+	var content bytes.Buffer
+	templateErr := template.ExecuteTemplate(&content, "base", PageData{
+		Post: *post,
+		Site: *site,
+	})
+	if templateErr != nil {
+		return fmt.Errorf("error generating template: %+v", templateErr)
 	}
 
 	post.RenderedContent = content.String()
@@ -380,7 +415,7 @@ func BuildRSSFeed(site *Site) error {
 		return err
 	}
 
-	newFilePath := fmt.Sprintf("../docs/rss.xml")
+	newFilePath := "../docs/rss.xml"
 	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
@@ -395,24 +430,27 @@ func BuildRSSFeed(site *Site) error {
 	return nil
 }
 
+func CompressVideo(post *Post) (string, error) {
+	output := fmt.Sprintf("%s/resized.mp4", post.RenderPath)
+	err := ffmpeg.Input(fmt.Sprintf("%s/video.mp4", post.SrcPath)).
+		Output(output, ffmpeg.KwArgs{"vf": "scale=w=480:h=848"}).
+		OverWriteOutput().
+		Run()
+	if err != nil {
+		return "", err
+	}
+	return output, nil
+}
+
 func truncatePublicDir() {
 	dir, _ := ioutil.ReadDir("../docs")
 	exclude := []string{"img", "site.css", "CNAME"}
 	for _, d := range dir {
-		if contains(exclude, d.Name()) {
+		if Contains(exclude, d.Name()) {
 			continue
 		}
 		os.RemoveAll(fmt.Sprintf("../docs/%s", d.Name()))
 	}
-}
-
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
 }
 
 func getDimensions(imageSize bimg.ImageSize) []int {

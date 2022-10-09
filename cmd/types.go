@@ -17,17 +17,17 @@ type Site struct {
 }
 
 func (s Site) PublishedBlogPosts() []Post {
-	return s.PublishedPosts("blog")
+	return s.PublishedPosts([]string{"blog"})
 }
 
-func (s Site) PublishedPhotos() []Post {
-	return s.PublishedPosts("photo")
+func (s Site) PublishedFeed() []Post {
+	return s.PublishedPosts([]string{"photo", "video"})
 }
 
-func (s Site) PublishedPosts(category string) []Post {
+func (s Site) PublishedPosts(categories []string) []Post {
 	var published []Post
 	for _, post := range s.Posts {
-		if !post.Config.Draft && post.Config.Category == category {
+		if !post.Config.Draft && Contains(categories, post.Config.Category) {
 			published = append(published, post)
 		}
 	}
@@ -77,6 +77,7 @@ type Post struct {
 	SrcPath         string
 	RenderPath      string
 	Image           string
+	Video           string
 }
 
 type PostConfig struct {

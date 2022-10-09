@@ -31,30 +31,7 @@ func BuildBookRecommendations(site *Site) error {
 
 	site.Books = feedItems
 
-	// template := template.Must(
-	// 	template.ParseFiles("./templates/books.html", "./templates/base.html"),
-	// )
-
-	// var content bytes.Buffer
-	// templateErr := template.ExecuteTemplate(&content, "base", PageData{
-	// 	Site: *site,
-	// })
-	// if templateErr != nil {
-	// 	return fmt.Errorf("error generating template: \n%+v\n", templateErr)
-	// }
-
-	// dirErr := os.MkdirAll("../docs/books", os.ModePerm)
-	// if dirErr != nil {
-	// 	return dirErr
-	// }
-
-	// newFilePath := fmt.Sprintf("../docs/books/index.html")
-	// fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	// if err != nil {
-	// 	return err
-	// }
-
-	if buildErr := buildFromTemplate("./templates/books.html", PageData{Site: *site}, "../docs/books"); buildErr != nil {
+	if buildErr := BuildFromTemplate("./templates/books.html", PageData{Site: *site}, "../docs/books"); buildErr != nil {
 		return buildErr
 	}
 

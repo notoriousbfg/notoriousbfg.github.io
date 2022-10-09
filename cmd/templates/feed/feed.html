@@ -1,0 +1,19 @@
+{{ define "main" }}
+    {{ range .Site.PublishedFeed }}
+        <section class="feed-item">
+            <a href="/photo/{{ .Config.Slug }}">
+                <h2 class="post-title">{{ .Config.Title }}</h2>
+            </a>
+            <p class="post-date">{{ .Config.FormattedDate }}</p>
+            {{ if .Content }}
+            <div class="photo-content posthaven-post-body">{{ .Content }}</div>
+            {{ end }}
+            {{ if .Image }}
+            <img src="{{ .Image }}" alt="{{ .Config.Title }}" style="max-width: 100%;">
+            {{ end }}
+            {{ if .Video }}
+            <video src="{{ .Video }}" title="{{ .Config.Title }}" controls style="max-width: 100%;"></video>
+            {{ end }}
+        </section>
+    {{ end }}
+{{ end }}

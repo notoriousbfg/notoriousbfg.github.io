@@ -1,0 +1,12 @@
+{{ define "main" }}
+    <section>
+        <section class="feed-item">
+            <h2 class="post-title">{{ .Post.Config.Title }}</h2>
+            <p class="post-date">{{ .Post.Config.FormattedDate }}</p>
+            {{ if .Post.Content }}
+            <div class="photo-content posthaven-post-body">{{ .Post.Content }}</div>
+            {{ end }}
+            <video src="{{ .Post.Video }}" title="{{ .Post.Config.Title }}" style="width: 100%;"></video>
+        </section>
+    </section>
+{{ end }}
