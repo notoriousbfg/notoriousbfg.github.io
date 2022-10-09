@@ -125,53 +125,73 @@ func BuildSite(site *Site) error {
 }
 
 func BuildPosts(site *Site) error {
+	jsonFile, err := os.OpenFile("../build-cache.json", os.O_RDWR, 0755)
+	bytes, _ := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return err
+	}
+	var buildCache []CachedPost
+	if err := json.Unmarshal(bytes, &buildCache); err != nil {
+		return err
+	}
+	jsonFile.Close()
+
 	for key, post := range site.Posts {
+		checksumErr := post.MakeChecksum()
+		if checksumErr != nil {
+			return checksumErr
+		}
+
 		if post.Config.Draft {
 			continue
 		}
 
-		var newDir string
-		if post.Config.Category == "photo" || post.Config.Category == "video" {
-			newDir = fmt.Sprintf("../docs/feed/%s", post.Config.Slug)
-		} else {
-			newDir = fmt.Sprintf("../docs/%s", post.Config.Slug)
-		}
+		if post.HasChanged(buildCache) {
+			var newDir string
+			if post.Config.Category == "photo" || post.Config.Category == "video" {
+				newDir = fmt.Sprintf("../docs/feed/%s", post.Config.Slug)
+			} else {
+				newDir = fmt.Sprintf("../docs/%s", post.Config.Slug)
+			}
 
-		err := os.MkdirAll(newDir, os.ModePerm)
-		if err != nil {
-			return err
-		}
+			err := os.MkdirAll(newDir, os.ModePerm)
+			if err != nil {
+				return err
+			}
 
-		post.RenderPath = newDir
+			post.RenderPath = newDir
 
-		newFilePath := fmt.Sprintf("%s/index.html", newDir)
-		fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-		if err != nil {
-			return err
-		}
+			newFilePath := fmt.Sprintf("%s/index.html", newDir)
+			fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+			if err != nil {
+				return err
+			}
 
-		var renderError error
-		switch post.Config.Category {
-		case "photo":
-			renderError = RenderPhoto(&post, site)
-		case "video":
-			renderError = RenderVideo(&post, site)
-		case "blog":
-			renderError = RenderPost(&post, site)
-		}
+			var renderError error
+			switch post.Config.Category {
+			case "photo":
+				renderError = RenderPhoto(&post, site)
+			case "video":
+				renderError = RenderVideo(&post, site)
+			case "blog":
+				renderError = RenderPost(&post, site)
+			}
 
-		if renderError != nil {
-			return renderError
-		}
+			if renderError != nil {
+				return renderError
+			}
 
-		fp.WriteString(post.RenderedContent)
+			fp.WriteString(post.RenderedContent)
 
-		if err := fp.Close(); err != nil {
-			return err
+			if err := fp.Close(); err != nil {
+				return err
+			}
 		}
 
 		site.Posts[key] = post
 	}
+
+	CachePosts(site.Posts)
 
 	return nil
 }
@@ -440,6 +460,24 @@ func CompressVideo(post *Post) (string, error) {
 		return "", err
 	}
 	return output, nil
+}
+
+func CachePosts(posts []Post) error {
+	var output []CachedPost
+	for _, post := range posts {
+		output = append(output, CachedPost{
+			Directory:   post.SrcPath,
+			Checksum:    post.Checksum,
+			LastUpdated: time.Now(),
+		})
+	}
+	toWrite, _ := json.Marshal(output)
+	fp, err := os.OpenFile("../build-cache.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+	fp.WriteString(string(toWrite))
+	return nil
 }
 
 func truncatePublicDir() {

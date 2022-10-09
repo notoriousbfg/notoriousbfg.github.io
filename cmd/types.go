@@ -1,8 +1,12 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 	"sort"
 	"time"
 
@@ -76,8 +80,50 @@ type Post struct {
 	RenderedContent string
 	SrcPath         string
 	RenderPath      string
+	Checksum        string
 	Image           string
 	Video           string
+}
+
+func (p *Post) MakeChecksum() error {
+	f, err := os.Open(p.SrcFile())
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return err
+	}
+	p.Checksum = hex.EncodeToString(h.Sum(nil))
+	return nil
+}
+
+func (p *Post) HasChanged(cache []CachedPost) bool {
+	var thisPost CachedPost
+	for _, cachedPost := range cache {
+		if cachedPost.Directory == p.SrcPath {
+			thisPost = cachedPost
+			break
+		}
+	}
+	if thisPost.Directory == "" {
+		return true
+	} else {
+		return thisPost.Checksum != p.Checksum
+	}
+}
+
+func (p Post) SrcFile() string {
+	var inputFile string
+	if p.Config.Category == "blog" {
+		inputFile = fmt.Sprintf("%s/post.md", p.SrcPath)
+	} else if p.Config.Category == "photo" {
+		inputFile = fmt.Sprintf("%s/img.jpg", p.SrcPath)
+	} else if p.Config.Category == "video" {
+		inputFile = fmt.Sprintf("%s/video.mp4", p.SrcPath)
+	}
+	return inputFile
 }
 
 type PostConfig struct {
@@ -150,4 +196,10 @@ type PageData struct {
 
 func (pd PageData) HasPost() bool {
 	return pd.Post.Config.Title != ""
+}
+
+type CachedPost struct {
+	Directory   string    `json:"directory"`
+	Checksum    string    `json:"checksum"`
+	LastUpdated time.Time `json:"last-updated"`
 }
