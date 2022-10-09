@@ -1,7 +1,7 @@
 {{ define "main" }}
     {{ range .Site.PublishedFeed }}
         <section class="feed-item">
-            <a href="/photo/{{ .Config.Slug }}">
+            <a href="/feed/{{ .Config.Slug }}">
                 <h2 class="post-title">{{ .Config.Title }}</h2>
             </a>
             <p class="post-date">{{ .Config.FormattedDate }}</p>
