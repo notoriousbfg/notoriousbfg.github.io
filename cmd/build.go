@@ -62,7 +62,7 @@ func ReadPosts() ([]Post, error) {
 }
 
 func BuildSite(site *Site) error {
-	truncatePublicDir()
+	// truncatePublicDir()
 
 	posts, readErr := ReadPosts()
 
@@ -125,16 +125,7 @@ func BuildSite(site *Site) error {
 }
 
 func BuildPosts(site *Site) error {
-	jsonFile, err := os.OpenFile("../build-cache.json", os.O_RDWR, 0755)
-	bytes, _ := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		return err
-	}
-	var buildCache []CachedPost
-	if err := json.Unmarshal(bytes, &buildCache); err != nil {
-		return err
-	}
-	jsonFile.Close()
+	buildCache, _ := BuildCache()
 
 	for key, post := range site.Posts {
 		checksumErr := post.MakeChecksum()
@@ -146,46 +137,44 @@ func BuildPosts(site *Site) error {
 			continue
 		}
 
-		if post.HasChanged(buildCache) {
-			var newDir string
-			if post.Config.Category == "photo" || post.Config.Category == "video" {
-				newDir = fmt.Sprintf("../docs/feed/%s", post.Config.Slug)
-			} else {
-				newDir = fmt.Sprintf("../docs/%s", post.Config.Slug)
-			}
+		var newDir string
+		if post.Config.Category == "photo" || post.Config.Category == "video" {
+			newDir = fmt.Sprintf("../docs/feed/%s", post.Config.Slug)
+		} else {
+			newDir = fmt.Sprintf("../docs/%s", post.Config.Slug)
+		}
 
-			err := os.MkdirAll(newDir, os.ModePerm)
-			if err != nil {
-				return err
-			}
+		err := os.MkdirAll(newDir, os.ModePerm)
+		if err != nil {
+			return err
+		}
 
-			post.RenderPath = newDir
+		post.RenderPath = newDir
 
-			newFilePath := fmt.Sprintf("%s/index.html", newDir)
-			fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-			if err != nil {
-				return err
-			}
+		newFilePath := fmt.Sprintf("%s/index.html", newDir)
+		fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+		if err != nil {
+			return err
+		}
 
-			var renderError error
-			switch post.Config.Category {
-			case "photo":
-				renderError = RenderPhoto(&post, site)
-			case "video":
-				renderError = RenderVideo(&post, site)
-			case "blog":
-				renderError = RenderPost(&post, site)
-			}
+		var renderError error
+		switch post.Config.Category {
+		case "photo":
+			renderError = RenderPhoto(&post, site, buildCache)
+		case "video":
+			renderError = RenderVideo(&post, site, buildCache)
+		case "blog":
+			renderError = RenderPost(&post, site)
+		}
 
-			if renderError != nil {
-				return renderError
-			}
+		if renderError != nil {
+			return renderError
+		}
 
-			fp.WriteString(post.RenderedContent)
+		fp.WriteString(post.RenderedContent)
 
-			if err := fp.Close(); err != nil {
-				return err
-			}
+		if err := fp.Close(); err != nil {
+			return err
 		}
 
 		site.Posts[key] = post
@@ -321,10 +310,12 @@ func RenderPost(post *Post, site *Site) error {
 	return nil
 }
 
-func RenderPhoto(post *Post, site *Site) error {
-	_, err := ResizeImage(post)
-	if err != nil {
-		return err
+func RenderPhoto(post *Post, site *Site, cache []CachedPost) error {
+	if post.HasChanged(cache) {
+		_, err := ResizeImage(post)
+		if err != nil {
+			return err
+		}
 	}
 
 	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
@@ -354,10 +345,12 @@ func RenderPhoto(post *Post, site *Site) error {
 	return nil
 }
 
-func RenderVideo(post *Post, site *Site) error {
-	_, err := CompressVideo(post)
-	if err != nil {
-		return err
+func RenderVideo(post *Post, site *Site, cache []CachedPost) error {
+	if post.HasChanged(cache) {
+		_, err := CompressVideo(post)
+		if err != nil {
+			return err
+		}
 	}
 
 	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
@@ -478,6 +471,23 @@ func CachePosts(posts []Post) error {
 	}
 	fp.WriteString(string(toWrite))
 	return nil
+}
+
+func BuildCache() ([]CachedPost, error) {
+	jsonFile, err := os.OpenFile("../build-cache.json", os.O_RDWR, 0755)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+	bytes, _ := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	var buildCache []CachedPost
+	if err := json.Unmarshal(bytes, &buildCache); err != nil {
+		return nil, err
+	}
+	return buildCache, nil
 }
 
 func truncatePublicDir() {
