@@ -1,0 +1,33 @@
+I haven't published anything here for a while because my mind has been in other places creatively and intellectually, but ultimately life just gets in the way. As my driving instructor says "Life is unfair, Tim. Entropy prevails."
+
+
+
+What am I writing about?
+
+- Things that appear easy on the surface but require more investment.
+
+- Feeling compelled to bring a story to life.
+
+
+
+I think most people, to spend any considerable time doing something, must believe they're good at it. It's rare to slog away at something for years thinking you're bad at it. But then again, many creative processes are inherently fun. I'm not the best painter but I enjoy applying paint to canvas, mixing colours and textures. For Christmas I made a friend a photo album which he loved, despite the countless mistakes I made. It was a joy to make having only made pamphlets until that point.
+
+I first took up photography as a teenager because I thought it was easy, or had the appearance of something that was easy. My early explorations with a compact digital camera allowed me to document all the things and happenings in my life, and eventually the people around me. In 2012 I wrote to Alec Soth as a teenager asking for his advice on photographing strangers and he very kindly sent back some of his zines, telling me, "...all I can say is that I had [the same] fear of photographing strangers. For me, photography is like therapy. So I encourage you to go out and give it a shot. Hell, come to Minnesota and take my picture."
+
+While I later became quite technically proficient at photography, I would not only document the world around me but would use it to express myself and my ideas creatively. I imagined myself making photographs like other young artists I admired (Olivia Bee comes to mind) but recognised that in order to make art that truly resonated emotionally with others, I needed to connect with my subjects and subject matter on a deeper level. There's a stunning photograph of a young couple in Vanessa Winship's "She Dances on Jackson" forever imprinted on my brain; the subjects' expressions tell us so much about where they are in their lives; I can't imagine what she said to them beforehand. Forming a deeper relationship with my subjects would require a considerable amount of time (and enough money to survive) neither of which I had. My father wouldn't let me train to become a photographer (because he thought it was oversubscribed) so I took a stab at becoming a TV cameraman instead and failed.
+
+While I don't *make* pictures so often these days (I take the odd snapshot on my phone here and there) I can still visualise the process, framing beautiful scenes, natural light. I filter through old negatives and see only the frayed edges of what might have been; no, I suspect if I pursued photography as a hobby it would be some time before I could think of myself as being "good" again. TODO
+
+**YOU TRAIN IT**
+
+I wish I could say I think of photography as an effective way to tell stories. I see series of photographs as being more analogous to poetry anthologies than I do novels. There are certainly ways of sequencing photographs that communicate meaning (Soth has spoken about this extensively) but **TODO**
+
+I started writing poetry earlier this year because on the surface it appeared easy. You can write a half-decent-sounding ten-line poem in an afternoon on the back of a postcard and send it to your girlfriend. Much like photography, it's easy to **TODO**
+
+In his Masterclass the poet Billy Collins says "What you have to do in your poetry is tell a little white lie... that you love poetry more than you love yourself".
+
+I think programming is the opposite. I find most people who don't code perceive it to be some incredibly complex skill but most of us with a couple of years experience know there are simple patterns. I used to work with a guy who insisted on using a green and black terminal theme (it was probably just default iTerm) because non-technical coworkers would walk past his desk and jokingly say things like "are you in the Matrix?" even though I knew he was just doing trivial git stuff. Funnily enough, thinking programming was "what smart people do" is one of the reasons I took it up in the first place; I had watched "The Internship" with Owen Wilson and Vince Vaugn and decided I was going to learn how to code and work at Google. (We were all young and naïve once!) I've met lots of stupid people who code but most are, unsurprisingly, pretty clever.
+
+There's a view in literature that the story dictates the form of the novel; it's important to choose a viewpoint that suits the subject matter best. But so many first-time novelists choose to write in the first person because their own perspective is the only one they know; editors and literary agents see their work as self-indulgent. In photography, the book "TTP" by Hayahisa Tomiyasu comes to mind: its style and design (its form) are informed by the nature of its photographs and subject matter.
+
+I have been reading Haruki Murakami's latest collection of essays "Novelist as a Vocation" and...
