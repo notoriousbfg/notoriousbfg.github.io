@@ -159,11 +159,9 @@ func BuildPosts(site *Site, nuke bool) error {
 			return err
 		}
 
-		if DirContainsImages(post.SrcPath) && (post.HasChanged(buildCache) || nuke) {
-			err := ResizeImages(&post)
-			if err != nil {
-				return err
-			}
+		err = ResizeImages(&post, buildCache, nuke)
+		if err != nil {
+			return err
 		}
 
 		var renderError error
@@ -381,7 +379,7 @@ func RenderVideo(post *Post, site *Site, cache []CachedPost, nuke bool) error {
 	return nil
 }
 
-func ResizeImages(post *Post) error {
+func ResizeImages(post *Post, cache []CachedPost, nuke bool) error {
 	files, err := ioutil.ReadDir(post.SrcPath)
 	if err != nil {
 		return err
@@ -393,23 +391,26 @@ func ResizeImages(post *Post) error {
 		ext := filepath.Ext(file.Name()) // returns the "."
 		if Contains(allowedImageExtensions, ext) {
 			count++
-			imagePath := fmt.Sprintf("%s/%s", post.SrcPath, file.Name())
-			buffer, err := bimg.Read(imagePath)
-			if err != nil {
-				return err
+
+			if post.HasChanged(cache) || nuke {
+				imagePath := fmt.Sprintf("%s/%s", post.SrcPath, file.Name())
+				buffer, err := bimg.Read(imagePath)
+				if err != nil {
+					return err
+				}
+
+				newImage := bimg.NewImage(buffer)
+				imageSize, _ := newImage.Size()
+
+				dimensions := getDimensions(imageSize)
+				resizedImage, err := newImage.Resize(dimensions[0], dimensions[1])
+				if err != nil {
+					return err
+				}
+
+				newImagePath := fmt.Sprintf("%s/%d.jpg", post.RenderPath, count)
+				bimg.Write(newImagePath, resizedImage)
 			}
-
-			newImage := bimg.NewImage(buffer)
-			imageSize, _ := newImage.Size()
-
-			dimensions := getDimensions(imageSize)
-			resizedImage, err := newImage.Resize(dimensions[0], dimensions[1])
-			if err != nil {
-				return err
-			}
-
-			newImagePath := fmt.Sprintf("%s/%d.jpg", post.RenderPath, count)
-			bimg.Write(newImagePath, resizedImage)
 
 			newSrcPath := fmt.Sprintf("/feed/%s/%d.jpg", post.Config.Slug, count)
 			newImagePaths = append(newImagePaths, newSrcPath)
