@@ -3,9 +3,13 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"text/template"
 )
+
+var allowedImageExtensions = []string{".jpg", ".png", ".jpeg"}
 
 func BuildFromTemplate(templateFile string, data PageData, dirName string) error {
 	template := template.Must(
@@ -37,6 +41,20 @@ func BuildFromTemplate(templateFile string, data PageData, dirName string) error
 func Contains(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func DirContainsImages(dir string) bool {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return false
+	}
+	for _, file := range files {
+		ext := filepath.Ext(file.Name())
+		if Contains(allowedImageExtensions, ext) {
 			return true
 		}
 	}

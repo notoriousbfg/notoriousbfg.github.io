@@ -6,7 +6,9 @@
             {{ if .Post.Content }}
             <div class="photo-content posthaven-post-body">{{ .Post.Content }}</div>
             {{ end }}
-            <img src="{{ .Post.Image }}" alt="{{ .Post.Config.Title }}" style="width: 100%;">
+            {{ range .Post.Images }}
+            <img src="{{ . }}" style="width: 100%;">
+            {{ end }}
         </section>
     </section>
 {{ end }}
