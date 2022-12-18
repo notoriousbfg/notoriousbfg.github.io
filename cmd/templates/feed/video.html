@@ -6,7 +6,7 @@
             {{ if .Post.Content }}
             <div class="photo-content posthaven-post-body">{{ .Post.Content }}</div>
             {{ end }}
-            <video src="{{ .Post.Video }}" title="{{ .Post.Config.Title }}" style="width: 100%;"></video>
+            <video src="{{ .Post.Video }}" title="{{ .Post.Config.Title }}" controls style="width: 100%;"></video>
         </section>
     </section>
 {{ end }}

@@ -10,7 +10,7 @@ One common developer bias is that old code is bad. You've never heard anyone say
 
 I think the reason old code is often seen this way is because it takes longer to remember. Developers yearn for clarity but if they're not immediately able to recall [under what circumstances some code was written](/building-software-sharing-knowledge) (in a few seconds or less), they only see ambiguity.
 
-![Code Age vs Time To Recall](/img/time_to_recall.jpg)
+![Code Age vs Time To Recall](./time_to_recall.jpg)
 
 Even when we talk about code, when we're able to recall previous conversations/decisions/motivations quickly, we can talk about it confidently and convey to others that we understand it well. Unfortunately saying, "I need five to ten minutes to refresh my memory of this" doesn't convey the same sense of confidence. Always prepare.
 

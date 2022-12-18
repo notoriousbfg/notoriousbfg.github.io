@@ -543,6 +543,10 @@ a {
     color: #94a9db;
 }
 
+.posthaven-post-body img {
+    max-width: 100%;
+}
+
 .posthaven-comment-form label {
     font-size: 0.875rem;
 }

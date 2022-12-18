@@ -1,0 +1,3 @@
+I'm a big fan of Christopher Anderson's books. I have all of his recent Stanley Barker releases (Cop, Approximate Joy, Pia, Son) and now Marion.<br>
+
+Photographing from a truly privileged perspective, in a letter to his wife, the subject, he writes "The fact that they [the pictures] exist as photographs is really beside the point. The camera always seemed like an excuse to enjoy the simple pleasure of looking at you... secondary to the experience itself."

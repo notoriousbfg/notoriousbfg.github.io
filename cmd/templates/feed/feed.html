@@ -8,8 +8,10 @@
             {{ if .Content }}
             <div class="photo-content posthaven-post-body">{{ .Content }}</div>
             {{ end }}
-            {{ if .Image }}
-            <img src="{{ .Image }}" alt="{{ .Config.Title }}" style="max-width: 100%;">
+            {{ if .Images }}
+            {{ range .Images }}
+            <img src="{{ . }}" style="max-width: 100%;">
+            {{ end }}
             {{ end }}
             {{ if .Video }}
             <video src="{{ .Video }}" title="{{ .Config.Title }}" controls style="max-width: 100%;"></video>
