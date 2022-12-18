@@ -1,11 +1,10 @@
 I haven't published anything here for a while because my mind has been in other places creatively and intellectually, but ultimately life just gets in the way. As my driving instructor says "Life is unfair, Tim. Entropy prevails."
 
-
+![Classic cars convention](/easy/1.jpg)
 
 What am I writing about?
 
 - Things that appear easy on the surface but require more investment.
-
 - Feeling compelled to bring an ouvre to life.
 
 

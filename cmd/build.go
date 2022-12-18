@@ -159,7 +159,8 @@ func BuildPosts(site *Site, nuke bool) error {
 			return err
 		}
 
-		err = ResizeImages(&post, buildCache, nuke)
+		var imageMap map[string]string
+		imageMap, err = ResizeImages(&post, buildCache, nuke)
 		if err != nil {
 			return err
 		}
@@ -171,7 +172,8 @@ func BuildPosts(site *Site, nuke bool) error {
 		case "video":
 			renderError = RenderVideo(&post, site, buildCache, nuke)
 		case "blog":
-			renderError = RenderPost(&post, site)
+			// TODO: Use imageMap to replace all image paths in the markdown content with their published paths
+			renderError = RenderPost(&post, site, imageMap)
 		}
 
 		if renderError != nil {
@@ -286,7 +288,7 @@ func BuildFeedPage(site *Site) error {
 	return nil
 }
 
-func RenderPost(post *Post, site *Site) error {
+func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
 	contents, pathErr := ioutil.ReadFile(postPath)
 
@@ -313,7 +315,13 @@ func RenderPost(post *Post, site *Site) error {
 		return fmt.Errorf("error generating template: \n%+v", templateErr)
 	}
 
-	post.RenderedContent = content.String()
+	renderedContent := content.String()
+
+	cleanHTML, err := replaceImagePaths(renderedContent, imageMap)
+	if err != nil {
+		return err
+	}
+	post.RenderedContent = cleanHTML
 	return nil
 }
 
@@ -379,16 +387,19 @@ func RenderVideo(post *Post, site *Site, cache []CachedPost, nuke bool) error {
 	return nil
 }
 
-func ResizeImages(post *Post, cache []CachedPost, nuke bool) error {
+func ResizeImages(post *Post, cache []CachedPost, nuke bool) (map[string]string, error) {
 	files, err := ioutil.ReadDir(post.SrcPath)
 	if err != nil {
-		return err
+		return map[string]string{}, err
 	}
 
 	var newImagePaths []string
 	var count int = 0
+	imageMap := make(map[string]string, 0)
+
 	for _, file := range files {
-		ext := filepath.Ext(file.Name()) // returns the "."
+		filename := file.Name()
+		ext := filepath.Ext(filename) // returns the "."
 		if Contains(allowedImageExtensions, ext) {
 			count++
 
@@ -396,7 +407,7 @@ func ResizeImages(post *Post, cache []CachedPost, nuke bool) error {
 				imagePath := fmt.Sprintf("%s/%s", post.SrcPath, file.Name())
 				buffer, err := bimg.Read(imagePath)
 				if err != nil {
-					return err
+					return map[string]string{}, err
 				}
 
 				newImage := bimg.NewImage(buffer)
@@ -405,7 +416,7 @@ func ResizeImages(post *Post, cache []CachedPost, nuke bool) error {
 				dimensions := getDimensions(imageSize)
 				resizedImage, err := newImage.Resize(dimensions[0], dimensions[1])
 				if err != nil {
-					return err
+					return map[string]string{}, err
 				}
 
 				newImagePath := fmt.Sprintf("%s/%d.jpg", post.RenderPath, count)
@@ -414,11 +425,14 @@ func ResizeImages(post *Post, cache []CachedPost, nuke bool) error {
 
 			newSrcPath := fmt.Sprintf("/feed/%s/%d.jpg", post.Config.Slug, count)
 			newImagePaths = append(newImagePaths, newSrcPath)
+
+			imageMapKey := fmt.Sprintf("./%s", filename)
+			imageMap[imageMapKey] = newSrcPath
 		}
 	}
 
 	post.Images = newImagePaths
-	return nil
+	return imageMap, nil
 }
 
 func BuildRSSFeed(site *Site) error {
@@ -533,4 +547,13 @@ func getDimensions(imageSize bimg.ImageSize) []int {
 	newHeight := newWidth * aspectRatio
 	dimensions = [...]int{newWidth, newHeight}
 	return dimensions[:]
+}
+
+func replaceImagePaths(html string, imageMap map[string]string) (string, error) {
+	// e.g. "./my-image.jpeg" -> "/post-slug/1.jpg"
+	// for src, pub := range imageMap {
+
+	// }
+
+	return html, nil
 }
