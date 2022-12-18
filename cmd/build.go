@@ -313,8 +313,10 @@ func RenderPost(post *Post, site *Site) error {
 }
 
 func RenderPhoto(post *Post, site *Site, cache []CachedPost, nuke bool) error {
+	var images []string
 	if post.HasChanged(cache) || nuke {
-		_, err := ResizeImage(post)
+		var err error
+		images, err = ResizeImages(post)
 		if err != nil {
 			return err
 		}
@@ -328,7 +330,7 @@ func RenderPhoto(post *Post, site *Site, cache []CachedPost, nuke bool) error {
 	}
 
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
-	post.Image = fmt.Sprintf("/feed/%s/resized.jpg", post.Config.Slug)
+	post.Images = images
 
 	template := template.Must(
 		template.ParseFiles("./templates/feed/photo.html", "./templates/base.html"),
@@ -382,27 +384,40 @@ func RenderVideo(post *Post, site *Site, cache []CachedPost, nuke bool) error {
 	return nil
 }
 
-func ResizeImage(post *Post) (string, error) {
-	imagePath := fmt.Sprintf("%s/img.jpg", post.SrcPath)
-	buffer, err := bimg.Read(imagePath)
+func ResizeImages(post *Post) ([]string, error) {
+	allowedImageExtensions := []string{".jpg", ".png", ".jpeg"}
+	files, err := ioutil.ReadDir(post.SrcPath)
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 
-	newImage := bimg.NewImage(buffer)
-	imageSize, _ := newImage.Size()
+	var newImagePaths []string
+	for num, file := range files {
+		ext := filepath.Ext(file.Name()) // returns the "."
+		if Contains(allowedImageExtensions, ext) {
+			imagePath := fmt.Sprintf("%s/%s", post.SrcPath, file.Name())
+			buffer, err := bimg.Read(imagePath)
+			if err != nil {
+				return []string{}, err
+			}
 
-	dimensions := getDimensions(imageSize)
+			newImage := bimg.NewImage(buffer)
+			imageSize, _ := newImage.Size()
 
-	resizedImage, err := newImage.Resize(dimensions[0], dimensions[1])
-	if err != nil {
-		return "", err
+			dimensions := getDimensions(imageSize)
+			resizedImage, err := newImage.Resize(dimensions[0], dimensions[1])
+			if err != nil {
+				return []string{}, err
+			}
+
+			newImagePath := fmt.Sprintf("%s/%d.jpg", post.RenderPath, num)
+			bimg.Write(newImagePath, resizedImage)
+
+			newImagePaths = append(newImagePaths, newImagePath)
+		}
 	}
 
-	newImagePath := fmt.Sprintf("%s/resized.jpg", post.RenderPath)
-	bimg.Write(newImagePath, resizedImage)
-
-	return newImagePath, nil
+	return newImagePaths, nil
 }
 
 func BuildRSSFeed(site *Site) error {

@@ -81,7 +81,7 @@ type Post struct {
 	SrcPath         string
 	RenderPath      string
 	Checksum        string
-	Image           string
+	Images          []string
 	Video           string
 }
 
