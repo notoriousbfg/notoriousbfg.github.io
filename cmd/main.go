@@ -61,4 +61,8 @@ func main() {
 	if args[0] == "serve" {
 		StartServer()
 	}
+
+	if args[0] == "watch" {
+		WatchFiles()
+	}
 }

@@ -17,10 +17,9 @@ func StartServer() {
 	fmt.Printf("Listening at %s...\n", url)
 	go open(url)
 	http.ListenAndServe(":3000", nil)
-	watchFiles()
 }
 
-func watchFiles() {
+func WatchFiles() {
 	w := watcher.New()
 	w.SetMaxEvents(1)
 	if err := w.AddRecursive("../posts"); err != nil {

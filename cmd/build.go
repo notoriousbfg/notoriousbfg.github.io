@@ -300,7 +300,12 @@ func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 
-	post.Content = string(markdown.ToHTML(contents, nil, renderer))
+	postContent := string(markdown.ToHTML(contents, nil, renderer))
+	cleanHTML, err := replaceImagePaths(postContent, imageMap)
+	if err != nil {
+		return err
+	}
+	post.Content = cleanHTML
 
 	template := template.Must(
 		template.ParseFiles("./templates/post.html", "./templates/base.html"),
@@ -315,12 +320,7 @@ func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 		return fmt.Errorf("error generating template: \n%+v", templateErr)
 	}
 
-	renderedContent := content.String()
-	cleanHTML, err := replaceImagePaths(renderedContent, imageMap)
-	if err != nil {
-		return err
-	}
-	post.RenderedContent = cleanHTML
+	post.RenderedContent = content.String()
 	return nil
 }
 

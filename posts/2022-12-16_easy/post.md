@@ -7,9 +7,7 @@ What am I writing about?
 - Things that appear easy on the surface but require more investment.
 - Feeling compelled to bring an ouvre to life.
 
-
-
-I think most people, to spend any considerable time doing something, must believe they're good at it. It's rare to slog away at something for years thinking you're bad at it. But then again, many creative processes are inherently fun. I'm not the best painter but I enjoy applying paint to canvas, mixing colours and textures. For Christmas I made a friend a photo album which he loved, despite the countless mistakes I made. It was a joy to make, having only made pamphlets until that point.
+I  think most people, to spend any considerable time doing something, must believe they're good at it. It's rare to slog away at something for years thinking you're bad at it. But then again, many creative processes are inherently fun. I'm not the best painter but I enjoy applying paint to canvas, mixing colours and textures. For Christmas I made a friend a photo album which he loved, despite the countless mistakes I made. It was a joy to make, having only made pamphlets until that point.
 
 I first took up photography as a teenager because I thought it was easy, or had the appearance of something that was easy. My early explorations with a compact digital camera allowed me to document all the things and happenings in my life, and eventually the people around me. In 2012, aged 18, I wrote to the photographer Alec Soth asking for his advice on photographing strangers and he very kindly sent back some of his zines, telling me, "...all I can say is that I had [the same] fear of photographing strangers. For me, photography is like therapy. So I encourage you to go out and give it a shot. Hell, come to Minnesota and take my picture."
 
