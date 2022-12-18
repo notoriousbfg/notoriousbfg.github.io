@@ -1,6 +1,6 @@
 I haven't published anything here for a while because my mind has been in other places creatively and intellectually, but ultimately life just gets in the way. As my driving instructor says "Life is unfair, Tim. Entropy prevails."
 
-![Classic cars convention](/easy/1.jpg)
+![Classic cars convention](./classic-cars.jpg)
 
 What am I writing about?
 

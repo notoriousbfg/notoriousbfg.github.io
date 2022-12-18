@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"text/template"
 	"time"
@@ -172,7 +173,6 @@ func BuildPosts(site *Site, nuke bool) error {
 		case "video":
 			renderError = RenderVideo(&post, site, buildCache, nuke)
 		case "blog":
-			// TODO: Use imageMap to replace all image paths in the markdown content with their published paths
 			renderError = RenderPost(&post, site, imageMap)
 		}
 
@@ -316,7 +316,6 @@ func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 	}
 
 	renderedContent := content.String()
-
 	cleanHTML, err := replaceImagePaths(renderedContent, imageMap)
 	if err != nil {
 		return err
@@ -423,7 +422,12 @@ func ResizeImages(post *Post, cache []CachedPost, nuke bool) (map[string]string,
 				bimg.Write(newImagePath, resizedImage)
 			}
 
-			newSrcPath := fmt.Sprintf("/feed/%s/%d.jpg", post.Config.Slug, count)
+			var newSrcPath string
+			if post.Config.Category == "photo" {
+				newSrcPath = fmt.Sprintf("/feed/%s/%d.jpg", post.Config.Slug, count)
+			} else {
+				newSrcPath = fmt.Sprintf("/%s/%d.jpg", post.Config.Slug, count)
+			}
 			newImagePaths = append(newImagePaths, newSrcPath)
 
 			imageMapKey := fmt.Sprintf("./%s", filename)
@@ -551,9 +555,8 @@ func getDimensions(imageSize bimg.ImageSize) []int {
 
 func replaceImagePaths(html string, imageMap map[string]string) (string, error) {
 	// e.g. "./my-image.jpeg" -> "/post-slug/1.jpg"
-	// for src, pub := range imageMap {
-
-	// }
-
+	for src, pub := range imageMap {
+		html = strings.Replace(html, src, pub, -1)
+	}
 	return html, nil
 }
