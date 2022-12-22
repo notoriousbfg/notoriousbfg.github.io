@@ -67,7 +67,7 @@ func ReadPosts() ([]Post, error) {
 	return posts, nil
 }
 
-func BuildSite(site *Site, nuke bool) error {
+func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 	if nuke {
 		truncatePublicDir()
 	}
@@ -82,7 +82,7 @@ func BuildSite(site *Site, nuke bool) error {
 
 	var buildErr error
 
-	if err := BuildPosts(site, nuke); err != nil {
+	if err := BuildPosts(site, nuke, buildDraftPosts); err != nil {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
@@ -132,7 +132,7 @@ func BuildSite(site *Site, nuke bool) error {
 	return nil
 }
 
-func BuildPosts(site *Site, nuke bool) error {
+func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 	buildCache, _ := BuildCache()
 
 	for key, post := range site.Posts {
@@ -141,7 +141,7 @@ func BuildPosts(site *Site, nuke bool) error {
 			return checksumErr
 		}
 
-		if post.Config.Draft {
+		if post.Config.Draft && !buildDraft {
 			continue
 		}
 

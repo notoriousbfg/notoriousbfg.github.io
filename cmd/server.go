@@ -62,6 +62,9 @@ func watchFiles(wg *sync.WaitGroup) {
 
 	defer wg.Done()
 
+	// initial build
+	BuildSite(&site, false, true)
+
 	go func() {
 		for {
 			select {
@@ -70,7 +73,7 @@ func watchFiles(wg *sync.WaitGroup) {
 					return
 				}
 				if event.Has(fsnotify.Write) {
-					BuildSite(&site, false)
+					BuildSite(&site, false, true)
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
