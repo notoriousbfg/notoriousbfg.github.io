@@ -386,7 +386,7 @@ a {
 }
 
 .post.is-current {
-    margin: 2.5rem 0 2rem 0;
+    margin: 1.75rem 0 2rem 0;
 }
 
 .post.home-post {
@@ -683,7 +683,10 @@ a {
 }
 
 .archive-title {
-    margin: 2.5rem 0;
+    margin: 1.75rem 0;
+    font-size: 1.875rem;
+    line-height: 2.75rem;
+    height: 44px;
 }
 
 .feed-item {
