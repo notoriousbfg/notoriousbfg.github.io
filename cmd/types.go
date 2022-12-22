@@ -52,6 +52,13 @@ func (s Site) LatestBlogPosts() []Post {
 	return posts[0:sliceLength]
 }
 
+// the date of the last published post
+func (s Site) Version() string {
+	latestPost := s.PublishedBlogPosts()[0]
+
+	return carbon.Time2Carbon(latestPost.Config.Published).Format("Y-m-d")
+}
+
 func (s Site) Categories() []string {
 	categorySet := make(map[string]bool)
 	for _, post := range s.Posts {
@@ -72,7 +79,6 @@ type SiteConfig struct {
 	Title       string
 	Description string
 	Bio         string
-	Version     string
 }
 
 type Post struct {

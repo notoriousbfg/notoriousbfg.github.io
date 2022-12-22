@@ -443,6 +443,16 @@ a {
     display: inline-block;
 }
 
+.home-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.version {
+    opacity: 0.4;
+}
+
 .bio {
     display: flex;
     width: 100%;

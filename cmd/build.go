@@ -498,7 +498,7 @@ func CompressVideo(post *Post) (string, error) {
 
 func CachePosts(site *Site) error {
 	cache := &Cache{
-		Version: site.Config.Version,
+		Version: site.Version(),
 	}
 	for _, post := range site.Posts {
 		cache.Posts = append(cache.Posts, CachedPost{
