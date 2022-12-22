@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os/exec"
@@ -20,8 +21,25 @@ func StartServer() {
 	wg.Add(3)
 	watchFiles(wg)
 	runServer(wg)
-	openBrowser(wg)
+	go openBrowser(wg)
 	wg.Wait()
+}
+
+func postPaths() StringSet {
+	items, err := ioutil.ReadDir("../posts")
+	if err != nil {
+		log.Fatal(err)
+	}
+	pathSet := StringSet{}
+	for _, item := range items {
+		if item.IsDir() {
+			name := item.Name()
+			if ok := pathSet[name]; !ok {
+				pathSet[name] = true
+			}
+		}
+	}
+	return pathSet
 }
 
 func runServer(wg *sync.WaitGroup) {
@@ -41,10 +59,8 @@ func watchFiles(wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer func() {
-		// watcher.Close()
-		wg.Done()
-	}()
+
+	defer wg.Done()
 
 	go func() {
 		for {
@@ -65,16 +81,21 @@ func watchFiles(wg *sync.WaitGroup) {
 		}
 	}()
 
-	err = watcher.Add("../posts/2022-12-16_easy")
-	if err != nil {
-		log.Fatal(err)
+	fmt.Println("watching posts directory...")
+	postPaths := postPaths()
+	for path := range postPaths {
+		err = watcher.Add(fmt.Sprintf("../posts/%s", path))
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
 func openBrowser(wg *sync.WaitGroup) error {
-	defer wg.Done()
 	var cmd string
 	var args []string
+
+	defer wg.Done()
 
 	switch runtime.GOOS {
 	case "windows":

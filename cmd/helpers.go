@@ -9,6 +9,8 @@ import (
 	"text/template"
 )
 
+type StringSet map[string]bool
+
 var allowedImageExtensions = []string{".jpg", ".png", ".jpeg"}
 
 func BuildFromTemplate(templateFile string, data PageData, dirName string) error {
