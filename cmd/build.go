@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -20,11 +20,16 @@ import (
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
+type Cache struct {
+	Version string       `json:"version"`
+	Posts   []CachedPost `json:"posts"`
+}
+
 func ReadPosts() ([]Post, error) {
 	var posts []Post
 
 	postsPath, _ := filepath.Abs("../posts")
-	items, err := ioutil.ReadDir(postsPath)
+	items, err := os.ReadDir(postsPath)
 	if err != nil {
 		return nil, fmt.Errorf("error reading posts directory")
 	}
@@ -35,7 +40,7 @@ func ReadPosts() ([]Post, error) {
 				SrcPath: fmt.Sprintf("../posts/%s", item.Name()),
 			}
 
-			subItems, err := ioutil.ReadDir(post.SrcPath)
+			subItems, err := os.ReadDir(post.SrcPath)
 
 			if err != nil {
 				return nil, fmt.Errorf("error reading post directory: %v", item)
@@ -44,7 +49,7 @@ func ReadPosts() ([]Post, error) {
 			for _, subItem := range subItems {
 				if subItem.Name() == "config.json" {
 					filePath := fmt.Sprintf("%s/config.json", post.SrcPath)
-					contents, err := ioutil.ReadFile(filePath)
+					contents, err := os.ReadFile(filePath)
 					if err != nil {
 						return nil, fmt.Errorf("error reading config file: %s", filePath)
 					}
@@ -189,7 +194,7 @@ func BuildPosts(site *Site, nuke bool) error {
 		site.Posts[key] = post
 	}
 
-	CachePosts(site.Posts)
+	CachePosts(site)
 
 	return nil
 }
@@ -290,7 +295,7 @@ func BuildFeedPage(site *Site) error {
 
 func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
-	contents, pathErr := ioutil.ReadFile(postPath)
+	contents, pathErr := os.ReadFile(postPath)
 
 	if pathErr != nil {
 		return fmt.Errorf("error reading file: %s", postPath)
@@ -326,7 +331,7 @@ func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 
 func RenderPhoto(post *Post, site *Site) error {
 	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
-	contents, pathErr := ioutil.ReadFile(postPath)
+	contents, pathErr := os.ReadFile(postPath)
 
 	if pathErr != nil {
 		return fmt.Errorf("error reading file: %s", postPath)
@@ -351,8 +356,8 @@ func RenderPhoto(post *Post, site *Site) error {
 	return nil
 }
 
-func RenderVideo(post *Post, site *Site, cache []CachedPost, nuke bool) error {
-	if post.HasChanged(cache) || nuke {
+func RenderVideo(post *Post, site *Site, cache Cache, nuke bool) error {
+	if post.HasChanged(cache.Posts) || nuke {
 		_, err := CompressVideo(post)
 		if err != nil {
 			return err
@@ -360,7 +365,7 @@ func RenderVideo(post *Post, site *Site, cache []CachedPost, nuke bool) error {
 	}
 
 	postPath := fmt.Sprintf("%s/post.md", post.SrcPath)
-	contents, pathErr := ioutil.ReadFile(postPath)
+	contents, pathErr := os.ReadFile(postPath)
 
 	if pathErr != nil {
 		return fmt.Errorf("error reading file: %s", postPath)
@@ -386,8 +391,8 @@ func RenderVideo(post *Post, site *Site, cache []CachedPost, nuke bool) error {
 	return nil
 }
 
-func ResizeImages(post *Post, cache []CachedPost, nuke bool) (map[string]string, error) {
-	files, err := ioutil.ReadDir(post.SrcPath)
+func ResizeImages(post *Post, cache Cache, nuke bool) (map[string]string, error) {
+	files, err := os.ReadDir(post.SrcPath)
 	if err != nil {
 		return map[string]string{}, err
 	}
@@ -402,7 +407,7 @@ func ResizeImages(post *Post, cache []CachedPost, nuke bool) (map[string]string,
 		if Contains(allowedImageExtensions, ext) {
 			count++
 
-			if post.HasChanged(cache) || nuke {
+			if post.HasChanged(cache.Posts) || nuke {
 				imagePath := fmt.Sprintf("%s/%s", post.SrcPath, file.Name())
 				buffer, err := bimg.Read(imagePath)
 				if err != nil {
@@ -491,16 +496,18 @@ func CompressVideo(post *Post) (string, error) {
 	return output, nil
 }
 
-func CachePosts(posts []Post) error {
-	var output []CachedPost
-	for _, post := range posts {
-		output = append(output, CachedPost{
+func CachePosts(site *Site) error {
+	cache := &Cache{
+		Version: site.Config.Version,
+	}
+	for _, post := range site.Posts {
+		cache.Posts = append(cache.Posts, CachedPost{
 			Directory:   post.SrcPath,
 			Checksum:    post.Checksum,
 			LastUpdated: time.Now(),
 		})
 	}
-	toWrite, _ := json.Marshal(output)
+	toWrite, _ := json.Marshal(cache)
 	fp, err := os.OpenFile("../build-cache.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
@@ -509,25 +516,25 @@ func CachePosts(posts []Post) error {
 	return nil
 }
 
-func BuildCache() ([]CachedPost, error) {
+func BuildCache() (Cache, error) {
 	jsonFile, err := os.OpenFile("../build-cache.json", os.O_RDWR, 0755)
 	if err != nil {
-		return nil, err
+		return Cache{}, err
 	}
 	defer jsonFile.Close()
-	bytes, _ := ioutil.ReadAll(jsonFile)
+	bytes, _ := io.ReadAll(jsonFile)
 	if err != nil {
-		return nil, err
+		return Cache{}, err
 	}
-	var buildCache []CachedPost
+	var buildCache Cache
 	if err := json.Unmarshal(bytes, &buildCache); err != nil {
-		return nil, err
+		return Cache{}, err
 	}
 	return buildCache, nil
 }
 
 func truncatePublicDir() {
-	dir, _ := ioutil.ReadDir("../docs")
+	dir, _ := os.ReadDir("../docs")
 	exclude := []string{"img", "site.css", "CNAME"}
 	for _, d := range dir {
 		if Contains(exclude, d.Name()) {

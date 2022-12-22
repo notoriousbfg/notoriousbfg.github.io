@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"runtime"
 	"sync"
@@ -26,7 +26,7 @@ func StartServer() {
 }
 
 func postPaths() StringSet {
-	items, err := ioutil.ReadDir("../posts")
+	items, err := os.ReadDir("../posts")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -81,7 +81,6 @@ func watchFiles(wg *sync.WaitGroup) {
 		}
 	}()
 
-	fmt.Println("watching posts directory...")
 	postPaths := postPaths()
 	for path := range postPaths {
 		err = watcher.Add(fmt.Sprintf("../posts/%s", path))
@@ -89,6 +88,13 @@ func watchFiles(wg *sync.WaitGroup) {
 			log.Fatal(err)
 		}
 	}
+	fmt.Println("watching posts directory...")
+
+	err = watcher.Add("./templates")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("watching templates directory...")
 }
 
 func openBrowser(wg *sync.WaitGroup) error {

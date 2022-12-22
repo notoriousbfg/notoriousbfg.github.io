@@ -15,6 +15,7 @@ var (
 			Title:       "Tim's Blog",
 			Description: "The personal blog of Tim White, Software Developer from Bournemouth.",
 			Bio:         "I’m Tim, a Software Developer from the UK. I like to program, cook, read & run.",
+			Version:     "v1.0.0",
 		},
 	}
 )

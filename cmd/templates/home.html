@@ -18,5 +18,8 @@
         </article>
     {{ end }}
 </section>
-<a class="link-hover" style="margin: 20px 0; display: inline-block;" href="/archive">More Posts</a>
+<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <a class="link-hover" style="display: inline-block;" href="/archive">More Posts</a>
+    <span>{{ .Site.Config.Version }}</span>
+</div>
 {{ end }}

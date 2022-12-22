@@ -72,6 +72,7 @@ type SiteConfig struct {
 	Title       string
 	Description string
 	Bio         string
+	Version     string
 }
 
 type Post struct {
