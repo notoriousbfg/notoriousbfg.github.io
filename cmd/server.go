@@ -6,43 +6,73 @@ import (
 	"net/http"
 	"os/exec"
 	"runtime"
-	"time"
+	"sync"
 
-	"github.com/radovskyb/watcher"
+	"github.com/fsnotify/fsnotify"
+)
+
+const (
+	siteUrl = "http://localhost:3000"
 )
 
 func StartServer() {
-	http.Handle("/", http.FileServer(http.Dir("../docs")))
-	url := "http://localhost:3000"
-	fmt.Printf("Listening at %s...\n", url)
-	go open(url)
-	http.ListenAndServe(":3000", nil)
+	wg := new(sync.WaitGroup)
+	wg.Add(3)
+	watchFiles(wg)
+	runServer(wg)
+	openBrowser(wg)
+	wg.Wait()
 }
 
-func WatchFiles() {
-	w := watcher.New()
-	w.SetMaxEvents(1)
-	if err := w.AddRecursive("../posts"); err != nil {
-		log.Fatalln(err)
+func runServer(wg *sync.WaitGroup) {
+	http.Handle("/", http.FileServer(http.Dir("../docs")))
+	fmt.Printf("Listening at %s...\n", siteUrl)
+	go func() {
+		err := http.ListenAndServe(":3000", nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wg.Done()
+	}()
+}
+
+func watchFiles(wg *sync.WaitGroup) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
 	}
+	defer func() {
+		// watcher.Close()
+		wg.Done()
+	}()
+
 	go func() {
 		for {
 			select {
-			case <-w.Event:
-				BuildSite(&site, false)
-			case err := <-w.Error:
-				log.Fatalln(err)
-			case <-w.Closed:
-				return
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				if event.Has(fsnotify.Write) {
+					BuildSite(&site, false)
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("error:", err)
 			}
 		}
 	}()
-	if err := w.Start(time.Millisecond * 100); err != nil {
-		log.Fatalln(err)
+
+	err = watcher.Add("../posts/2022-12-16_easy")
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
-func open(url string) error {
+func openBrowser(wg *sync.WaitGroup) error {
+	defer wg.Done()
 	var cmd string
 	var args []string
 
@@ -55,6 +85,6 @@ func open(url string) error {
 	default:
 		cmd = "xdg-open"
 	}
-	args = append(args, url)
+	args = append(args, siteUrl)
 	return exec.Command(cmd, args...).Start()
 }
