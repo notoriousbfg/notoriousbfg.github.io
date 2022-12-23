@@ -554,7 +554,7 @@ func getDimensions(imageSize bimg.ImageSize) []int {
 	} else {
 		aspectRatio = 1
 	}
-	newWidth := 2000
+	newWidth := 1000
 	newHeight := newWidth * aspectRatio
 	dimensions = [...]int{newWidth, newHeight}
 	return dimensions[:]
