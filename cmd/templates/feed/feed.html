@@ -10,11 +10,11 @@
             {{ end }}
             {{ if .Images }}
             {{ range .Images }}
-            <img src="{{ . }}" style="max-width: 100%;">
+            <img src="{{ . }}" style="max-width: 100%;" loading="lazy">
             {{ end }}
             {{ end }}
             {{ if .Video }}
-            <video src="{{ .Video }}" title="{{ .Config.Title }}" controls style="max-width: 100%;"></video>
+            <video src="{{ .Video }}" title="{{ .Config.Title }}" controls style="max-width: 100%;" loading="lazy"></video>
             {{ end }}
         </section>
     {{ end }}
