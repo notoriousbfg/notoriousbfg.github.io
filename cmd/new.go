@@ -45,13 +45,9 @@ func NewPost(title string, category string, date string, draft bool) error {
 	configFilePointer.WriteString(string(b))
 
 	newMDFilePath := fmt.Sprintf("%s/post.md", newDir)
-	mdFilePointer, err := os.OpenFile(newMDFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	_, err = os.OpenFile(newMDFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
-	}
-
-	if category != "photo" {
-		mdFilePointer.WriteString(fmt.Sprintf("# %s", title))
 	}
 
 	fmt.Printf("post \"%s\" successfully created\n", title)
