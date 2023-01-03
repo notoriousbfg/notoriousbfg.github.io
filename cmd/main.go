@@ -50,9 +50,10 @@ func main() {
 
 		category := flag.String("category", "blog", "the category of the post")
 		date := flag.String("date", "", "the publish date of the post")
+		draft := flag.Bool("draft", false, "whether the post is a draft")
 		flag.Parse()
 
-		if err := NewPost(title, *category, *date); err != nil {
+		if err := NewPost(title, *category, *date, *draft); err != nil {
 			log.Printf("there was a problem creating a new post: %+v", err)
 			return
 		}

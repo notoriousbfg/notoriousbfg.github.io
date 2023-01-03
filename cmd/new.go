@@ -10,7 +10,7 @@ import (
 	"github.com/gosimple/slug"
 )
 
-func NewPost(title string, category string, date string) error {
+func NewPost(title string, category string, date string, draft bool) error {
 	slug := slug.Make(title)
 	var published time.Time
 	if date != "" {
@@ -30,6 +30,7 @@ func NewPost(title string, category string, date string) error {
 		Slug:      slug,
 		Published: published,
 		Category:  category,
+		Draft:     draft,
 	}
 	b, err := json.MarshalIndent(config, "", "	")
 	if err != nil {
