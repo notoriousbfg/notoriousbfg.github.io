@@ -1,1 +1,1 @@
-I wanted to make this pork & pineapple hotpot one last time before Spring. When the Sun's still low this time of year the light catches the edge of my bowl like this making for some interesting textures & colours.
+I wanted to make this pork & pineapple hotpot one last time before Spring. When the Sun's still low this time of year the light catches the edge of my bowl like this, which makes for some interesting textures & colours.
