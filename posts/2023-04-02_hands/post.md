@@ -1,0 +1,1 @@
+Everything looks so visually appealing this time of year, bathed in this light. Rarely does the photo capture the experience, but raises questions nonetheless.
