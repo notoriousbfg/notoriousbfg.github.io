@@ -737,10 +737,32 @@ a {
     .post-link p {
         margin-bottom: 0;
     }
+    .post-link .title {
+        line-height: 2rem;
+        margin-bottom: 1rem;
+    }
 
     .new-comment,
     .subscribe {
         width: 100%;
         padding: 0;
+    }
+
+    .post.is-current {
+        margin-top: 1.25rem;
+    }
+
+    .post-title {
+        font-size: 1.5rem;
+        line-height: 2rem;
+    }
+    .post-header p {
+        margin-bottom: 0;
+    }
+    .archive-title {
+        line-height: 1.5rem;
+    }
+    .posthaven-post-body {
+        line-height: 1.75rem;
     }
 }
