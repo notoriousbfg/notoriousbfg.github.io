@@ -91,11 +91,18 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(4)
+	wg.Add(5)
 
 	go func() {
 		defer wg.Done()
 		if err := BuildArchivePage(site); err != nil {
+			buildErr = multierror.Append(buildErr, err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := BuildAboutPage(site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
@@ -246,6 +253,39 @@ func BuildArchivePage(site *Site) error {
 	}
 
 	newFilePath := "../docs/archive/index.html"
+	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+
+	fp.WriteString(content.String())
+
+	if err := fp.Close(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func BuildAboutPage(site *Site) error {
+	template := template.Must(
+		template.ParseFiles("./templates/about.html", "./templates/base.html"),
+	)
+
+	var content bytes.Buffer
+	templateErr := template.ExecuteTemplate(&content, "base", PageData{
+		Site: *site,
+	})
+	if templateErr != nil {
+		return fmt.Errorf("error generating template: %+v", templateErr)
+	}
+
+	err := os.MkdirAll("../docs/about", os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	newFilePath := "../docs/about/index.html"
 	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err

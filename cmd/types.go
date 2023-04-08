@@ -121,6 +121,7 @@ func (p *Post) HasChanged(cache []CachedPost) bool {
 	}
 }
 
+// this is a bit dumb because it doesn't really reflect the content of the post
 func (p Post) SrcFile() string {
 	var inputFile string
 	if p.Config.Category == "blog" {
