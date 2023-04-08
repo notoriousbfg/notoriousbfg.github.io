@@ -90,6 +90,8 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
+	BuildAboutPage(site)
+
 	var wg sync.WaitGroup
 	wg.Add(5)
 
