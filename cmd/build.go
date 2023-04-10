@@ -82,6 +82,8 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 
 	var buildErr error
 
+	// parse player file & add to site config
+
 	if err := BuildPosts(site, nuke, buildDraftPosts); err != nil {
 		buildErr = multierror.Append(buildErr, err)
 	}
@@ -90,10 +92,8 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
-	BuildAboutPage(site)
-
 	var wg sync.WaitGroup
-	wg.Add(5)
+	wg.Add(6)
 
 	go func() {
 		defer wg.Done()
@@ -126,6 +126,13 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 	go func() {
 		defer wg.Done()
 		if err := BuildBookRecommendations(site); err != nil {
+			buildErr = multierror.Append(buildErr, err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := BuildAboutPage(site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()

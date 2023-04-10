@@ -79,6 +79,7 @@ type SiteConfig struct {
 	Title       string
 	Description string
 	Bio         string
+	Player      Track
 }
 
 type Post struct {

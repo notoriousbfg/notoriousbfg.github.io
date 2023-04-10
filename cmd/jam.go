@@ -50,7 +50,7 @@ type spotifyArtist struct {
 	Name string `json:"name"`
 }
 
-type promptTrack struct {
+type Track struct {
 	ID         string `json:"-"`
 	Name       string `json:"name"`
 	ArtistName string `json:"artist"`
@@ -80,9 +80,9 @@ func NewJam(title string) error {
 	}
 
 	// select track
-	trackSelection := make([]promptTrack, 0)
+	trackSelection := make([]Track, 0)
 	for _, spotifyItem := range tracks.Tracks.Items {
-		trackSelection = append(trackSelection, promptTrack{
+		trackSelection = append(trackSelection, Track{
 			ID:         spotifyItem.ID,
 			Name:       spotifyItem.Name,
 			ArtistName: spotifyItem.firstArtist().Name,
@@ -152,7 +152,7 @@ func searchTracks(accessToken string, searchString string) ([]byte, error) {
 	return resBody, nil
 }
 
-func showTrackOptions(tracks []promptTrack) (promptTrack, error) {
+func showTrackOptions(tracks []Track) (Track, error) {
 	prompt := promptui.Select{
 		Label: "Select Track",
 		Items: tracks,
@@ -164,7 +164,7 @@ func showTrackOptions(tracks []promptTrack) (promptTrack, error) {
 
 	resultIndex, _, err := prompt.Run()
 	if err != nil {
-		return promptTrack{}, err
+		return Track{}, err
 	}
 
 	return tracks[resultIndex], nil
