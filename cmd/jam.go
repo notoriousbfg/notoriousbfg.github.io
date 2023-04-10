@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/caarlos0/env"
+	"github.com/manifoldco/promptui"
 )
 
 type spotifyConfig struct {
@@ -19,6 +20,39 @@ type spotifyConfig struct {
 
 type spotifyAccessToken struct {
 	AccessToken string `json:"access_token"`
+}
+
+type spotifyTrackListing struct {
+	Tracks spotifyTrack `json:"tracks"`
+}
+
+type spotifyTrack struct {
+	Items []spotifyItem `json:"items"`
+}
+
+type spotifyItem struct {
+	ID         string          `json:"id"`
+	Name       string          `json:"name"`
+	PreviewURL string          `json:"preview_url"`
+	Artists    []spotifyArtist `json:"artists"`
+}
+
+func (si spotifyItem) firstArtist() spotifyArtist {
+	if len(si.Artists) > 0 {
+		return si.Artists[0]
+	} else {
+		return spotifyArtist{}
+	}
+}
+
+type spotifyArtist struct {
+	Name string `json:"name"`
+}
+
+type promptTrack struct {
+	ID         string
+	Name       string
+	ArtistName string
 }
 
 func NewJam(title string) error {
@@ -37,9 +71,27 @@ func NewJam(title string) error {
 
 	// search for track
 	tracksResponse, _ := searchTracks(accessTokenObject.AccessToken, title)
-	fmt.Printf("%s", tracksResponse)
+	tracks := spotifyTrackListing{}
+	err = json.Unmarshal(tracksResponse, &tracks)
+	if err != nil {
+		return err
+	}
 
 	// select track
+	trackSelection := make([]promptTrack, 0)
+	for _, spotifyItem := range tracks.Tracks.Items {
+		trackSelection = append(trackSelection, promptTrack{
+			ID:         spotifyItem.ID,
+			Name:       spotifyItem.Name,
+			ArtistName: spotifyItem.firstArtist().Name,
+		})
+	}
+	selectedTrack, err := showTrackOptions(trackSelection)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("selected track %s", selectedTrack.Name)
 
 	// write output to json
 	return nil
@@ -90,4 +142,22 @@ func searchTracks(accessToken string, searchString string) ([]byte, error) {
 		return []byte{}, err
 	}
 	return resBody, nil
+}
+
+func showTrackOptions(tracks []promptTrack) (promptTrack, error) {
+	prompt := promptui.Select{
+		Label: "Select Track",
+		Items: tracks,
+		Templates: &promptui.SelectTemplates{
+			Active:   `{{ .Name | cyan }} - {{ .ArtistName | cyan }}`,
+			Inactive: `{{ .Name }} - {{ .ArtistName }}`,
+		},
+	}
+
+	resultIndex, _, err := prompt.Run()
+	if err != nil {
+		return promptTrack{}, err
+	}
+
+	return tracks[resultIndex], nil
 }
