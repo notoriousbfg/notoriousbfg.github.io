@@ -42,9 +42,6 @@
         <main class="container">
             {{ template "main" . }}
         </main>
-        {{ if .Site.Config.Player }}
-            {{ template "player.html" .Site.Config.Player }}
-        {{ end }}
     </body>
 </html>
 {{ end }}

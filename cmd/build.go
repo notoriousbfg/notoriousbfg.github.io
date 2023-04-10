@@ -82,7 +82,10 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 
 	var buildErr error
 
-	// parse player file & add to site config
+	// parse jam file & add to site config
+	if err := ReadJam(site); err != nil {
+		buildErr = multierror.Append(buildErr, err)
+	}
 
 	if err := BuildPosts(site, nuke, buildDraftPosts); err != nil {
 		buildErr = multierror.Append(buildErr, err)
@@ -530,6 +533,24 @@ func BuildRSSFeed(site *Site) error {
 		return err
 	}
 
+	return nil
+}
+
+func ReadJam(site *Site) error {
+	jsonFile, err := os.OpenFile("../jam.json", os.O_RDWR, 0755)
+	if err != nil {
+		return err
+	}
+	defer jsonFile.Close()
+	bytes, _ := io.ReadAll(jsonFile)
+	if err != nil {
+		return err
+	}
+	var track Track
+	if err := json.Unmarshal(bytes, &track); err != nil {
+		return err
+	}
+	site.Config.Player = track
 	return nil
 }
 

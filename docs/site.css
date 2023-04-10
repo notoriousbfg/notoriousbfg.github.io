@@ -729,6 +729,30 @@ a {
     font-weight: 400;
 }
 
+.player {
+    position: fixed;
+    display: block;
+    bottom: 10px;
+    left: 10px;
+    background: #1d1d20e5;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid white;
+    font-size: 0.875rem;
+    width: 100%;
+    max-width: 340px;
+}
+
+.player-prompt {
+    margin: 0;
+}
+
+.player-title {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #fffc;
+}
+
 @media screen and (max-width: 480px) {
     .post-link {
         flex: 0 0 100%;
@@ -765,5 +789,9 @@ a {
     }
     .posthaven-post-body {
         line-height: 1.75rem;
+    }
+
+    .player {
+        display: none;
     }
 }
