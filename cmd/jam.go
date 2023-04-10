@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/caarlos0/env"
@@ -50,9 +51,10 @@ type spotifyArtist struct {
 }
 
 type promptTrack struct {
-	ID         string
-	Name       string
-	ArtistName string
+	ID         string `json:"-"`
+	Name       string `json:"name"`
+	ArtistName string `json:"artist"`
+	PreviewURL string `json:"preview_url"`
 }
 
 func NewJam(title string) error {
@@ -84,6 +86,7 @@ func NewJam(title string) error {
 			ID:         spotifyItem.ID,
 			Name:       spotifyItem.Name,
 			ArtistName: spotifyItem.firstArtist().Name,
+			PreviewURL: spotifyItem.PreviewURL,
 		})
 	}
 	selectedTrack, err := showTrackOptions(trackSelection)
@@ -91,9 +94,14 @@ func NewJam(title string) error {
 		return err
 	}
 
-	fmt.Printf("selected track %s", selectedTrack.Name)
-
 	// write output to json
+	toWrite, _ := json.Marshal(selectedTrack)
+	fp, err := os.OpenFile("../jam.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+	fp.WriteString(string(toWrite))
+
 	return nil
 }
 
