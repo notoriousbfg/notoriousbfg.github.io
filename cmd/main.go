@@ -59,6 +59,20 @@ func main() {
 		}
 	}
 
+	if args[0] == "jam" {
+		if len(args) == 1 {
+			log.Printf("you must specify a song title")
+			return
+		}
+
+		title := args[1]
+
+		if err := NewJam(title); err != nil {
+			log.Printf("there was a problem creating a new jam: %+v", err)
+			return
+		}
+	}
+
 	if args[0] == "serve" {
 		StartServer()
 	}

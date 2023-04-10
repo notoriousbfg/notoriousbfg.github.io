@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0 // indirect
+	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/gobuffalo/envy v1.10.1 // indirect
 	github.com/gobuffalo/packd v1.0.1 // indirect
