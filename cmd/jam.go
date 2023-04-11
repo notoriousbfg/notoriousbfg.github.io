@@ -64,6 +64,10 @@ func NewJam(title string) error {
 		return err
 	}
 
+	if len(cfg.ClientID) == 0 || len(cfg.ClientSecret) == 0 {
+		return fmt.Errorf("spotify credentials missing")
+	}
+
 	accessTokenResp, err := getSpotifyAccessToken(cfg)
 	if err != nil {
 		return err
@@ -77,6 +81,10 @@ func NewJam(title string) error {
 	err = json.Unmarshal(tracksResponse, &tracks)
 	if err != nil {
 		return err
+	}
+
+	if len(tracks.Tracks.Items) == 0 {
+		return fmt.Errorf("no tracks found")
 	}
 
 	// select track
