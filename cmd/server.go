@@ -97,6 +97,10 @@ func watchFiles(wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = watcher.Add("./templates/feed")
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println("watching templates directory...")
 }
 

@@ -747,11 +747,37 @@ a {
     margin: 0;
 }
 
+.player-title-wrapper {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.player-title-marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    animation: marquee 14s linear infinite;
+    padding-left: 100%;
+}
+
+.player-title-marquee p {
+    display: inline-block;
+}
+
 .player-title {
-    margin-bottom: 10px;
+    margin: 0;
     font-weight: bold;
     color: #fffc;
     line-height: 1.5rem;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-100%, 0, 0);
+    }
 }
 
 @media screen and (max-width: 480px) {

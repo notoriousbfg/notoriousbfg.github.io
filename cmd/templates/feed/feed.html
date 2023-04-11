@@ -22,7 +22,11 @@
     {{ if .Site.Config.Player }}
     <div class="player">
         <p class="player-prompt">I'm currently listening to:</p>
-        <p class="player-title">{{ .Site.Config.Player.Name }} - {{ .Site.Config.Player.ArtistName }}</p>
+        <div class="player-title-wrapper">
+            <div class="player-title-marquee">
+                <p class="player-title">{{ .Site.Config.Player.Name }} - {{ .Site.Config.Player.ArtistName }}</p>
+            </div>
+        </div>
         <audio class="player-controls" controls src="{{ .Site.Config.Player.PreviewURL }}"></audio>
     </div>
     {{ end }}
