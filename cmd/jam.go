@@ -36,6 +36,7 @@ type spotifyItem struct {
 	Name       string          `json:"name"`
 	PreviewURL string          `json:"preview_url"`
 	Artists    []spotifyArtist `json:"artists"`
+	Album      spotifyAlbum    `json:"album"`
 }
 
 func (si spotifyItem) firstArtist() spotifyArtist {
@@ -46,8 +47,24 @@ func (si spotifyItem) firstArtist() spotifyArtist {
 	}
 }
 
+func (si spotifyItem) albumArt() spotifyImage {
+	if len(si.Album.Images) > 0 {
+		return si.Album.Images[0]
+	} else {
+		return spotifyImage{}
+	}
+}
+
 type spotifyArtist struct {
 	Name string `json:"name"`
+}
+
+type spotifyAlbum struct {
+	Images []spotifyImage `json:"images"`
+}
+
+type spotifyImage struct {
+	Url string `json:"url"`
 }
 
 type Track struct {
@@ -55,6 +72,7 @@ type Track struct {
 	Name       string `json:"name"`
 	ArtistName string `json:"artist"`
 	PreviewURL string `json:"preview_url"`
+	Image      string `json:"image"`
 }
 
 func NewJam(title string, site *Site) error {
@@ -95,6 +113,7 @@ func NewJam(title string, site *Site) error {
 			Name:       spotifyItem.Name,
 			ArtistName: spotifyItem.firstArtist().Name,
 			PreviewURL: spotifyItem.PreviewURL,
+			Image:      spotifyItem.albumArt().Url,
 		})
 	}
 	selectedTrack, err := showTrackOptions(trackSelection)
