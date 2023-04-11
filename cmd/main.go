@@ -67,7 +67,7 @@ func main() {
 
 		title := args[1]
 
-		if err := NewJam(title); err != nil {
+		if err := NewJam(title, &site); err != nil {
 			log.Printf("there was a problem creating a new jam: %+v", err)
 			return
 		}

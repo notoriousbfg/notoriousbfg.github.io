@@ -57,7 +57,7 @@ type Track struct {
 	PreviewURL string `json:"preview_url"`
 }
 
-func NewJam(title string) error {
+func NewJam(title string, site *Site) error {
 	// auth spotify api
 	cfg := spotifyConfig{}
 	if err := env.Parse(&cfg); err != nil {
@@ -109,6 +109,10 @@ func NewJam(title string) error {
 		return err
 	}
 	fp.WriteString(string(toWrite))
+
+	if buildErr := BuildSite(site, false, false); err != nil {
+		return buildErr
+	}
 
 	return nil
 }
