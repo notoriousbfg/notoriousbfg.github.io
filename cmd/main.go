@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"strconv"
 
 	flag "github.com/ogier/pflag"
@@ -75,32 +74,7 @@ func main() {
 	}
 
 	if args[0] == "publish" {
-		cmd := exec.Command("git", "add", "docs/*")
-		cmd.Dir = "../"
-		err := cmd.Run()
-
-		if err != nil {
-			log.Printf("there was a problem staging files: %+v", err)
-			return
-		}
-
-		cmd = exec.Command("git", "commit", "-m", "publish blog")
-		cmd.Dir = "../"
-		err = cmd.Run()
-
-		if err != nil {
-			log.Printf("there was a problem committing: %+v", err)
-			return
-		}
-
-		cmd = exec.Command("git", "push", "-u", "origin", "master", "--force")
-		cmd.Dir = "../"
-		err = cmd.Run()
-
-		if err != nil {
-			log.Printf("there was a problem pushing to the remote: %+v", err)
-			return
-		}
+		PublishBlog()
 	}
 
 	if args[0] == "serve" {
