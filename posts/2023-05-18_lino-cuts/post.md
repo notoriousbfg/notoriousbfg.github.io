@@ -1,0 +1,1 @@
+Lately I've been experimenting with lino & coloured inks. The inspiration for this piece came from the work of Michael Craig Martin & Gary Hume.
