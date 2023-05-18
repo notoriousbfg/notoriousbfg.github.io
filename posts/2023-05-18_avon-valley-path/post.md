@@ -1,0 +1,1 @@
+Jen & I took a walk along (part of) the Avon Valley footpath. As we sadly found out, much of it was flooded and impossible to navigate by foot.
