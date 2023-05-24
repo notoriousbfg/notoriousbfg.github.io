@@ -1,0 +1,13 @@
+In December last year I set a goal of meditating every day for six months. I'm not exactly sure what I'd hoped I might achieve but I'd read that meditation was a great way to overcome anxiety and I'd been struggling with anxiety before my driving lessons. I had also read that meditation [can improve focus](https://www.vox.com/2015/8/27/9214697/meditation-brain-neuroscience). Incidentally, I'm pleased to say that I passed my driving test (first time) this month.
+
+Since I had no experience of meditating I turned to some of the popular apps and tried several, but the one I most liked (and still use today) is [Balance](https://balanceapp.com). Given that I use it for nearly all of my meditations, I'll talk about it briefly. Balance asks you questions about how you think your practice is going. It uses this to create somewhat-custom sessions (but the voice isn't robotic-sounding). I found their "plans" (courses of ten daily meditations) easy to follow; I'm currently on the "Advanced IV" having completed Foundations I-V and Advanced I-III. Sometimes I throw in other "singles" on the topics of gratitude (my personal favourite), positivity and self esteem.
+
+Sometimes talking about meditation can sound a bit "preachy". It's absolutely fine if you don't get it (neither did I at first) but I've felt a real improvement in my life and I want to talk about some of my anecdotal experiences with it. Before I continue I want to say one last important thing: It's very easy in this day and age to link totally unrelated things. For example, I had really good sleep after I started taking multivitamin pills last year but have no evidence to back it up. My sleep later went to shit, while continuing to take the pills. So I'll only talk about things I _know_ were the direct consequence of meditation.
+
+**Most significantly of all, meditation helped me relax.** My body had never been so relaxed as it was when I first started to meditate. Sometimes I was so still (and my focus so heightened) I could feel only my heartbeat, and then half a second later in the tops my thighs (something I'd never experienced before). Much of the anxiety I felt before my driving lessons, like the wrist shakes and the anxious leg spasms, went away. Ten minutes of meditation could help me feel sedate for thirty minutes to an hour.
+
+**Soon I felt greater self awareness**.
+
+**I became less judgemental and more grateful**.
+
+**Meditation later felt less potent.**
