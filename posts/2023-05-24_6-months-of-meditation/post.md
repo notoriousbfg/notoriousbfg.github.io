@@ -10,8 +10,8 @@ Talking about meditation can sound a bit "preachy". It's absolutely fine if you 
 
 On many occasions I've been walking from A to B and realise how completely wrapped up in my own thoughts I am, such that I pay no attention to what's going on around me. When was the last time you looked up at the clouds with curiosity? Initially I would have to pay attention to specific things on their own (sounds, colours, light, feelings in various parts of my body etc) but in time built a greater sense of lots of things at once.
 
-**I became less judgemental and more grateful**.
+**I became less judgemental and more grateful**. Judgement is everywhere. We make value judgements about most of the thoughts that enter our minds: whether we need something, whether it or they are worthwhile.
 
-**I felt less affected by swinging emotions and stopped overthinking.**
+**I felt less affected by varying emotions and stopped overthinking.**
 
-**Later meditation felt harder, less potent and I procrastinated.** Contrary to what you might think, meditation isn't anything like sleep - it requires constant focus and sometimes feels quite tiring. 
+**Later meditation felt harder, less potent and I procrastinated.** Contrary to what you might think, meditation isn't anything like sleep - it requires constant focus and can feel tiring. 
