@@ -57,7 +57,7 @@
             
             
             
-            <video src="/feed/robbie/resized.mp4" title="Robbie" controls style="max-width: 100%;"></video>
+            <video class="video-player" src="/feed/robbie/resized.mp4" title="Robbie" controls style="max-width: 100%;"></video>
             
         </section>
     
@@ -371,7 +371,7 @@ Had a little in the tank for the last ~2km.</p>
             
             
             
-            <video src="/feed/race-day/resized.mp4" title="Race Day" controls style="max-width: 100%;"></video>
+            <video class="video-player" src="/feed/race-day/resized.mp4" title="Race Day" controls style="max-width: 100%;"></video>
             
         </section>
     
@@ -796,12 +796,23 @@ And not as much time to borrow.</p>
                 </div>
             </div>
         </div>
-        <audio id="player" class="player-controls" controls src="https://p.scdn.co/mp3-preview/bd7d8dbce1ca2101c0170b01fdd811fc23f06658?cid=1c599b67032d4448833076d7e45f5990"></audio>
+        <audio id="song-player" class="player-controls" controls src="https://p.scdn.co/mp3-preview/bd7d8dbce1ca2101c0170b01fdd811fc23f06658?cid=1c599b67032d4448833076d7e45f5990"></audio>
     </div>
     
     <script>
-        var audio = document.getElementById("player");
-        audio.volume = 0.5;
+        var masterVolume = 0.3;
+
+        var songPlayer = document.getElementById("song-player");
+        songPlayer.volume = masterVolume;
+
+        // employing my 2014 vanilla js skillz
+        var videos = document.querySelectorAll(".video-player");
+        if (videos.length > 0) {
+            for (var i=0;i<videos.length;i++) {
+                var video = videos[i];
+                video.volume = masterVolume;
+            }
+        }
     </script>
 
         </main>
