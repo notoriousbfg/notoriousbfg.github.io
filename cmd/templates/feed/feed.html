@@ -14,7 +14,7 @@
             {{ end }}
             {{ end }}
             {{ if .Video }}
-            <video src="{{ .Video }}" title="{{ .Config.Title }}" controls style="max-width: 100%;"></video>
+            <video class="video-player" src="{{ .Video }}" title="{{ .Config.Title }}" controls style="max-width: 100%;"></video>
             {{ end }}
         </section>
     {{ end }}
@@ -32,11 +32,22 @@
                 </div>
             </div>
         </div>
-        <audio id="player" class="player-controls" controls src="{{ .Site.Config.Player.PreviewURL }}"></audio>
+        <audio id="song-player" class="player-controls" controls src="{{ .Site.Config.Player.PreviewURL }}"></audio>
     </div>
     {{ end }}
     <script>
-        var audio = document.getElementById("player");
-        audio.volume = 0.5;
+        var masterVolume = 0.3;
+
+        var songPlayer = document.getElementById("song-player");
+        songPlayer.volume = masterVolume;
+
+        // employing my 2014 vanilla js skillz
+        var videos = document.querySelectorAll(".video-player");
+        if (videos.length > 0) {
+            for (var i=0;i<videos.length;i++) {
+                var video = videos[i];
+                video.volume = masterVolume;
+            }
+        }
     </script>
 {{ end }}
