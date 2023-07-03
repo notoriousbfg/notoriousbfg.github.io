@@ -50,6 +50,6 @@ func NewPost(title string, category string, date string, draft bool) error {
 		return err
 	}
 
-	fmt.Printf("post \"%s\" successfully created\n", title)
+	fmt.Printf("%s \"%s\" created\n", config.Category, title)
 	return nil
 }
