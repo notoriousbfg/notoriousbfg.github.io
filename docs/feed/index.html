@@ -796,9 +796,13 @@ And not as much time to borrow.</p>
                 </div>
             </div>
         </div>
-        <audio class="player-controls" controls src="https://p.scdn.co/mp3-preview/bd7d8dbce1ca2101c0170b01fdd811fc23f06658?cid=1c599b67032d4448833076d7e45f5990"></audio>
+        <audio id="player" class="player-controls" controls src="https://p.scdn.co/mp3-preview/bd7d8dbce1ca2101c0170b01fdd811fc23f06658?cid=1c599b67032d4448833076d7e45f5990"></audio>
     </div>
     
+    <script>
+        var audio = document.getElementById("player");
+        audio.volume = 0.5;
+    </script>
 
         </main>
     </body>

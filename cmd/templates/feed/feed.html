@@ -32,7 +32,11 @@
                 </div>
             </div>
         </div>
-        <audio class="player-controls" controls src="{{ .Site.Config.Player.PreviewURL }}"></audio>
+        <audio id="player" class="player-controls" controls src="{{ .Site.Config.Player.PreviewURL }}"></audio>
     </div>
     {{ end }}
+    <script>
+        var audio = document.getElementById("player");
+        audio.volume = 0.5;
+    </script>
 {{ end }}
