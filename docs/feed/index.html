@@ -802,17 +802,36 @@ And not as much time to borrow.</p>
     <script>
         var masterVolume = 0.3;
 
+        // using my 2014 vanilla js skillz
+        function iterateVideos(cb) {
+            var videos = document.querySelectorAll(".video-player");
+
+            if (videos.length == 0) {
+                return;
+            }
+
+            for (var i = 0; i < videos.length; i++) {
+                var video = videos[i];
+                cb(video);
+            }
+        }
+
         var songPlayer = document.getElementById("song-player");
         songPlayer.volume = masterVolume;
 
-        // employing my 2014 vanilla js skillz
-        var videos = document.querySelectorAll(".video-player");
-        if (videos.length > 0) {
-            for (var i=0;i<videos.length;i++) {
-                var video = videos[i];
-                video.volume = masterVolume;
-            }
+        songPlayer.onplay = function () {
+            iterateVideos(function (video) {
+                video.pause()
+            })
         }
+
+        iterateVideos(function (video) {
+            video.volume = masterVolume
+
+            video.onplay = function() {
+                songPlayer.pause()
+            }
+        })
     </script>
 
         </main>
