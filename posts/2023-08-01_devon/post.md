@@ -1,0 +1,1 @@
+Jen treated me to a wonderful weekend break in South Devon for my birthday. We stayed in Dawlish then visited Exeter (and the Royal Albert Memorial Museum) and Montacute House in Somerset on the way back. 
