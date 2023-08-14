@@ -4,7 +4,21 @@
     <link>https://notoriousbfg.com</link>
     <description>The personal blog of Tim White, Software Engineer from Bournemouth.</description>
     <managingEditor> (Tim White)</managingEditor>
-    <pubDate>Sun, 13 Aug 2023 12:41:45 +0100</pubDate>
+    <pubDate>Mon, 14 Aug 2023 18:19:05 +0100</pubDate>
+    <item>
+      <title>What is so timeless?</title>
+      <link>http://notoriousbfg.com/football-fans</link>
+      <description>Football fans it seems, alternate between love and hate for their own players on an almost weekly basis.</description>
+      <author>Tim White</author>
+      <pubDate>Mon, 14 Aug 2023 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Masters of our own destinies</title>
+      <link>http://notoriousbfg.com/masters-of-doom</link>
+      <description>At the weekend I finished reading &#39;Masters of Doom&#39; which follows &#39;The Two Johns&#39; (Romero and Carmack) (founders of id Software) who would make games like Wolfenstein 3-D, Doom and Quake and bring about vast cultural change in the process.</description>
+      <author>Tim White</author>
+      <pubDate>Sun, 13 Aug 2023 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>I hope I&#39;m right (to be care-free) about AI</title>
       <link>http://notoriousbfg.com/i-hope-im-right-about-ai</link>
