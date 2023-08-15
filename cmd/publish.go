@@ -6,27 +6,9 @@ import (
 )
 
 func PublishBlog() {
-	cmd := exec.Command("git", "add", "docs/*")
+	cmd := exec.Command("git", "add", "--all")
 	cmd.Dir = "../"
 	err := cmd.Run()
-
-	if err != nil {
-		log.Printf("there was a problem staging files: %+v", err)
-		return
-	}
-
-	cmd = exec.Command("git", "add", "build-cache.json")
-	cmd.Dir = "../"
-	err = cmd.Run()
-
-	if err != nil {
-		log.Printf("there was a problem staging files: %+v", err)
-		return
-	}
-
-	cmd = exec.Command("git", "add", "jam.json")
-	cmd.Dir = "../"
-	err = cmd.Run()
 
 	if err != nil {
 		log.Printf("there was a problem staging files: %+v", err)
