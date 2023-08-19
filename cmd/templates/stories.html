@@ -1,10 +1,9 @@
 <div>
     {{ range .Site.LatestStories }}
-        <div>
-            {{ range .Config.Scenes }}
-                <caption>{{ .Title }}</caption>
-                <div style="background-image: url({{.Image}})"></div>
-            {{ end }}
-        </div>
+        <div class="story" style="background-image: url({{.Config.Scenes[0].Image}})"></div>
     {{ end }}
 </div>
+
+<script>
+    var stories = "{{ .Site.LatestStoriesJSON }}"
+</script>
