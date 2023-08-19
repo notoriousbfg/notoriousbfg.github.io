@@ -4,34 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
-	"github.com/golang-module/carbon"
 	"github.com/gosimple/slug"
 )
 
-func NewPost(title string, category string, date string, draft bool) error {
-	slug := slug.Make(title)
-	var published time.Time
-	if date != "" {
-		published = carbon.Parse(date).Carbon2Time()
-	} else {
-		published = time.Now()
-	}
-	newDir := fmt.Sprintf("../posts/%s_%s", published.Format("2006-01-02"), slug)
+func NewPost(config *PostConfig) error {
+	slug := slug.Make(config.Title)
+	newDir := fmt.Sprintf("../posts/%s_%s", config.Published.Format("2006-01-02"), slug)
 
 	err := os.MkdirAll(newDir, os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	config := &PostConfig{
-		Title:     title,
-		Slug:      slug,
-		Published: published,
-		Category:  category,
-		Draft:     draft,
-	}
 	b, err := json.MarshalIndent(config, "", "	")
 	if err != nil {
 		return err
@@ -50,6 +35,6 @@ func NewPost(title string, category string, date string, draft bool) error {
 		return err
 	}
 
-	fmt.Printf("%s \"%s\" created\n", config.Category, title)
+	fmt.Printf("%s \"%s\" created\n", config.Category, config.Title)
 	return nil
 }

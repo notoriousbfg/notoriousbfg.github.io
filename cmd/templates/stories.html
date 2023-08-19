@@ -1,0 +1,10 @@
+<div>
+    {{ range .Site.LatestStories }}
+        <div>
+            {{ range .Config.Scenes }}
+                <caption>{{ .Title }}</caption>
+                <div style="background-image: url({{.Image}})"></div>
+            {{ end }}
+        </div>
+    {{ end }}
+</div>

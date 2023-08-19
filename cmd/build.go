@@ -83,7 +83,7 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 	var buildErr error
 
 	// parse jam file & add to site config
-	if err := ReadJam(site); err != nil {
+	if err := readJam(site); err != nil {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
@@ -121,7 +121,7 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 
 	go func() {
 		defer wg.Done()
-		if err := BuildRSSFeed(site); err != nil {
+		if err := buildRSSFeed(site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
@@ -152,7 +152,7 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 }
 
 func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
-	buildCache, _ := BuildCache()
+	buildCache, _ := buildCache()
 
 	for key, post := range site.Posts {
 		checksumErr := post.MakeChecksum()
@@ -185,7 +185,7 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 		}
 
 		var imageMap map[string]string
-		imageMap, err = ResizeImages(&post, buildCache, nuke)
+		imageMap, err = resizeImages(&post, buildCache, nuke)
 		if err != nil {
 			return err
 		}
@@ -198,6 +198,8 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 			renderError = RenderVideo(&post, site, buildCache, nuke)
 		case "blog":
 			renderError = RenderPost(&post, site, imageMap)
+		case "story":
+			renderError = RenderStory(&post, site, buildCache, nuke)
 		}
 
 		if renderError != nil {
@@ -213,7 +215,7 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 		site.Posts[key] = post
 	}
 
-	CachePosts(site)
+	cachePosts(site)
 
 	return nil
 }
@@ -410,7 +412,7 @@ func RenderPhoto(post *Post, site *Site) error {
 
 func RenderVideo(post *Post, site *Site, cache Cache, nuke bool) error {
 	if post.HasChanged(cache.Posts) || nuke {
-		_, err := CompressVideo(post)
+		_, err := compressVideo(post)
 		if err != nil {
 			return err
 		}
@@ -443,7 +445,15 @@ func RenderVideo(post *Post, site *Site, cache Cache, nuke bool) error {
 	return nil
 }
 
-func ResizeImages(post *Post, cache Cache, nuke bool) (map[string]string, error) {
+func RenderStory(post *Post, site *Site, cache Cache, nuke bool) error {
+	if len(post.Config.Scenes) == 0 {
+		return fmt.Errorf("story does not have any scenes")
+	}
+
+	return nil
+}
+
+func resizeImages(post *Post, cache Cache, nuke bool) (map[string]string, error) {
 	files, err := os.ReadDir(post.SrcPath)
 	if err != nil {
 		return map[string]string{}, err
@@ -496,7 +506,7 @@ func ResizeImages(post *Post, cache Cache, nuke bool) (map[string]string, error)
 	return imageMap, nil
 }
 
-func BuildRSSFeed(site *Site) error {
+func buildRSSFeed(site *Site) error {
 	now := time.Now()
 	feed := &feeds.Feed{
 		Title:       site.Config.Title,
@@ -536,7 +546,7 @@ func BuildRSSFeed(site *Site) error {
 	return nil
 }
 
-func ReadJam(site *Site) error {
+func readJam(site *Site) error {
 	jsonFile, err := os.OpenFile("../jam.json", os.O_RDWR, 0755)
 	if err != nil {
 		return err
@@ -554,7 +564,7 @@ func ReadJam(site *Site) error {
 	return nil
 }
 
-func CompressVideo(post *Post) (string, error) {
+func compressVideo(post *Post) (string, error) {
 	output := fmt.Sprintf("%s/resized.mp4", post.RenderPath)
 	err := ffmpeg.Input(fmt.Sprintf("%s/video.mp4", post.SrcPath)).
 		Output(output, ffmpeg.KwArgs{"vf": "scale=w=480:h=848"}).
@@ -566,7 +576,7 @@ func CompressVideo(post *Post) (string, error) {
 	return output, nil
 }
 
-func CachePosts(site *Site) error {
+func cachePosts(site *Site) error {
 	cache := &Cache{
 		Version: site.Version(),
 	}
@@ -586,7 +596,7 @@ func CachePosts(site *Site) error {
 	return nil
 }
 
-func BuildCache() (Cache, error) {
+func buildCache() (Cache, error) {
 	jsonFile, err := os.OpenFile("../build-cache.json", os.O_RDWR, 0755)
 	if err != nil {
 		return Cache{}, err

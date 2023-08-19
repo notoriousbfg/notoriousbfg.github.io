@@ -76,47 +76,7 @@ type Track struct {
 }
 
 func NewJam(title string, site *Site) error {
-	// auth spotify api
-	cfg := spotifyConfig{}
-	if err := env.Parse(&cfg); err != nil {
-		return err
-	}
-
-	if len(cfg.ClientID) == 0 || len(cfg.ClientSecret) == 0 {
-		return fmt.Errorf("spotify credentials missing")
-	}
-
-	accessTokenResp, err := getSpotifyAccessToken(cfg)
-	if err != nil {
-		return err
-	}
-	accessTokenObject := spotifyAccessToken{}
-	json.Unmarshal(accessTokenResp, &accessTokenObject)
-
-	// search for track
-	tracksResponse, _ := searchTracks(accessTokenObject.AccessToken, title)
-	tracks := spotifyTrackListing{}
-	err = json.Unmarshal(tracksResponse, &tracks)
-	if err != nil {
-		return err
-	}
-
-	if len(tracks.Tracks.Items) == 0 {
-		return fmt.Errorf("no tracks found")
-	}
-
-	// select track
-	trackSelection := make([]Track, 0)
-	for _, spotifyItem := range tracks.Tracks.Items {
-		trackSelection = append(trackSelection, Track{
-			ID:         spotifyItem.ID,
-			Name:       spotifyItem.Name,
-			ArtistName: spotifyItem.firstArtist().Name,
-			PreviewURL: spotifyItem.PreviewURL,
-			Image:      spotifyItem.albumArt().Url,
-		})
-	}
-	selectedTrack, err := showTrackOptions(trackSelection)
+	selectedTrack, err := ChooseTrack(title)
 	if err != nil {
 		return err
 	}
@@ -134,6 +94,51 @@ func NewJam(title string, site *Site) error {
 	}
 
 	return nil
+}
+
+func ChooseTrack(title string) (Track, error) {
+	// auth spotify api
+	cfg := spotifyConfig{}
+	if err := env.Parse(&cfg); err != nil {
+		return Track{}, err
+	}
+
+	if len(cfg.ClientID) == 0 || len(cfg.ClientSecret) == 0 {
+		return Track{}, fmt.Errorf("spotify credentials missing")
+	}
+
+	accessTokenResp, err := getSpotifyAccessToken(cfg)
+	if err != nil {
+		return Track{}, err
+	}
+	accessTokenObject := spotifyAccessToken{}
+	json.Unmarshal(accessTokenResp, &accessTokenObject)
+
+	// search for track
+	tracksResponse, _ := searchTracks(accessTokenObject.AccessToken, title)
+	tracks := spotifyTrackListing{}
+	err = json.Unmarshal(tracksResponse, &tracks)
+	if err != nil {
+		return Track{}, err
+	}
+
+	if len(tracks.Tracks.Items) == 0 {
+		return Track{}, fmt.Errorf("no tracks found")
+	}
+
+	// select track
+	trackSelection := make([]Track, 0)
+	for _, spotifyItem := range tracks.Tracks.Items {
+		trackSelection = append(trackSelection, Track{
+			ID:         spotifyItem.ID,
+			Name:       spotifyItem.Name,
+			ArtistName: spotifyItem.firstArtist().Name,
+			PreviewURL: spotifyItem.PreviewURL,
+			Image:      spotifyItem.albumArt().Url,
+		})
+	}
+
+	return showTrackOptions(trackSelection)
 }
 
 func getSpotifyAccessToken(config spotifyConfig) ([]byte, error) {

@@ -28,6 +28,10 @@ func (s Site) PublishedFeed() []Post {
 	return s.PublishedPosts([]string{"photo", "video"})
 }
 
+func (s Site) PublishedStories() []Post {
+	return s.PublishedPosts([]string{"story"})
+}
+
 func (s Site) PublishedPosts(categories []string) []Post {
 	var published []Post
 	for _, post := range s.Posts {
@@ -142,6 +146,7 @@ type PostConfig struct {
 	Description string
 	Category    string
 	Draft       bool
+	Scenes      []Scene
 }
 
 func (pc PostConfig) FormattedDate() string {
@@ -196,6 +201,12 @@ func (pc *PostConfig) MarshalJSON() ([]byte, error) {
 		Category:    pc.Category,
 		Draft:       pc.Draft,
 	})
+}
+
+type Scene struct {
+	Title string
+	Image string
+	Song  string
 }
 
 type PageData struct {

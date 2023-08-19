@@ -5,7 +5,9 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
+	"github.com/golang-module/carbon"
 	flag "github.com/ogier/pflag"
 )
 
@@ -53,7 +55,13 @@ func main() {
 		draft := flag.Bool("draft", false, "whether the post is a draft")
 		flag.Parse()
 
-		if err := NewPost(title, *category, *date, *draft); err != nil {
+		postConfig := PostConfig{
+			Title:     title,
+			Category:  *category,
+			Draft:     *draft,
+			Published: getPostDate(*date),
+		}
+		if err := NewPost(&postConfig); err != nil {
 			log.Printf("there was a problem creating a new post: %+v", err)
 			return
 		}
@@ -79,5 +87,13 @@ func main() {
 
 	if args[0] == "serve" {
 		StartServer()
+	}
+}
+
+func getPostDate(date string) time.Time {
+	if date != "" {
+		return carbon.Parse(date).Carbon2Time()
+	} else {
+		return time.Now()
 	}
 }
