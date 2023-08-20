@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        
+            <title>Comparing Player Stats</title>
+            
+            <meta name="description" content="The personal blog of Tim White, Software Engineer from Bournemouth." />
+            
+        
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/site.css">
+    </head>
+    <body>
+        <header style="margin-top: 2rem;">
+            <nav class="nav container">
+                <ul class="nav-list">
+                    <li>
+                        <a href="/" class="logo">Tim White</a>
+                    </li>
+                    <li>
+                        <a href="/archive" class="link-hover">blog</a>
+                    </li>
+                    <li>
+                        <a href="/books" class="link-hover">books</a>
+                    </li>
+                    <li>
+                        <a href="/about" class="link-hover">about</a>
+                    </li>
+                    <li>
+                        <a href="/feed" class="link-hover">timstagram</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <main class="container">
+            
+	<article class="post is-current">
+		<header class="post-header">
+			<h1 class="title post-title">Comparing Player Stats</h1>
+			<p>
+				<span class="post-date">20th August, 2023</span>
+			</p>
+		</header>
+		<div class="body">
+			<div class="posthaven-post-body">
+				<p>Earlier this week I was curious if I could create a program that would help me make my Fantasy Premier League selections: a list of players with the highest scores for the anticipated gameweek (a set of fixtures). Initially I wanted it to consider form (a player&rsquo;s average score over the last thirty days) and the difficulty of each fixture. I wrote a <a href="https://github.com/notoriousbfg/simple-fantasy/tree/bf15b3ae433a0a8ebe330b5661adb09bc9ab2c37" target="_blank">first version</a> in a couple of hours [1].</p>
+
+<p>Writing programs that consume APIs in Go usually requires creating a series of structs that mirror the structure of the API. You &ldquo;unmarshal&rdquo; JSON onto these. In my first iteration, when I wanted to add my own additional computed values I would just add these as new fields, omitting the json struct tags. When I came to add more features a few days later the code was hard to read so I prefixed my API structs with &ldquo;api&rdquo; and then created a series of new types designed on the structure of data I wanted to output. I then iterated over the API values, mapping the data onto the new types. The data was much easier to work with in that way.</p>
+
+<p>My program works like this: Initially I create a selection of &ldquo;likely winners&rdquo;: teams whose expected difficulty is less than that of the teams they&rsquo;re facing. I then take all the players from these teams and sort them by form, their ICT index (a metric created by the league), their average starts and the difficulty of the fixture.</p>
+
+<p>But I encountered an interesting problem. The game requires you to play a certain number of players in each position. Between three and five defenders, two and five midfielders and one and three forwards. There&rsquo;s always one goalkeeper. These bounds mean that (for example) one week the &ldquo;ideal&rdquo; team might consist of four defenders and five midfielders because the midfielders are higher scoring than the defenders and forwards. I attempted various different solutions including maintaining state across an ordered slice and a map of players by position. Even ChatGPT couldn&rsquo;t produce viable code. Ultimately I ended up calculating the total scores for each combination of players (a formation) and picking the formation with the highest score; though I&rsquo;m sure this isn&rsquo;t the most efficient method - if you have a better idea please <a href="mailto:timmakesthings@gmail.com" target="_blank">email me</a>.</p>
+
+<p>I still continue to enjoy writing code with Go. My language (pending name timlang) is still in development and I&rsquo;ve been adding some new features to <a href="https://github.com/notoriousbfg/notoriousbfg.github.io" target="_blank">my blog</a>. I can&rsquo;t imagine having worked on this tool any other way, especially when the compiled run time is ~100ms.</p>
+
+<p>[1] Latest version: <a href="https://github.com/notoriousbfg/simple-fantasy" target="_blank">https://github.com/notoriousbfg/simple-fantasy</a></p>
+
+			</div>
+		</div>
+		<section class="bio">
+			<div class="profile-pic">
+				<img src="/img/me.jpg" width="72" height="72">
+			</div>
+			<p class="bio-text">I’m Tim, a Software Engineer from the UK. I like to write code, cook, read & run.</p>
+		</section>
+	</article>
+	<a class="link-hover" style="margin: 20px 0; display: inline-block;" href="/archive">More Posts</a>
+
+        </main>
+    </body>
+</html>

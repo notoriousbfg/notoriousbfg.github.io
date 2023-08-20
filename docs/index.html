@@ -38,6 +38,33 @@
     
         <article class="post is-current home-post">
             <header class="post-header">
+                <a href="/comparing-player-stats">
+                    <h1 class="title post-title">Comparing Player Stats</h1>
+                </a>
+                <p>
+                    <span class="post-date">20th August, 2023</span>
+                </p>
+            </header>
+            <div class="body">
+                <div class="posthaven-post-body">
+                    <p>Earlier this week I was curious if I could create a program that would help me make my Fantasy Premier League selections: a list of players with the highest scores for the anticipated gameweek (a set of fixtures). Initially I wanted it to consider form (a player&rsquo;s average score over the last thirty days) and the difficulty of each fixture. I wrote a <a href="https://github.com/notoriousbfg/simple-fantasy/tree/bf15b3ae433a0a8ebe330b5661adb09bc9ab2c37" target="_blank">first version</a> in a couple of hours [1].</p>
+
+<p>Writing programs that consume APIs in Go usually requires creating a series of structs that mirror the structure of the API. You &ldquo;unmarshal&rdquo; JSON onto these. In my first iteration, when I wanted to add my own additional computed values I would just add these as new fields, omitting the json struct tags. When I came to add more features a few days later the code was hard to read so I prefixed my API structs with &ldquo;api&rdquo; and then created a series of new types designed on the structure of data I wanted to output. I then iterated over the API values, mapping the data onto the new types. The data was much easier to work with in that way.</p>
+
+<p>My program works like this: Initially I create a selection of &ldquo;likely winners&rdquo;: teams whose expected difficulty is less than that of the teams they&rsquo;re facing. I then take all the players from these teams and sort them by form, their ICT index (a metric created by the league), their average starts and the difficulty of the fixture.</p>
+
+<p>But I encountered an interesting problem. The game requires you to play a certain number of players in each position. Between three and five defenders, two and five midfielders and one and three forwards. There&rsquo;s always one goalkeeper. These bounds mean that (for example) one week the &ldquo;ideal&rdquo; team might consist of four defenders and five midfielders because the midfielders are higher scoring than the defenders and forwards. I attempted various different solutions including maintaining state across an ordered slice and a map of players by position. Even ChatGPT couldn&rsquo;t produce viable code. Ultimately I ended up calculating the total scores for each combination of players (a formation) and picking the formation with the highest score; though I&rsquo;m sure this isn&rsquo;t the most efficient method - if you have a better idea please <a href="mailto:timmakesthings@gmail.com" target="_blank">email me</a>.</p>
+
+<p>I still continue to enjoy writing code with Go. My language (pending name timlang) is still in development and I&rsquo;ve been adding some new features to <a href="https://github.com/notoriousbfg/notoriousbfg.github.io" target="_blank">my blog</a>. I can&rsquo;t imagine having worked on this tool any other way, especially when the compiled run time is ~100ms.</p>
+
+<p>[1] Latest version: <a href="https://github.com/notoriousbfg/simple-fantasy" target="_blank">https://github.com/notoriousbfg/simple-fantasy</a></p>
+
+                </div>
+            </div>
+        </article>
+    
+        <article class="post is-current home-post">
+            <header class="post-header">
                 <a href="/my-internet-pulse">
                     <h1 class="title post-title">My internet pulse</h1>
                 </a>
@@ -139,43 +166,10 @@ updates rather than big sprints; I&rsquo;ve been able to offer an improved exper
             </div>
         </article>
     
-        <article class="post is-current home-post">
-            <header class="post-header">
-                <a href="/resonance-inspiration">
-                    <h1 class="title post-title">Resonance/Inspiration</h1>
-                </a>
-                <p>
-                    <span class="post-date">15th August, 2022</span>
-                </p>
-            </header>
-            <div class="body">
-                <div class="posthaven-post-body">
-                    <p>I&rsquo;ve spent a great deal of time over the last few years thinking about why some things are better than others, particularly art. There&rsquo;s a common view that if the purpose of art is to appeal to humans, the &ldquo;best&rdquo; art is that which appeals to the greatest number. I hold the view that popularity is not necessarily a measure of quality, but <a href="/some-quality-biases/">a bias</a>.</p>
-
-<p>When my girlfriend and I recently visited Arundel we came across <a href="https://www.kimsbookshops.co.uk/arundel/" target="_blank">Kim&rsquo;s Books</a>, with tens of thousands of titles on its shelves. I found myself gravitating only towards the authors I&rsquo;d heard of and there simply wouldn&rsquo;t have been enough time to discover something new (not that either of us had come with any particular titles in mind). The impression the experience gave me was that not all works are timeless; likely most will be forgotten about in time. For how long will people continue to read novels?</p>
-
-<p>I feel a couple of ideas coming together. Long have I been preoccupied with quality but there are many books, movies and songs that I like that aren&rsquo;t considerd critically-speaking &ldquo;good&rdquo;. Not by critics, not by anyone. I like them because they <em>resonate with me</em>, on an emotional or intellectual level. I don&rsquo;t mean to say that &ldquo;all art is subjective&rdquo; which the majority seem to believe these days, because I don&rsquo;t think the subjective/objective model is the be all and end all; there <em>are</em> &ldquo;better&rdquo; forms of art than others and the right answer is probably a bit more nuanced; I&rsquo;ve skirted around what I think this is in various blog posts here. I&rsquo;m starting to feel that to create something that resonates with at least one other person (someone you know even) is just as much the mark of &ldquo;success&rdquo; as anything that resonates with many people, but I do fully-well appreciate that &ldquo;great&rdquo; works are usually popular.</p>
-
-<p>I&rsquo;ve been writing poems for the last three or so months. I always thought poetry was for hacks, but I&rsquo;ve never really had the patience for long fiction and I find writing fun little verses accessible (at least on the surface). In this sense, writing poems feels like what photography is to painting: both involve the study of light but the former is at least in this day and age easier to get started with. But I say &ldquo;only on the surface&rdquo; because like many of the arts, to create something truly resonant takes time and patience.</p>
-
-<p>Sometimes I find writing poems difficult when I&rsquo;ve been listening to a lot of music by a single artist, as I often do (I almost never skip around). It influences me so greatly I find it impossible to write anything not in the style of, or to the beat of the music I&rsquo;ve been listening to. In fact the other day I wrote an entire poem only to realise it had the exact same rhythmn as John Prine&rsquo;s &ldquo;One Red Rose&rdquo; (though I prefer the Iris DeMent version).</p>
-
-<p>Pirsig wrote about something similar. After the publication of &ldquo;Zen&hellip;&rdquo; he said:</p>
-
-<blockquote>
-<p>&rdquo;&hellip;there&rsquo;s an adage to remember, &lsquo;Reading is the enemy of writing.&rsquo; I remember telling that to Kay Sexton at B. Dalton who threw up her hands and said, &lsquo;Don&rsquo;t say that! You&rsquo;ll put us out of business!&rsquo; But it&rsquo;s true. Any time I did read a book during the years of writing ZMM and Lila it would stop the writing for as much as a week while memories of what I just read or heard gradually faded. That was also true of movies, TV, and parties.&rdquo;</p>
-</blockquote>
-
-<p>What is inspiration if not emotional resonance? Artists are inspired by other artists, probably more indirectly than we think, since to read Seneca is not to understand Marcus Aurelius&rsquo; &ldquo;Meditations&rdquo;. The latter is <em>inspired</em> by the ideas of the former but after all when the dust settles, they are separate works by separate authors.</p>
-
-                </div>
-            </div>
-        </article>
-    
 </section>
 <div class="home-footer">
     <a class="link-hover" style="display: inline-block;" href="/archive">More Posts</a>
-    <span class="version">Version: 2023-08-15</span>
+    <span class="version">Version: 2023-08-20</span>
 </div>
 
         </main>
