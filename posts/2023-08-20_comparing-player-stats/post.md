@@ -8,4 +8,7 @@ But I encountered an interesting problem. The game requires you to play a certai
 
 I still continue to enjoy writing code with Go. My language (pending name timlang) is still in development and I've been adding some new features to [my blog](https://github.com/notoriousbfg/notoriousbfg.github.io). I can't imagine having worked on this tool any other way, especially when the compiled run time is ~100ms.
 
+#### Edit: 21st Aug
+In studying the API data, today I also decided to include the likelihood of a player starting in a given round as part of their "score", so as to degrade injured players. I'm also now displaying the score in the results, an arbitrary number whose meaning is unclear to the uninitiated. Some players seem to rank higher on this score than others in much better form, which might not make sense at first. In some ways the "meaning" of the data, what I'm really trying to convey when I say the "perfect team", has been distilled; Adding more variables to my ranking order is not as simple as just form on its own nor am I under any illusion that having more variables presents a "complete" picture. That picture may be complex but I suspect that most of my predictions will be wrong.
+
 [1] Latest version: https://github.com/notoriousbfg/simple-fantasy
