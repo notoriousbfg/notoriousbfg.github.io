@@ -123,7 +123,7 @@ func NewJam(title string, site *Site) error {
 
 	// write output to json
 	toWrite, _ := json.Marshal(selectedTrack)
-	fp, err := os.OpenFile("../jam.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	fp, err := os.OpenFile(fmt.Sprintf("%s/jam.json", site.BasePath), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}

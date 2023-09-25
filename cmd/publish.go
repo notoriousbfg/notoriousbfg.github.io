@@ -5,9 +5,9 @@ import (
 	"os/exec"
 )
 
-func PublishBlog() {
+func PublishBlog(site *Site) {
 	cmd := exec.Command("git", "add", "--all")
-	cmd.Dir = "../"
+	cmd.Dir = site.BasePath
 	err := cmd.Run()
 
 	if err != nil {
@@ -16,7 +16,7 @@ func PublishBlog() {
 	}
 
 	cmd = exec.Command("git", "commit", "-m", "publish blog")
-	cmd.Dir = "../"
+	cmd.Dir = site.BasePath
 	err = cmd.Run()
 
 	if err != nil {
@@ -25,7 +25,7 @@ func PublishBlog() {
 	}
 
 	cmd = exec.Command("git", "push", "-u", "origin", "master", "--force")
-	cmd.Dir = "../"
+	cmd.Dir = site.BasePath
 	err = cmd.Run()
 
 	if err != nil {

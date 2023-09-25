@@ -28,7 +28,7 @@ type Cache struct {
 func ReadPosts() ([]Post, error) {
 	var posts []Post
 
-	postsPath, _ := filepath.Abs("../posts")
+	postsPath, _ := filepath.Abs(fmt.Sprintf("%s/posts", site.BasePath))
 	items, err := os.ReadDir(postsPath)
 	if err != nil {
 		return nil, fmt.Errorf("error reading posts directory")
@@ -37,7 +37,7 @@ func ReadPosts() ([]Post, error) {
 	for _, item := range items {
 		if item.IsDir() {
 			post := Post{
-				SrcPath: fmt.Sprintf("../posts/%s", item.Name()),
+				SrcPath: fmt.Sprintf("%s/posts/%s", site.BasePath, item.Name()),
 			}
 
 			subItems, err := os.ReadDir(post.SrcPath)
@@ -166,9 +166,9 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 
 		var newDir string
 		if post.Config.Category == "photo" || post.Config.Category == "video" {
-			newDir = fmt.Sprintf("../docs/feed/%s", post.Config.Slug)
+			newDir = fmt.Sprintf("%s/docs/feed/%s", site.BasePath, post.Config.Slug)
 		} else {
-			newDir = fmt.Sprintf("../docs/%s", post.Config.Slug)
+			newDir = fmt.Sprintf("%s/docs/%s", site.BasePath, post.Config.Slug)
 		}
 
 		err := os.MkdirAll(newDir, os.ModePerm)

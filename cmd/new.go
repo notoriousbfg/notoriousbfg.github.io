@@ -10,7 +10,7 @@ import (
 	"github.com/gosimple/slug"
 )
 
-func NewPost(title string, category string, date string, draft bool) error {
+func NewPost(site *Site, title string, category string, date string, draft bool) error {
 	slug := slug.Make(title)
 	var published time.Time
 	if date != "" {
@@ -18,7 +18,7 @@ func NewPost(title string, category string, date string, draft bool) error {
 	} else {
 		published = time.Now()
 	}
-	newDir := fmt.Sprintf("../posts/%s_%s", published.Format("2006-01-02"), slug)
+	newDir := fmt.Sprintf("%s/posts/%s_%s", site.BasePath, published.Format("2006-01-02"), slug)
 
 	err := os.MkdirAll(newDir, os.ModePerm)
 	if err != nil {

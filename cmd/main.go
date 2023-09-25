@@ -26,6 +26,8 @@ func main() {
 		panic("not enough arguments passed to cli")
 	}
 
+	site.BasePath = os.Getenv("BLOGPATH")
+
 	if args[0] == "build" {
 		nuke := flag.Bool("nuke", false, "whether to truncate docs directory")
 		flag.Parse()
@@ -53,7 +55,7 @@ func main() {
 		draft := flag.Bool("draft", false, "whether the post is a draft")
 		flag.Parse()
 
-		if err := NewPost(title, *category, *date, *draft); err != nil {
+		if err := NewPost(&site, title, *category, *date, *draft); err != nil {
 			log.Printf("there was a problem creating a new post: %+v", err)
 			return
 		}
@@ -74,7 +76,7 @@ func main() {
 	}
 
 	if args[0] == "publish" {
-		PublishBlog()
+		PublishBlog(&site)
 	}
 
 	if args[0] == "serve" {

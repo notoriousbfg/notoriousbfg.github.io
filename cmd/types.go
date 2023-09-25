@@ -15,9 +15,10 @@ import (
 )
 
 type Site struct {
-	Config SiteConfig
-	Posts  []Post
-	Books  []*gofeed.Item
+	BasePath string
+	Config   SiteConfig
+	Posts    []Post
+	Books    []*gofeed.Item
 }
 
 func (s Site) PublishedBlogPosts() []Post {

@@ -43,7 +43,13 @@ func postPaths() StringSet {
 }
 
 func runServer(wg *sync.WaitGroup) {
-	http.Handle("/", http.FileServer(http.Dir("../docs")))
+	http.Handle("/",
+		http.FileServer(
+			http.Dir(
+				fmt.Sprintf("%s/docs", site.BasePath),
+			),
+		),
+	)
 	fmt.Printf("Listening at %s...\n", siteUrl)
 	go func() {
 		err := http.ListenAndServe(":3000", nil)
@@ -86,18 +92,18 @@ func watchFiles(wg *sync.WaitGroup) {
 
 	postPaths := postPaths()
 	for path := range postPaths {
-		err = watcher.Add(fmt.Sprintf("../posts/%s", path))
+		err = watcher.Add(fmt.Sprintf("%s/posts/%s", site.BasePath, path))
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 	fmt.Println("watching posts directory...")
 
-	err = watcher.Add("./templates")
+	err = watcher.Add(fmt.Sprintf("%s/cmd/templates", site.BasePath))
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = watcher.Add("./templates/feed")
+	err = watcher.Add(fmt.Sprintf("%s/cmd/templates/feed", site.BasePath))
 	if err != nil {
 		log.Fatal(err)
 	}
