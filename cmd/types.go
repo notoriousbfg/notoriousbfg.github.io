@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"sort"
 	"time"
@@ -131,6 +132,9 @@ func (p Post) SrcFile() string {
 		inputFile = fmt.Sprintf("%s/img.jpg", p.SrcPath)
 	} else if p.Config.Category == "video" {
 		inputFile = fmt.Sprintf("%s/video.mp4", p.SrcPath)
+	} else {
+		log.Printf("warning: post category not specified: %+v\n", p)
+		inputFile = fmt.Sprintf("%s/post.md", p.SrcPath)
 	}
 	return inputFile
 }

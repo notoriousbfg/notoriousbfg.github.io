@@ -17,7 +17,6 @@ import (
 	"github.com/gorilla/feeds"
 	"github.com/h2non/bimg"
 	"github.com/hashicorp/go-multierror"
-	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
 type Cache struct {
@@ -157,7 +156,7 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 	for key, post := range site.Posts {
 		checksumErr := post.MakeChecksum()
 		if checksumErr != nil {
-			return checksumErr
+			return fmt.Errorf("there was a problem with making the checksum for post '%s': %s", post.Config.Title, checksumErr.Error())
 		}
 
 		if post.Config.Draft && !buildDraft {
@@ -173,7 +172,7 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
-			return err
+			return fmt.Errorf("there was a problem with making the post directory '%s': %s", post.Config.Title, err.Error())
 		}
 
 		post.RenderPath = newDir
@@ -181,13 +180,13 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 		newFilePath := fmt.Sprintf("%s/index.html", newDir)
 		fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
-			return err
+			return fmt.Errorf("there was a problem opening the post index.html '%s': %s", post.Config.Title, err.Error())
 		}
 
 		var imageMap map[string]string
 		imageMap, err = ResizeImages(&post, buildCache, nuke)
 		if err != nil {
-			return err
+			return fmt.Errorf("there was a problem resizing the post images '%s': %s", post.Config.Title, err.Error())
 		}
 
 		var renderError error
@@ -201,7 +200,7 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 		}
 
 		if renderError != nil {
-			return renderError
+			return fmt.Errorf("there was a problem rendering the %s '%s': %s", post.Config.Category, post.Config.Title, renderError.Error())
 		}
 
 		fp.WriteString(post.RenderedContent)
@@ -555,14 +554,21 @@ func ReadJam(site *Site) error {
 }
 
 func CompressVideo(post *Post) (string, error) {
+	// output := fmt.Sprintf("%s/resized.mp4", post.RenderPath)
+	// err := ffmpeg.Input(fmt.Sprintf("%s/video.mp4", post.SrcPath)).
+	// 	Output(output, ffmpeg.KwArgs{"vf": "scale=w=480:h=848"}).
+	// 	OverWriteOutput().
+	// 	Run()
+	// if err != nil {
+	// 	return "", err
+	// }
+
 	output := fmt.Sprintf("%s/resized.mp4", post.RenderPath)
-	err := ffmpeg.Input(fmt.Sprintf("%s/video.mp4", post.SrcPath)).
-		Output(output, ffmpeg.KwArgs{"vf": "scale=w=480:h=848"}).
-		OverWriteOutput().
-		Run()
+	err := copyFile(fmt.Sprintf("%s/video.mp4", post.SrcPath), output)
 	if err != nil {
 		return "", err
 	}
+
 	return output, nil
 }
 
@@ -636,4 +642,25 @@ func replaceImagePaths(html string, imageMap map[string]string) (string, error) 
 		html = strings.Replace(html, src, pub, -1)
 	}
 	return html, nil
+}
+
+func copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destinationFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destinationFile.Close()
+
+	_, err = io.Copy(destinationFile, sourceFile)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
