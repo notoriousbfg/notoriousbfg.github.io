@@ -1,0 +1,1 @@
+I spent a lot of time decorating my spare room over the summer and it's fair to say I've caught the DIY bug. It's slowly taking shape; I hope to buy more plants and artwork.
