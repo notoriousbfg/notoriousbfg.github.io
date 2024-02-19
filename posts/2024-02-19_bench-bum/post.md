@@ -1,0 +1,1 @@
+I laughed at this for a good 5 mins.
