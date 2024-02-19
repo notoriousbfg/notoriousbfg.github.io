@@ -339,12 +339,15 @@ template {
 
 html,
 body {
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, “Segoe UI”, Roboto, Ubuntu, sans-serif;
+    font-family: "Inconsolata", monospace;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
     color: #999;
     font-size: 16px;
     line-height: 1.875rem;
-    font-weight: 400;
-    background: #2E2E33;
+    font-weight: 300;
+    background: #2A2E33;
 }
 
 body * {
@@ -377,8 +380,18 @@ a {
 
 .title {
     color: #BDBDBD;
-    font-weight: 600;
     margin: 0 0 1.25rem 0;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 300;
+    font-style: normal;
+}
+
+a > .title {
+    transition: color 0.25s ease-in-out;
+} 
+
+a:hover > .title {
+    color: #d56e00;
 }
 
 .post {
@@ -406,6 +419,9 @@ a {
     font-size: 1.875rem;
     line-height: 2.75rem;
     margin-bottom: 0.3125rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .post-date,
@@ -550,7 +566,7 @@ a {
 }
 
 .posthaven-post-body a {
-    color: #94a9db;
+    color: #d56e00;
 }
 
 .posthaven-post-body img {
@@ -698,6 +714,7 @@ a {
     font-size: 1.875rem;
     line-height: 2.75rem;
     height: 44px;
+    font-weight: 400;
 }
 
 .feed-item {
@@ -711,6 +728,11 @@ a {
     line-height: 1.75rem;
     margin-bottom: 0.25rem;
     display: inline-block;
+    transition: color 0.25s ease-in-out;
+}
+
+.feed-item a:hover > .post-title {
+    color: #d56e00;
 }
 
 .feed-item .post-date {
