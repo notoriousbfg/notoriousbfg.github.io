@@ -611,7 +611,7 @@ func BuildCache() (Cache, error) {
 
 func truncatePublicDir() {
 	dir, _ := os.ReadDir("../docs")
-	exclude := []string{"img", "site.css", "me.jpg", "CNAME"}
+	exclude := []string{"img", "site.css", "me.jpg", "CNAME", "human.png"}
 	for _, d := range dir {
 		if Contains(exclude, d.Name()) {
 			continue
