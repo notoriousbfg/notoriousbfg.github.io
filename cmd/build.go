@@ -258,12 +258,12 @@ func BuildArchivePage(site *Site) error {
 		return fmt.Errorf("error generating template: %+v", templateErr)
 	}
 
-	err := os.MkdirAll("../docs/archive", os.ModePerm)
+	err := os.MkdirAll("../docs/essays", os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	newFilePath := "../docs/archive/index.html"
+	newFilePath := "../docs/essays/index.html"
 	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
