@@ -8,9 +8,13 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
+const (
+	currentlyReadingUrl = "https://oku.club/rss/collection/wcVIL"
+)
+
 func GetOkuFeed() ([]*gofeed.Item, error) {
 	fp := gofeed.NewParser()
-	feed, err := fp.ParseURL("https://oku.club/rss/collection/hZgei")
+	feed, err := fp.ParseURL(currentlyReadingUrl)
 	if err != nil {
 		return []*gofeed.Item{}, err
 	}
@@ -21,21 +25,6 @@ func GetOkuFeed() ([]*gofeed.Item, error) {
 		feedItems = append(feedItems, item)
 	}
 	return feedItems, nil
-}
-
-func BuildBookRecommendations(site *Site) error {
-	feedItems, err := GetOkuFeed()
-	if err != nil {
-		return err
-	}
-
-	site.Books = feedItems
-
-	if buildErr := BuildFromTemplate("./templates/books.html", PageData{Site: *site}, "../docs/books"); buildErr != nil {
-		return buildErr
-	}
-
-	return nil
 }
 
 func truncateText(s string, max int) string {

@@ -95,7 +95,7 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(6)
+	wg.Add(5)
 
 	go func() {
 		defer wg.Done()
@@ -121,13 +121,6 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 	go func() {
 		defer wg.Done()
 		if err := BuildRSSFeed(site); err != nil {
-			buildErr = multierror.Append(buildErr, err)
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		if err := BuildBookRecommendations(site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
@@ -283,6 +276,12 @@ func BuildAboutPage(site *Site) error {
 		template.ParseFiles("./templates/about.html", "./templates/base.html"),
 	)
 
+	currentBooks, err := GetOkuFeed()
+	if err != nil {
+		return err
+	}
+	site.CurrentBook = currentBooks[0]
+
 	var content bytes.Buffer
 	templateErr := template.ExecuteTemplate(&content, "base", PageData{
 		Site: *site,
@@ -291,7 +290,7 @@ func BuildAboutPage(site *Site) error {
 		return fmt.Errorf("error generating template: %+v", templateErr)
 	}
 
-	err := os.MkdirAll("../docs/about", os.ModePerm)
+	err = os.MkdirAll("../docs/about", os.ModePerm)
 	if err != nil {
 		return err
 	}
