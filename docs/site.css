@@ -554,6 +554,31 @@ a:hover > .title {
     margin: 10px 30px;
 }
 
+.posthaven-post-body hr {
+    background-color: #616366;
+    border: none;
+    height: 1px;
+}
+
+.posthaven-post-body .footnotes li {
+    margin-bottom: 10px;
+}
+
+.posthaven-post-body sup {
+    font-size: 1rem;
+    line-height: 1rem;
+    top: 0;
+}
+
+.posthaven-post-body sup::before {
+    content: "[";
+    color: #d56e00;
+}
+.posthaven-post-body sup::after {
+    content: "]";
+    color: #d56e00;
+}
+
 .posthaven-post-body blockquote::before {
     content: " ";
     position: absolute;

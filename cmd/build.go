@@ -14,6 +14,7 @@ import (
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 	"github.com/gorilla/feeds"
 	"github.com/h2non/bimg"
 	"github.com/hashicorp/go-multierror"
@@ -352,10 +353,12 @@ func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 	}
 
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+	extensions := parser.Footnotes
+	parser := parser.NewWithExtensions(extensions)
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 
-	postContent := string(markdown.ToHTML(contents, nil, renderer))
+	postContent := string(markdown.ToHTML(contents, parser, renderer))
 	cleanHTML, err := replaceImagePaths(postContent, imageMap)
 	if err != nil {
 		return err
