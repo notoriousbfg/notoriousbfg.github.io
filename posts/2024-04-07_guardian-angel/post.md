@@ -43,7 +43,7 @@ A few steps away lay the body of a comrade, someone Paul hadn’t known well but
 
 Why was his voice any of the Army’s concern? Why he’d felt the need to tell one of his squadmates, Paul still wondered. It had been an unnecessary overshare. A person devoid of sleep will do questionable things.
 
-In some ways he felt lucky to have been chosen. “No”, he almost muttered to himself, he was never chosen. How could he know the voice wasn’t him? A partition in his brain. In tones and accents he’d heard before but not anyone he personally knew, it would tell him how to navigate the battlefield to avoid being shot, who to shoot, and sometimes who to speak to and which frequency to call on. But Paul knew this wasn’t just another part of his brain telling him things he already knew; it was another person entirely; his own Guardian Angel, looking out for him. He appreciated the irony.
+In some ways he felt lucky to have been chosen. “No”, he almost muttered to himself, he was never chosen. How could he know the voice wasn’t him? A partition in his brain. In tones and accents he’d heard before but not the voice of anyone he personally knew, it would tell him how to navigate the battlefield to avoid being shot, who to shoot, and sometimes who to speak to and which frequency to call on. But Paul knew this wasn’t just another part of his brain telling him things he already knew; it was another person entirely; his own Guardian Angel, looking out for him. He appreciated the irony.
 
 <br/>
 
