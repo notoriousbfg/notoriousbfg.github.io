@@ -48,7 +48,7 @@ In some ways he felt lucky to have been chosen. “No”, he almost muttered to 
 <br/>
 
 The Doctor placed a probe in Paul’s left ear and music started to play, initially only faintly and then becoming louder. This lasted a few minutes.
-“Functionally, your hearing works exactly as they’re supposed to. Our scans haven’t revealed anything out of the ordinary”, said the Doctor reassuringly. “You’ll be able to return to the field, Paul, but only after you rest. I’m recommending you stay off-world, at least for a month or two”.
+“Functionally, your hearing works exactly as it's supposed to. Our scans haven’t revealed anything out of the ordinary”, said the Doctor reassuringly. “You’ll be able to return to the field, Paul, but only after you rest. I’m recommending you stay off-world, at least for a month or two”.
 
 Paul felt disappointed to not be returning to his squad soon, but relieved to know there wasn’t anything fundamentally wrong with him. 
 What had been the point of all of this? The urgency with which the Army had removed him from his post had surprised him, initially labelling him “insane” but then privately retracting what it had said. There hadn’t been any apparent danger. He hadn’t represented a threat to others, or to order. Or had he? While his comrades fell, Paul continued to survive impregnable odds, not by any of his own strengths or merits but by, as he had described to the Doctor, a voice. He could challenge Death. Where had the voice come from if not from Paul himself?
