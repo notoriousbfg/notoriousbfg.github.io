@@ -839,6 +839,26 @@ a:hover > .title {
     width: 100%;
 }
 
+.page-break {
+    text-align: center;
+    line-height: 14px;
+    margin: 40px 0;
+}
+
+.page-break::before {
+    content: "*";
+    display: inline-block;
+    line-height: 14px;
+    width: 100%;
+}
+
+.page-break::after {
+    content: "* *";
+    display: inline-block;
+    line-height: 14px;
+    width: 100%;
+}
+
 @keyframes marquee {
     0% {
         transform: translate3d(0, 0, 0);
@@ -888,5 +908,9 @@ a:hover > .title {
 
     .player {
         display: none;
+    }
+
+    .page-break {
+        margin: 30px 0;
     }
 }
