@@ -1,0 +1,1 @@
+Since my last post back in December I've added more artwork, furniture and decorations to my [current working title] "workspace". It's a wonderful place to work in this time of year, with the light as pretty as it is.
