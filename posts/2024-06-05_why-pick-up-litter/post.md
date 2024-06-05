@@ -1,0 +1,35 @@
+In February of last year I became a member of [Dorset Devils](https://dorsetdevils.org), a litter picking group in the beautiful Dorset, where I live. I'm DD1164. Joining had been on my horizon for some time but the kick up the backside I needed was seeing a local taxi driver pull up in my road before dumping a McDonald's paper bag (full of other assorted rubbish) out of his car. Deciding not to do anything about it for the next week, while out walking I would see the bag, breaking apart and then eventually sending little bits of rubbish all over the road. What a f*cking mess.
+
+I pick up litter on my own, usually every other Sunday for around two or three hours. Sometimes the roads can remain free of litter for a week. Sometimes more litter will appear the day after I cleared it. It's not my responsibility to care: there will always be litter. Doing something... anything... is better than inaction. Some people do thank me, for which I'm very grateful; It does feel nice to know my time and effort is appreciated but it's not something I have ever expected.
+
+The purpose of this article is to describe where I think roadside litter comes from, why I spend my free time picking it up and what else could be done to reduce it. It's based on my own personal experiences of litter picking (a posteriori) and not any research I've read or conducted. My intent is _not_ to virtue signal; Don't think litter is important? You know where the door is.
+
+### What constitutes litter?
+
+To me, while picking, litter is anything that's been intentionally discarded in a public place. The vast majority (by volume) is food packaging and (by type) cigarette butts. How do I know what's been intentionally discarded? Usually it's dirty.
+
+My bucket is only so large, which means that over the course of two hours or so I have to empty it several times. A dartboard left propped up against a lamppost has probably been discarded, but a decision I leave to the authorities to make.
+
+### Where does roadside litter come from?
+
+Most people will have been raised to understand littering is morally wrong: It makes a place look scruffy and poses a danger to people's and animals' health. In school you're taught to take your litter home with you, or deposit it in the nearest public bin. Until that point it's your responsibility to hold onto it. It's _just_ what you do. While not a _serious_ crime, I think littering is quite a selfish thing for a person to do.
+
+While picking, I often think about the litterer's motivations; I wonder whether they drop litter out of carelessness or malice. Either they do it in the knowledge that it's wrong or they're simply careless about where it goes. The latter seems silly to imagine; a person would have to have a lot of litter in their car for it to blow onto the street without their knowledge. I prefer to imagine a spectrum of behaviour instead of two distinct options.
+
+I pick up vastly more cigarette butts than any other type of rubbish. Cigarette butts are small but hard to pick up in any quantity. On a given outing I usually have a tolerance for how many I'm willing to pick up, but food packaging is far more garish and noticeable in my opinion. Sometimes I'll come across a bench or spot where smokers congregate and find hundreds of butts in one place. I'm sure some smokers will argue it should be the authorities' responsibility to provide bins to deposit cigarette butts in, but this is far too easy: every person maintains their own moral responsibility and smoking is still, ultimately, a choice, as is throwing a butt on the floor.
+
+Most of the rubbish I pick up seems to collect around cars. I have to be careful about how to word this so as to not indiscriminately accuse drivers of littering, but there is certainly more litter where there are free places to park. For example, on more than one occasion I've seen taxi drivers eat a meal in their car and then deposit the packaging at the curbside. Having walked the same routes for over a year now it's also apparent to me who some of the main culprits are, due to the amount of new rubbish that appears by their cars. You need only glance through their windows to see rubbish in the footwells, on the seats, in the cupholders etc. These people, although a minority, contribute most of the curbside rubbish. The irony that they do this outside their own homes!
+
+Some litter does fall out of household bins (as they're being emptied into the bin lorry) and blow into the road but I think it only accounts for a small part of the total. In apartment blocks there's often not a clear understanding about who's responsible for clearing this rubbish, but homeowners tend to be fairly dilligent. Is someone more likely to drop litter if there is already lots or less litter already around, I wonder?
+
+### Why do I pick up litter?
+
+Lots of rubbish in public places generally leads a person to believe that (if there's a nicer way of saying this please send it to me) they live in... a sh\*thole. When people think they live in a sh\*thole, they treat it and the people (and other people's posessions) with a proportionate level of respect. _Not_ thinking they live in a sh\*thole generally makes a person feel better about their life, improves their sense of wellbeing and allows them to focus their energy on the day.
+
+Picking up litter is also a great source of exercise. I wear a Dorset Devils branded high-vis jacket (which is actually very useful) and my bucket also has branding (and a QR code linking to the website, though nobody has every engaged me in conversation long enough to ask for a link). People simply seeing me pick up litter (and piqueing their interest enough to go to the website) is a good thing in my books. At the time of writing we have 1434 members. Not only is more people picking up litter a good thing, but having more people (especially young people) experiencing their communities (and the people that live in them) is essential. To quote myself "[Good people _do_ good things](https://notoriousbfg.com/feed/good)".
+
+### What might help even more?
+
+It's quite apparent to me that BCP (Bournemouth, Christchurch and Poole) Council have chosen to focus their litter-picking efforts on some parts of Bournemouth and not others. On Braidley Road for example, the road that (ironically) Town Hall resides on, lots of litter can be found beyond the flyover halfway alongs its length, but the section next to Town Hall itself is fairly litter-free. More bins and collections are required all over, and on residential roads too. In parking bays signs should indicate the nearest bins. Cigarette bins could be erected next to park benches.
+
+Fast food restaurants (McDonald's, Subway, Burger King) and big-chain supermarkets (Sainsbury's, Asda, Lidl, Aldo) could equally do a lot more to prevent littering, whether that involves working with the local council to erect more bins or encouraging their customers to deposit litter at their establishments or take it home with them. I suspect low-level corruption is partly the reason as to why this hasn't already happened.
