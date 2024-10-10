@@ -1,0 +1,9 @@
+Much to the annoyance of my neighbours (probably) I've been a chronic sleepwalker since I was a teenager. I have no reason to believe things won't continue to be like this for the rest of my life.
+
+Sometimes I go for weeks without sleepwalking, while other times I find myself in an inescapable hole. Sleep disruption seems to beget more sleep disruption. As much as I yearn for a good night's sleep, each night is as bad as the last. I have terrible headaches that start when I wake up and don't go away until mid afternoon; I'm unable to concentrate on my work fully, my Maths study, my relationships etc. If I could take a sick day I'd be taking weeks off at a time.
+
+The prevailing response when I talk about my sleep is that there's something _else_ I could be doing that I'm not. Name any possible lifestyle alteration, medicine, practice or behaviour and you can bet I've already tried it [1]. While I'm sure those I'm speaking to are just trying to be helpful I find this response a little offensive because it carries the implication that there's something I'm _not_ doing or something I should be doing _more_ of.
+
+It's not like I'm a smoker with lung cancer - I look after my body fairly well - but I wish this conversation was a different one. I have a medically-diagnosed disorder that causes me a lot of pain and makes my life measurably harder (and for which there doesn't appear to be a known solution). The suggestion that the only possible cause is that I'm not looking after myself well enough is of no help.
+
+[1] I have tried absolutely _everything_. I've even taken medication prescribed by my doctor, which worked for a time until it made me sleepy during the day. After ~15 years with this I'm resigned to the belief that this is just something I have/am.
