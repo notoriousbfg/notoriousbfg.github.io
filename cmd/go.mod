@@ -13,7 +13,6 @@ require (
 	github.com/gosimple/slug v1.12.0
 	github.com/h2non/bimg v1.1.9
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hasura/go-graphql-client v0.15.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/ogier/pflag v0.0.1
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
