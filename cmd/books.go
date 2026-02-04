@@ -1,111 +1,141 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"time"
-
-	graphql "github.com/hasura/go-graphql-client"
 )
 
 type CurrentBook struct {
-	Title string
+	Title   string
+	Image   string
+	Authors []string
+	Link    string
 }
 
 var hardCoverAPIKey = os.Getenv("HARDOVER_API_KEY")
 
-type UserBooksQuery struct {
-	UserBooks []struct {
-		Book struct {
-			Title string
-			Image *struct {
-				URL string
-			}
-			Contributions []struct {
-				Author struct {
-					Name string
-				}
-			}
-		}
-	} `graphql:"user_books(where: {user_id: {_eq: $user_id}, status_id: {_eq: 2}})"`
+type hardcoverResponse struct {
+	Data struct {
+		UserBooks []struct {
+			Book struct {
+				Title string `json:"title"`
+				Image *struct {
+					URL string `json:"url"`
+				} `json:"image"`
+				Contributions []struct {
+					Author struct {
+						Name string `json:"name"`
+					} `json:"author"`
+				} `json:"contributions"`
+				Slug string `json:"slug"`
+			} `json:"book"`
+		} `json:"user_books"`
+	} `json:"data"`
+	Errors []struct {
+		Message string `json:"message"`
+	} `json:"errors"`
 }
 
-func GetCurrentHardoverBook(ctx context.Context) (CurrentBook, error) {
-	booksQuery := UserBooksQuery{}
-	variables := map[string]interface{}{
-		"user_id": 50871,
-	}
-
-	err := authenticatedRequestWithRetries(ctx,
-		"https://api.hardcover.app/v1/graphql",
-		&booksQuery,
-		variables,
-	)
-	if err != nil {
-		return CurrentBook{}, fmt.Errorf("hardcover request failed: %w", err)
-	}
-
-	if len(booksQuery.UserBooks) > 0 {
-		firstBook := booksQuery.UserBooks[0]
-		return CurrentBook{Title: firstBook.Book.Title}, nil
-	}
-
-	return CurrentBook{}, nil
-}
-
-type roundTripperWithAuth struct {
-	token string
-}
-
-func (r roundTripperWithAuth) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Set("Authorization", "Bearer "+r.token)
-	return http.DefaultTransport.RoundTrip(req)
-}
-
-func authenticatedRequestWithRetries(
-	ctx context.Context,
-	endpoint string,
-	query interface{},
-	variables map[string]interface{},
-) error {
-
-	httpClient := &http.Client{
-		Transport: roundTripperWithAuth{
-			token: hardCoverAPIKey,
-		},
-	}
-
-	client := graphql.NewClient(endpoint, httpClient)
-
+func GetCurrentHardcoverBook(ctx context.Context) (CurrentBook, error) {
 	const maxAttempts = 3
 	backoff := 200 * time.Millisecond
 
 	var lastErr error
 
 	for attempt := 1; attempt <= maxAttempts; attempt++ {
-		err := client.Query(ctx, &query, variables)
+		book, err := fetchBook(ctx)
 		if err == nil {
-			return nil
+			return book, nil
 		}
-
 		lastErr = err
 
-		// Don’t sleep after final attempt
-		if attempt == maxAttempts {
-			break
-		}
-
-		select {
-		case <-time.After(backoff):
-			backoff *= 2
-		case <-ctx.Done():
-			return ctx.Err()
+		if attempt < maxAttempts {
+			select {
+			case <-time.After(backoff):
+				backoff *= 2
+			case <-ctx.Done():
+				return CurrentBook{}, ctx.Err()
+			}
 		}
 	}
 
-	return fmt.Errorf("graphql request failed after %d attempts: %w", maxAttempts, lastErr)
+	return CurrentBook{}, fmt.Errorf("failed after %d attempts: %w", maxAttempts, lastErr)
+}
+
+func fetchBook(ctx context.Context) (CurrentBook, error) {
+	query := `
+query GetUserBooks($user_id: Int!) {
+	user_books(where: {user_id: {_eq: $user_id}, status_id: {_eq: 2}}) {
+		book {
+			title
+			image { url }
+			contributions { author { name } }
+			slug
+		}
+	}
+}`
+
+	payload := map[string]interface{}{
+		"query": query,
+		"variables": map[string]interface{}{
+			"user_id": 50871,
+		},
+	}
+
+	bodyBytes, _ := json.Marshal(payload)
+	req, err := http.NewRequestWithContext(ctx, "POST", "https://api.hardcover.app/v1/graphql", bytes.NewReader(bodyBytes))
+	if err != nil {
+		return CurrentBook{}, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+hardCoverAPIKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return CurrentBook{}, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return CurrentBook{}, fmt.Errorf("hardcover API returned status %d", resp.StatusCode)
+	}
+
+	var hcResp hardcoverResponse
+	if err := json.NewDecoder(resp.Body).Decode(&hcResp); err != nil {
+		return CurrentBook{}, fmt.Errorf("decode response: %w", err)
+	}
+
+	if len(hcResp.Errors) > 0 {
+		return CurrentBook{}, fmt.Errorf("graphql error: %s", hcResp.Errors[0].Message)
+	}
+
+	if len(hcResp.Data.UserBooks) == 0 {
+		return CurrentBook{}, nil
+	}
+
+	first := hcResp.Data.UserBooks[0].Book
+	authors := make([]string, 0, len(first.Contributions))
+	for _, c := range first.Contributions {
+		authors = append(authors, c.Author.Name)
+	}
+
+	imageURL := ""
+	if first.Image != nil {
+		imageURL = first.Image.URL
+	}
+
+	return CurrentBook{
+		Title:   first.Title,
+		Image:   imageURL,
+		Authors: authors,
+		Link:    fmt.Sprintf("https://hardcover.app/books/%s", first.Slug),
+	}, nil
 }
 
 func truncateText(s string, max int) string {

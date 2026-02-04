@@ -278,7 +278,7 @@ func BuildAboutPage(site *Site) error {
 		template.ParseFiles("./templates/about.html", "./templates/base.html"),
 	)
 
-	currentBook, err := GetCurrentHardoverBook(context.Background())
+	currentBook, err := GetCurrentHardcoverBook(context.Background())
 	if err != nil {
 		return err
 	}
