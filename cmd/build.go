@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -277,11 +278,11 @@ func BuildAboutPage(site *Site) error {
 		template.ParseFiles("./templates/about.html", "./templates/base.html"),
 	)
 
-	currentBooks, err := GetOkuFeed()
+	currentBook, err := GetCurrentHardoverBook(context.Background())
 	if err != nil {
 		return err
 	}
-	site.CurrentBook = currentBooks[0]
+	site.CurrentBook = currentBook
 
 	var content bytes.Buffer
 	templateErr := template.ExecuteTemplate(&content, "base", PageData{

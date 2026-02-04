@@ -13,7 +13,7 @@ var (
 	site = Site{
 		Config: SiteConfig{
 			Title:       "Tim's Blog",
-			Description: "The personal blog of Tim White, Software Engineer from Bournemouth.",
+			Description: "The personal blog of Tim White, Software Engineer from Somerset, UK.",
 			Bio:         "I’m Tim, a Software Engineer from the UK. I like to write code, cook, read & run.",
 		},
 	}

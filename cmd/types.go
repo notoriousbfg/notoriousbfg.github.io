@@ -12,13 +12,12 @@ import (
 	"time"
 
 	"github.com/golang-module/carbon"
-	"github.com/mmcdole/gofeed"
 )
 
 type Site struct {
 	Config      SiteConfig
 	Posts       []Post
-	CurrentBook *gofeed.Item
+	CurrentBook CurrentBook
 }
 
 func (s Site) PublishedBlogPosts() []Post {
