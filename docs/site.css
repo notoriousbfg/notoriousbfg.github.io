@@ -558,6 +558,7 @@ a:hover > .title {
     background-color: #616366;
     border: none;
     height: 1px;
+    margin: 40px 0;
 }
 
 .posthaven-post-body .footnotes li {
@@ -592,6 +593,11 @@ a:hover > .title {
 
 .posthaven-post-body a {
     color: #d56e00;
+    transition: color 0.175s ease-in-out;
+}
+
+.posthaven-post-body a:hover {
+    color: #08aeff;
 }
 
 .posthaven-post-body img {
