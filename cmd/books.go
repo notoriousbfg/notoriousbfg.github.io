@@ -17,7 +17,7 @@ type CurrentBook struct {
 	Link    string
 }
 
-var hardCoverAPIKey = os.Getenv("HARDOVER_API_KEY")
+var hardCoverAPIKey = os.Getenv("HARDCOVER_API_KEY")
 
 type hardcoverResponse struct {
 	Data struct {
