@@ -1,6 +1,6 @@
 <img src="./img.jpg" alt="North Devon bluebells in Spring"> 
 
-When my girlfriend and I arrived in North Devon for a short break with her parents last week I said I didn't want to talk about AI. I suppose lately I've been feeling the coming together of several different forces in my work and personal life and I feel so terribly exhausted by the rhetoric around the use of LLMs. I'm so tired of being seen to be the unreasonable one, to ask for things I don't think of as being unreasonable. To be absolutely clear, I do not want this future society appears to be sleepwalking into. I didn't ask for any of this.
+When my girlfriend and I arrived in North Devon for a short break with her parents last week I said I didn't want to talk about AI. I suppose lately I've been feeling the coming together of several different forces in my work life and I feel so terribly exhausted by the rhetoric around the use of LLMs. I'm so tired of being seen to be the unreasonable one, to ask for things I don't think of as being unreasonable. To be absolutely clear, I do not want this future society appears to be sleepwalking into. I didn't ask for any of this.
 
 In my despair it was then so refreshing to read Kyle Kingsbury's essay series "The Future of Everything is Lies, I Guess". In my favourite of the series, ["Where do we go from here?"](https://archive.is/eXuD0), he writes:
 
