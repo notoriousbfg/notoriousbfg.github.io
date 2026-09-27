@@ -54,7 +54,7 @@ Once again, with very low expectations I watched some more YouTube videos. Throu
     </iframe>
 </div>
 
-On this project I had bought some 200 by 100 by 2400 railway sleepers from Bradfords, another builders merchant near where we live in Somerset. Unfortunately some of these were twisted, which made some aspects of the project tricky later on.
+On this project I had bought some 200 by 100 by 2400 railway sleepers from Bradford's, another builders merchant near where we live in Somerset. Unfortunately some of these were twisted, which made some aspects of the project tricky later on.
 
 ### New tools
 
@@ -144,7 +144,7 @@ This weekend I've been building a workbench so I can continue my DIY & woodworki
 
 <img src="./19.jpg">
 
-For this project I once again enlisted the help of Stuart at Proper DIY. I decided to extend Stuart's simple workbench design with a 100mm overhang on each side for easy clamping. Remembering Sydenhams' slow delivery, I ordered the wood for this project from Bradford. Unfortunately, after a whole kerfuffle in which they delivered the wrong product three times, much of the correct wood I received was twisted. 
+For this project I once again enlisted the help of Stuart at Proper DIY. I decided to extend Stuart's simple workbench design with a 100mm overhang on each side for easy clamping. Remembering Sydenhams' slow delivery, I ordered the wood for this project from Bradford's. Unfortunately, after a whole kerfuffle in which they delivered the wrong product three times, much of the correct wood I received was twisted. 
 
 <div class="iframe-video">
     <iframe src="https://www.youtube.com/embed/O16pe3NiUaU" 
