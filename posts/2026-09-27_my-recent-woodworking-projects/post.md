@@ -4,7 +4,7 @@ When I was fifteen I completed a Design & Tech GCSE specifically in "Resistant M
 
 It hadn't crossed my mind to attempt any woodworking again until my partner Jenny and I realised we needed a gate to prevent our dog going upstairs when we were downstairs. (Our dog Fern is mischievous.) We have employed traditional baby gates in other parts of the house but our stairs have an awkward vertical space between the trim and the railing.
 
-Searching on YouTube, I found a straightforward tutorial with a simple design. What I love about the way this video is presented is that it helped me visualise the gate and therefore _believe_ that I could make it, in addition to being instructive; The creator made it seem so easy.
+Searching on YouTube, I found a straightforward tutorial with a simple design. What I loved about the way this video is presented was that it helped me visualise the gate and therefore _believe_ that I could make it; The creator made it seem so easy.
 
 <div class="iframe-video">
     <iframe src="https://www.youtube.com/embed/mX5wBkNmGEI" 
@@ -15,7 +15,7 @@ Searching on YouTube, I found a straightforward tutorial with a simple design. W
 
 I didn't have a miter saw but some googling led me to believe I would need some kind of workbench, some handsaws, a square, a drill (which I already owned), screws and some wood glue.
 
-For the workbench, I ended up going with the very highly recommended Black & Decker workmate, which I still use on various projects. It's a little low for me though. The handsaws, square and the other bits were fairly easy to buy at Screwfix. Jenny and I drove to Sydenhams for the wood, a builder's merchant. We had to cut down some longer pieces so they'd fit in my Skoda Octavia Spaceback.
+For the workbench, I ended up going with the very highly recommended Black & Decker workmate, which I still use on various projects. It's a little low for me though. The handsaws, square and the other bits were fairly easy to buy at Screwfix. Jenny and I drove to Sydenhams for the wood, a builder's merchant. We had to cut down some longer pieces so they'd fit in my Skoda Octavia spaceback.
 
 ### Nothing to lose
 
@@ -34,7 +34,7 @@ I'm fairly pleased with the gate's fairly straightforward, functional design. To
 <img src="./5.jpg">
 For the bolt, I imrovised a fixing made of two perpendicular pieces, fixed to the wall with three rawlplugs. This part of the gate was the least secure. There's about 1mm of clearance from the gate frame but Jenny and I like that we can often rest the gate in the closed position without locking it, so the dog can come downstairs if we want to give her the option.
 
-We chose to paint the gate with white Dulux satinwood paint. I didn't realise that I probably should have used a primer, but actually the paint took ok. I rushed this part because I was so excited to mount and use my gate and perhaps, on reflection, shouldn't have. This becomes a recurring theme in my other projects; overcome with excitement I often rush the decorating part, compromising the finish.
+We chose to paint the gate with white Dulux satinwood paint. I didn't realise that I probably should have used a primer, but actually the paint took well. I rushed this part because I was so excited to mount and use my gate and perhaps, on reflection, shouldn't have. This becomes a recurring theme in my other projects; overcome with excitement I often rush the decorating part, compromising the finish.
 
 <img src="./3.jpg">
 (The drill scraped a little of the wall as I was fixing the hinges. Unfortunately we don't have any of the paint the previous owner used for this hallway.)
@@ -45,7 +45,7 @@ With my newfound woodworking confidence I wanted to take on another project. In 
 
 <img src="./7.jpg">
 
-Once again, with very low expectations I watched some YouTube videos. This video put me onto the excellent, highly-produced work of Stuart at "Proper DIY". The following video introduced me to a little more "technicality" than I had perhaps been exposed to on the gate project but features some lovely touches, like using some trim to folding the waterproof lining over for clean edges.
+Once again, with very low expectations I watched some more YouTube videos. Through this video I was introduced to the excellent, highly-produced work of Stuart at "Proper DIY". His video on raised sleeper beds exposed me to a little more "technicality" than I had perhaps experienced on the gate project but features some lovely touches, like using some trim to fold the waterproof lining over, for clean edges.
 
 <div class="iframe-video">
     <iframe src="https://www.youtube.com/embed/v_gDrvhty98" 
@@ -74,7 +74,7 @@ Cutting the sleepers was difficult because my saw's maximum cutting depth was 50
 
 ### Tricky cuts
 
-While the patio builder had left a 45 degree angle in the breezeblocks, I poorly judged where my end posts would sit and consequently had to cut a more acute angle for my diagonal piece. As you'll see in the following images, my cuts were so poor I had to create a short of "shim" and fill the gaps with loads of filler. It's "functional" but a little more planning might have produced a better finish.
+While the patio builder had left a 45 degree angle in the breezeblocks, I poorly judged where my end posts would sit and consequently had to cut a more acute angle for my diagonal piece. As you'll see in the following images, my cuts were so poor I had to create a sort of "shim" and fill the gaps with loads of filler. It's "functional" but a little more planning might have produced a better finish.
 
 <img src="./9.jpg">
 
@@ -155,11 +155,13 @@ For this project I once again enlisted the help of Stuart at Proper DIY. I decid
 
 Again, having blocked out a weekend I decided to push on with the project. Part of me really wishes I hadn't; it caused lots of headaches.
 
-Earlier this week I took receipt of my new Bosch Pro GCM 305-216 S miter saw and stand (costing only £314 altogether!) I knew that the workbench would warrant lots of clean, repeatable cuts and so far I've been very impressed with the quality of its cuts. The GTA 2600 stand is much more solid than I'd imagined.
+Earlier this week I took receipt of my new Bosch Pro GCM 305-216 S miter saw and stand (costing only £314 altogether!) I knew that the workbench would warrant lots of clean, repeatable cuts and so far I've been very impressed with its quality. The GTA 2600 stand is much more solid than I'd imagined.
 
 Jenny and I also recently purchased a Titan "shop vac" from Screwfix, which we've used to hoover up soil and sawdust from the garage floor. We can't believe how something so cheap has such vastly superior suction power; I don't exaggerate when I say our quality of life has been improved.
 
-I'm looking forward to attaching a vice to my workbench and possibly adding castors, so that I can reposition it to the middle of our garage for cutting larger sheet materials. It is however, very structurally secure.
+On this project I tried using a (newly acquired) jig for drilling tidy pocket screw holes. While the finish is very good, I got frustrated with the tedium of reclamping and repositioning my workpiece and instead defaulted to using the "turning drill" technique you can see in Stuart's workbench video. It's much quicker and in all likelihood nobody's ever going to see the screwholes on the inside of my workbench but me.
+
+I'm looking forward to attaching a vice to the bench and possibly adding castors on the feet so that I can reposition it to the middle of our garage for cutting larger sheet materials. It is however, very structurally secure.
 
 I'm very proud of what I've been able to accomplish with these projects in only a few months. As I'm sure other homeowners can attest, there are always things that need making or fixing. It's fair to say I have taken to my new occupation well.
 
