@@ -865,6 +865,18 @@ a:hover > .title {
     width: 100%;
 }
 
+.iframe-video {
+    padding-bottom: 56.25%;
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.iframe-video > iframe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
 @keyframes marquee {
     0% {
         transform: translate3d(0, 0, 0);
