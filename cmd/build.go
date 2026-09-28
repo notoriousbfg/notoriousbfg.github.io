@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 	"text/template"
@@ -354,12 +355,13 @@ func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 	}
 
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
-	extensions := parser.Footnotes
+	extensions := parser.Footnotes | parser.AutoHeadingIDs
 	parser := parser.NewWithExtensions(extensions)
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 
 	postContent := string(markdown.ToHTML(contents, parser, renderer))
+	postContent = addHeadingAnchors(postContent)
 	cleanHTML, err := replaceImagePaths(postContent, imageMap)
 	if err != nil {
 		return err
@@ -637,6 +639,22 @@ func getDimensions(imageSize bimg.ImageSize) []int {
 	newHeight := newWidth * aspectRatio
 	dimensions = [...]int{newWidth, newHeight}
 	return dimensions[:]
+}
+
+var headingAnchorRes = func() [6]*regexp.Regexp {
+	var res [6]*regexp.Regexp
+	for level := 1; level <= 6; level++ {
+		res[level-1] = regexp.MustCompile(fmt.Sprintf(`(?s)<h%d id="([^"]+)">(.*?)</h%d>`, level, level))
+	}
+	return res
+}()
+
+func addHeadingAnchors(html string) string {
+	for level := 1; level <= 6; level++ {
+		replacement := fmt.Sprintf(`<h%d id="$1"><a href="#$1" class="heading-anchor">$2</a></h%d>`, level, level)
+		html = headingAnchorRes[level-1].ReplaceAllString(html, replacement)
+	}
+	return html
 }
 
 func replaceImagePaths(html string, imageMap map[string]string) (string, error) {

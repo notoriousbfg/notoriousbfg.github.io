@@ -350,7 +350,7 @@ template {
     --color-accent: #d56e00;
     --color-accent-hover: #08aeff;
 
-    --color-bg: #2A2E33;
+    --color-bg: #1B1E21;
     --color-border-subtle: #bdbdbd2b;
     --color-divider: #616366;
 
@@ -584,6 +584,35 @@ a:hover > .title {
     font-weight: 400;
 }
 
+.posthaven-post-body .heading-anchor {
+    position: relative;
+    display: inline-block;
+    padding-left: 1.25rem;
+    margin-left: -1.25rem;
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.4s ease-in-out;
+}
+
+.posthaven-post-body .heading-anchor:hover,
+.posthaven-post-body .heading-anchor:focus {
+    color: var(--color-accent);
+}
+
+.posthaven-post-body .heading-anchor::before {
+    content: "#";
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.posthaven-post-body .heading-anchor:hover::before,
+.posthaven-post-body .heading-anchor:focus::before {
+    opacity: 1;
+}
+
 .posthaven-post-body blockquote {
     position: relative;
     margin: 10px 30px;
@@ -762,6 +791,15 @@ a:hover > .title {
 .nav {
     display: flex;
     padding: 3px 10px;
+    font-family: var(--font-title);
+}
+
+.nav a {
+    transition: color 0.25s ease-in-out;
+}
+
+.nav a:hover {
+    color: var(--color-accent);
 }
 
 .nav-list {
@@ -965,5 +1003,9 @@ a:hover > .title {
 
     .page-break {
         margin: 30px 0;
+    }
+
+    .heading-anchor::before {
+        display: none;
     }
 }
