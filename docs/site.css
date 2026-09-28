@@ -362,6 +362,10 @@ template {
     --color-player-title: #fffc;
 }
 
+html {
+    background: var(--color-bg);
+}
+
 html,
 body {
     font-family: var(--font-body);
@@ -372,7 +376,6 @@ body {
     font-size: 16px;
     line-height: 1.875rem;
     font-weight: 300;
-    background: var(--color-bg);
 }
 
 body * {
@@ -857,7 +860,7 @@ a:hover > .title {
 
 .player {
     position: fixed;
-    display: block;
+    display: none;
     bottom: 10px;
     left: 10px;
     background: var(--color-player-bg);
@@ -950,6 +953,70 @@ a:hover > .title {
     height: 100%;
 }
 
+.star-field {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    animation: star-twinkle 4s ease-in-out infinite;
+    will-change: transform;
+}
+
+@keyframes star-twinkle {
+    0%,
+    100% {
+        opacity: calc(0.25 * var(--star-opacity-scale, 1));
+    }
+    50% {
+        opacity: calc(0.85 * var(--star-opacity-scale, 1));
+    }
+}
+
+.shooting-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    animation: shooting-star-fly var(--shooting-duration, 0.4s) linear forwards;
+}
+
+@keyframes shooting-star-fly {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(calc(var(--shooting-dx, 200px) / 2), calc(var(--shooting-dy, 0px) / 2));
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--shooting-dx, 200px), var(--shooting-dy, 0px));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .star {
+        animation: none;
+        opacity: 0.3;
+        transform: none !important;
+    }
+}
+
 @keyframes marquee {
     0% {
         transform: translate3d(0, 0, 0);
@@ -997,7 +1064,7 @@ a:hover > .title {
         line-height: 1.75rem;
     }
 
-    .player {
+    .star-field {
         display: none;
     }
 
