@@ -337,17 +337,42 @@ template {
     display: none;
 }
 
+:root {
+    --font-title: "Bricolage Grotesque", sans-serif;
+    --font-body: "Fraunces", serif;
+
+    --color-text: #999;
+    --color-text-strong: #BDBDBD;
+    --color-text-muted: #6d6c77;
+    --color-link-hover: #DDD;
+    --color-logo: #CECBCB;
+
+    --color-accent: #d56e00;
+    --color-accent-hover: #08aeff;
+
+    --color-bg: #2A2E33;
+    --color-border-subtle: #bdbdbd2b;
+    --color-divider: #616366;
+
+    --color-button-bg: #000000;
+    --color-button-bg-hover: #1d1d20;
+
+    --color-player-bg: #1d1d20e5;
+    --color-player-border: white;
+    --color-player-title: #fffc;
+}
+
 html,
 body {
-    font-family: "Inconsolata", monospace;
+    font-family: var(--font-body);
     font-optical-sizing: auto;
     font-style: normal;
     font-variation-settings: "wdth" 100;
-    color: #999;
+    color: var(--color-text);
     font-size: 16px;
     line-height: 1.875rem;
     font-weight: 300;
-    background: #2A2E33;
+    background: var(--color-bg);
 }
 
 body * {
@@ -360,7 +385,7 @@ p, ul {
 
 a {
     text-decoration: none;
-    color: #999;
+    color: var(--color-text);
 }
 
 .container {
@@ -375,13 +400,13 @@ a {
 }
 
 .link-hover:hover {
-    color: #DDD;
+    color: var(--color-link-hover);
 }
 
 .title {
-    color: #BDBDBD;
+    color: var(--color-text-strong);
     margin: 0 0 1.25rem 0;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-title);
     font-weight: 300;
     font-style: normal;
 }
@@ -391,7 +416,7 @@ a > .title {
 } 
 
 a:hover > .title {
-    color: #d56e00;
+    color: var(--color-accent);
 }
 
 .post {
@@ -403,7 +428,7 @@ a:hover > .title {
 }
 
 .post.home-post {
-    border-bottom: 1px solid #bdbdbd2b;
+    border-bottom: 1px solid var(--color-border-subtle);
     padding-bottom: 2rem;
 }
 
@@ -419,14 +444,14 @@ a:hover > .title {
     font-size: 1.875rem;
     line-height: 2.75rem;
     margin-bottom: 0.3125rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-title);
     font-weight: 400;
     font-style: normal;
 }
 
 .post-date,
 .view-count {
-    color: #6d6c77;
+    color: var(--color-text-muted);
     margin: 0;
 }
 
@@ -480,7 +505,7 @@ a:hover > .title {
     font-size: 0.875rem;
     line-height: 1.5rem;
     margin-left: 0.9375rem;
-    color: #6d6c77;
+    color: var(--color-text-muted);
     width: 50%;
 }
 
@@ -526,7 +551,7 @@ a:hover > .title {
 }
 
 .response .byline {
-    color: #6d6c77;
+    color: var(--color-text-muted);
 }
 
 .response:last-child {
@@ -546,7 +571,17 @@ a:hover > .title {
 
 .posthaven-user-menu a {
     margin-left: 10px;
-    color: #6d6c77;
+    color: var(--color-text-muted);
+}
+
+.posthaven-post-body h1,
+.posthaven-post-body h2,
+.posthaven-post-body h3,
+.posthaven-post-body h4,
+.posthaven-post-body h5,
+.posthaven-post-body h6 {
+    font-family: var(--font-title);
+    font-weight: 400;
 }
 
 .posthaven-post-body blockquote {
@@ -555,7 +590,7 @@ a:hover > .title {
 }
 
 .posthaven-post-body hr {
-    background-color: #616366;
+    background-color: var(--color-divider);
     border: none;
     height: 1px;
     margin: 40px 0;
@@ -573,11 +608,11 @@ a:hover > .title {
 
 .posthaven-post-body sup::before {
     content: "[";
-    color: #d56e00;
+    color: var(--color-accent);
 }
 .posthaven-post-body sup::after {
     content: "]";
-    color: #d56e00;
+    color: var(--color-accent);
 }
 
 .posthaven-post-body blockquote::before {
@@ -586,18 +621,18 @@ a:hover > .title {
     display: block;
     width: 3px;
     height: 100%;
-    background: #999;
+    background: var(--color-text);
     border-radius: 10px;
     left: -15px;
 }
 
 .posthaven-post-body a {
-    color: #d56e00;
+    color: var(--color-accent);
     transition: color 0.175s ease-in-out;
 }
 
 .posthaven-post-body a:hover {
-    color: #08aeff;
+    color: var(--color-accent-hover);
 }
 
 .posthaven-post-body img {
@@ -630,11 +665,11 @@ a:hover > .title {
     font-size: 1rem;
     line-height: 1.25rem;
     width: 100%;
-    border: 1px solid #6d6c77;
+    border: 1px solid var(--color-text-muted);
     background: rgba(0, 0, 0, 0);
     resize: none;
     padding: 0.625rem;
-    color: #999;
+    color: var(--color-text);
     border-radius: 3px;
 }
 
@@ -652,16 +687,16 @@ a:hover > .title {
     appearance: none;
     padding: 0.625rem 1rem;
     border-radius: 4px;
-    background: #000000;
+    background: var(--color-button-bg);
     border: none;
-    color: #BDBDBD;
+    color: var(--color-text-strong);
     margin-top: 0.625rem;
     transition: background 0.3s ease-in-out;
     cursor: pointer;
 }
 
 .posthaven-comment-submit:hover {
-    background: #1d1d20;
+    background: var(--color-button-bg-hover);
 }
 
 .posthaven-file-image {
@@ -690,11 +725,11 @@ a:hover > .title {
     font-size: 1rem;
     line-height: 1.25rem;
     width: 100%;
-    border: 1px solid #6d6c77;
+    border: 1px solid var(--color-text-muted);
     background: rgba(0, 0, 0, 0);
     resize: none;
     padding: 0.625rem;
-    color: #999;
+    color: var(--color-text);
     border-radius: 3px;
     margin: 10px 0;
 }
@@ -703,16 +738,16 @@ a:hover > .title {
     appearance: none;
     padding: 0.625rem 1rem;
     border-radius: 4px;
-    background: #000000;
+    background: var(--color-button-bg);
     border: none;
-    color: #BDBDBD;
+    color: var(--color-text-strong);
     margin-top: 0.625rem;
     transition: background 0.3s ease-in-out;
     cursor: pointer;
 }
 
 .subscribe input[type="submit"]:hover {
-    background: #1d1d20;
+    background: var(--color-button-bg-hover);
 }
 
 .footer {
@@ -720,7 +755,7 @@ a:hover > .title {
 }
 
 .logo {
-    color: #CECBCB;
+    color: var(--color-logo);
     font-weight: 700;
 }
 
@@ -749,7 +784,7 @@ a:hover > .title {
 }
 
 .feed-item {
-    border-bottom: 1px solid #bdbdbd2b;
+    border-bottom: 1px solid var(--color-border-subtle);
     padding-bottom: 2rem;
     margin-bottom: 2rem;
 }
@@ -763,7 +798,7 @@ a:hover > .title {
 }
 
 .feed-item a:hover > .post-title {
-    color: #d56e00;
+    color: var(--color-accent);
 }
 
 .feed-item .post-date {
@@ -787,10 +822,10 @@ a:hover > .title {
     display: block;
     bottom: 10px;
     left: 10px;
-    background: #1d1d20e5;
+    background: var(--color-player-bg);
     padding: 10px 15px;
     border-radius: 10px;
-    border: 1px solid white;
+    border: 1px solid var(--color-player-border);
     font-size: 0.875rem;
     width: 100%;
     max-width: 340px;
@@ -836,7 +871,7 @@ a:hover > .title {
 .player-title {
     margin: 0;
     font-weight: bold;
-    color: #fffc;
+    color: var(--color-player-title);
     line-height: 1.5rem;
 }
 
