@@ -338,8 +338,10 @@ template {
 }
 
 :root {
-    --font-title: "Bricolage Grotesque", sans-serif;
+    --font-title: "Bricolage Grotesque", serif;
     --font-body: "Fraunces", serif;
+    --font-weight-title: 300;
+    --font-weight-body: 300;
 
     --color-text: #999;
     --color-text-strong: #BDBDBD;
@@ -375,7 +377,7 @@ body {
     color: var(--color-text);
     font-size: 16px;
     line-height: 1.875rem;
-    font-weight: 300;
+    font-weight: var(--font-weight-body);
 }
 
 body * {
@@ -410,7 +412,7 @@ a {
     color: var(--color-text-strong);
     margin: 0 0 1.25rem 0;
     font-family: var(--font-title);
-    font-weight: 300;
+    font-weight: var(--font-weight-title);
     font-style: normal;
 }
 
@@ -448,7 +450,7 @@ a:hover > .title {
     line-height: 2.75rem;
     margin-bottom: 0.3125rem;
     font-family: var(--font-title);
-    font-weight: 400;
+    font-weight: var(--font-weight-title);
     font-style: normal;
 }
 
@@ -584,7 +586,7 @@ a:hover > .title {
 .posthaven-post-body h5,
 .posthaven-post-body h6 {
     font-family: var(--font-title);
-    font-weight: 400;
+    font-weight: var(--font-weight-title);
 }
 
 .posthaven-post-body .heading-anchor {
