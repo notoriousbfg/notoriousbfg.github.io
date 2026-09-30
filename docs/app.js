@@ -8,6 +8,9 @@
     var ROWS = 17;
     var MIN_SIZE = 1;
     var MAX_SIZE = 2;
+    var LARGE_STAR_CHANCE = 0.15;
+    var LARGE_MIN_SIZE = 2.5;
+    var LARGE_MAX_SIZE = 3;
     var MIN_SPEED = 0.2;
     var MAX_SPEED = 1;
     var RESIZE_DEBOUNCE_MS = 200;
@@ -54,11 +57,12 @@
         for (var row = 0; row < ROWS; row++) {
             for (var col = 0; col < COLUMNS; col++) {
                 var star = document.createElement("div");
-                star.className = "star";
+                var large = Math.random() < LARGE_STAR_CHANCE;
+                star.className = large ? "star star-large" : "star";
 
                 var xPercent = col * cellWidthPercent + random(cellWidthPercent * 0.15, cellWidthPercent * 0.85);
                 var yPercent = row * cellHeightPercent + random(cellHeightPercent * 0.15, cellHeightPercent * 0.85);
-                var size = random(MIN_SIZE, MAX_SIZE);
+                var size = large ? random(LARGE_MIN_SIZE, LARGE_MAX_SIZE) : random(MIN_SIZE, MAX_SIZE);
 
                 var distanceFromCenter = Math.abs(xPercent - 50) / 50;
                 var opacityScale = 0.35 + distanceFromCenter * 0.65;
