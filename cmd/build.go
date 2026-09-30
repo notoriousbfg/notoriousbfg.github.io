@@ -107,35 +107,35 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 
 	go func() {
 		defer wg.Done()
-		if err := BuildArchivePage(site); err != nil {
+		if err := BuildArchivePage(*site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := BuildAboutPage(site); err != nil {
+		if err := BuildAboutPage(*site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := BuildFeedPage(site); err != nil {
+		if err := BuildFeedPage(*site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := BuildRSSFeed(site); err != nil {
+		if err := BuildRSSFeed(*site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := BuildBooksPage(site); err != nil {
+		if err := BuildBooksPage(*site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
@@ -219,6 +219,8 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 }
 
 func BuildHomePage(site *Site) error {
+	site.Config.CurrentPage = "home"
+
 	template := template.Must(
 		template.ParseFiles("./templates/home.html", "./templates/base.html"),
 	)
@@ -275,14 +277,16 @@ func BuildNotFoundPage(site *Site) error {
 	return nil
 }
 
-func BuildArchivePage(site *Site) error {
+func BuildArchivePage(site Site) error {
+	site.Config.CurrentPage = "essays"
+
 	template := template.Must(
 		template.ParseFiles("./templates/archive.html", "./templates/base.html"),
 	)
 
 	var content bytes.Buffer
 	templateErr := template.ExecuteTemplate(&content, "base", PageData{
-		Site: *site,
+		Site: site,
 	})
 	if templateErr != nil {
 		return fmt.Errorf("error generating template: %+v", templateErr)
@@ -308,7 +312,9 @@ func BuildArchivePage(site *Site) error {
 	return nil
 }
 
-func BuildAboutPage(site *Site) error {
+func BuildAboutPage(site Site) error {
+	site.Config.CurrentPage = "about"
+
 	template := template.Must(
 		template.ParseFiles("./templates/about.html", "./templates/base.html"),
 	)
@@ -321,7 +327,7 @@ func BuildAboutPage(site *Site) error {
 
 	var content bytes.Buffer
 	templateErr := template.ExecuteTemplate(&content, "base", PageData{
-		Site: *site,
+		Site: site,
 	})
 	if templateErr != nil {
 		return fmt.Errorf("error generating template: %+v", templateErr)
@@ -347,7 +353,14 @@ func BuildAboutPage(site *Site) error {
 	return nil
 }
 
-func BuildBooksPage(site *Site) error {
+func BuildBooksPage(site Site) error {
+	site.Config.CurrentPage = "reading"
+
+	currentBooks, err := GetCurrentHardcoverBooks(context.Background())
+	if err != nil {
+		return err
+	}
+
 	year := time.Now().Year()
 	books, err := GetHardcoverBooksRead(context.Background(), year)
 	if err != nil {
@@ -355,21 +368,26 @@ func BuildBooksPage(site *Site) error {
 	}
 
 	// the other pages are built at the same time, so the books go on a copy of the site
-	data := PageData{Site: *site}
+	data := PageData{
+		Site: site,
+	}
+	data.Site.CurrentBooks = currentBooks
 	data.Site.Books = books
 	data.Site.BooksYear = year
 
 	return BuildFromTemplate("./templates/books.html", data, "../docs/reading")
 }
 
-func BuildFeedPage(site *Site) error {
+func BuildFeedPage(site Site) error {
+	site.Config.CurrentPage = "timstagram"
+
 	template := template.Must(
 		template.ParseFiles("./templates/feed/feed.html", "./templates/base.html"),
 	)
 
 	var content bytes.Buffer
 	templateErr := template.ExecuteTemplate(&content, "base", PageData{
-		Site: *site,
+		Site: site,
 	})
 	if templateErr != nil {
 		return fmt.Errorf("error generating template: %+v", templateErr)
@@ -553,7 +571,7 @@ func ResizeImages(post *Post, cache Cache, nuke bool) (map[string]string, error)
 	return imageMap, nil
 }
 
-func BuildRSSFeed(site *Site) error {
+func BuildRSSFeed(site Site) error {
 	now := time.Now()
 	feed := &feeds.Feed{
 		Title:       site.Config.Title,
@@ -599,7 +617,7 @@ func ReadJam(site *Site) error {
 		return err
 	}
 	defer jsonFile.Close()
-	bytes, _ := io.ReadAll(jsonFile)
+	bytes, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return err
 	}
@@ -656,7 +674,7 @@ func BuildCache() (Cache, error) {
 		return Cache{}, err
 	}
 	defer jsonFile.Close()
-	bytes, _ := io.ReadAll(jsonFile)
+	bytes, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return Cache{}, err
 	}

@@ -129,7 +129,7 @@ func NewJam(title string, site *Site) error {
 	}
 	fp.WriteString(string(toWrite))
 
-	if buildErr := BuildSite(site, false, false); err != nil {
+	if buildErr := BuildSite(site, false, false); buildErr != nil {
 		return buildErr
 	}
 

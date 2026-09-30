@@ -17,10 +17,27 @@ import (
 const hardcoverUserID = 50871
 
 type CurrentBook struct {
-	Title   string
-	Image   string
-	Authors []string
-	Link    string
+	Title       string
+	Image       string
+	ImageWidth  int
+	ImageHeight int
+	Authors     []string
+	Link        string
+	Started     time.Time
+	Description string
+}
+
+func (b CurrentBook) Byline() string {
+	return strings.Join(b.Authors, ", ")
+}
+
+// the year is only worth mentioning if the book was started in a previous one
+func (b CurrentBook) FormattedStarted() string {
+	format := "jS F"
+	if b.Started.Year() != time.Now().Year() {
+		format = "jS F, Y"
+	}
+	return carbon.Time2Carbon(b.Started).Format(format)
 }
 
 type ReadBook struct {
@@ -57,11 +74,16 @@ type hardcoverResponse struct {
 	} `json:"errors"`
 }
 
+type hardcoverImage struct {
+	URL    string `json:"url"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+}
+
 type hardcoverBook struct {
-	Title string `json:"title"`
-	Image *struct {
-		URL string `json:"url"`
-	} `json:"image"`
+	Title         string          `json:"title"`
+	Description   string          `json:"description"`
+	Image         *hardcoverImage `json:"image"`
 	Contributions []struct {
 		Contribution *string `json:"contribution"`
 		Author       struct {
@@ -77,6 +99,13 @@ func (b hardcoverBook) Link() string {
 
 type hardcoverCurrentBooks struct {
 	UserBooks []struct {
+		FirstStartedDate *string `json:"first_started_reading_date"`
+		Reads            []struct {
+			StartedAt *string `json:"started_at"`
+		} `json:"user_book_reads"`
+		Edition *struct {
+			Image *hardcoverImage `json:"image"`
+		} `json:"edition"`
 		Book hardcoverBook `json:"book"`
 	} `json:"user_books"`
 }
@@ -90,13 +119,22 @@ type hardcoverReadBooks struct {
 }
 
 func GetCurrentHardcoverBook(ctx context.Context) (CurrentBook, error) {
-	var book CurrentBook
+	books, err := GetCurrentHardcoverBooks(ctx)
+	if err != nil || len(books) == 0 {
+		return CurrentBook{}, err
+	}
+	return books[0], nil
+}
+
+// the books being read at the moment, most recently started first
+func GetCurrentHardcoverBooks(ctx context.Context) ([]CurrentBook, error) {
+	var books []CurrentBook
 	err := retryHardcover(ctx, func() error {
 		var err error
-		book, err = fetchBook(ctx)
+		books, err = fetchCurrentBooks(ctx)
 		return err
 	})
-	return book, err
+	return books, err
 }
 
 // the books finished in the given year, highest rated first
@@ -177,14 +215,34 @@ func queryHardcover(ctx context.Context, query string, variables map[string]inte
 	return nil
 }
 
-func fetchBook(ctx context.Context) (CurrentBook, error) {
+func fetchCurrentBooks(ctx context.Context) ([]CurrentBook, error) {
+	// status 2 is "currently reading", privacy setting 1 is "public"
 	query := `
-query GetUserBooks($user_id: Int!) {
-	user_books(where: {user_id: {_eq: $user_id}, status_id: {_eq: 2}}) {
+query GetCurrentBooks($user_id: Int!) {
+	user_books(
+		where: {
+			user_id: {_eq: $user_id},
+			status_id: {_eq: 2},
+			privacy_setting_id: {_eq: 1}
+		},
+		order_by: {first_started_reading_date: desc_nulls_last}
+	) {
+		first_started_reading_date
+		user_book_reads(
+			where: {finished_at: {_is_null: true}},
+			order_by: {started_at: desc_nulls_last},
+			limit: 1
+		) {
+			started_at
+		}
+		edition {
+			image { url width height }
+		}
 		book {
 			title
-			image { url }
-			contributions { author { name } }
+			description
+			image { url width height }
+			contributions { contribution author { name } }
 			slug
 		}
 	}
@@ -195,30 +253,45 @@ query GetUserBooks($user_id: Int!) {
 		"user_id": hardcoverUserID,
 	}, &data)
 	if err != nil {
-		return CurrentBook{}, err
+		return nil, err
 	}
 
-	if len(data.UserBooks) == 0 {
-		return CurrentBook{}, nil
+	books := make([]CurrentBook, 0, len(data.UserBooks))
+	for _, userBook := range data.UserBooks {
+		book := CurrentBook{
+			Title:       userBook.Book.Title,
+			Authors:     bookAuthors(userBook.Book),
+			Link:        userBook.Book.Link(),
+			Description: strings.TrimSpace(userBook.Book.Description),
+		}
+
+		// the cover of the edition being read, if it has one
+		image := userBook.Book.Image
+		if userBook.Edition != nil && userBook.Edition.Image != nil {
+			image = userBook.Edition.Image
+		}
+		if image != nil {
+			book.Image = image.URL
+			book.ImageWidth = image.Width
+			book.ImageHeight = image.Height
+		}
+
+		// a re-read starts later than the date the book was first started
+		started := userBook.FirstStartedDate
+		if len(userBook.Reads) > 0 && userBook.Reads[0].StartedAt != nil {
+			started = userBook.Reads[0].StartedAt
+		}
+		if started != nil {
+			book.Started, err = time.ParseInLocation("2006-01-02", *started, time.Local)
+			if err != nil {
+				return nil, fmt.Errorf("parse started date for \"%s\": %w", book.Title, err)
+			}
+		}
+
+		books = append(books, book)
 	}
 
-	first := data.UserBooks[0].Book
-	authors := make([]string, 0, len(first.Contributions))
-	for _, c := range first.Contributions {
-		authors = append(authors, c.Author.Name)
-	}
-
-	imageURL := ""
-	if first.Image != nil {
-		imageURL = first.Image.URL
-	}
-
-	return CurrentBook{
-		Title:   first.Title,
-		Image:   imageURL,
-		Authors: authors,
-		Link:    first.Link(),
-	}, nil
+	return books, nil
 }
 
 func fetchBooksRead(ctx context.Context, year int) ([]ReadBook, error) {

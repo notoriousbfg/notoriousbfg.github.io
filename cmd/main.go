@@ -12,7 +12,7 @@ import (
 var (
 	site = Site{
 		Config: SiteConfig{
-			Title:       "Tim's Blog",
+			Title:       "tim's blog",
 			Description: "The personal blog of Tim White, Software Engineer from Somerset, UK.",
 			Bio:         "I’m Tim, a Software Engineer from the UK. I like to write code, cook, read & run.",
 		},

@@ -1,4 +1,28 @@
 {{ define "main" }}
+    {{ range .Site.CurrentBooks }}
+        <section class="current-book">
+            {{ if .Image }}
+                <a class="current-book-cover" href="{{ .Link }}" target="_blank">
+                    <img src="{{ .Image }}" alt="Cover of {{ .Title | html }}"{{ if .ImageWidth }} width="{{ .ImageWidth }}" height="{{ .ImageHeight }}"{{ end }}>
+                </a>
+            {{ end }}
+            <div class="current-book-details">
+                <p class="current-book-label">Currently reading</p>
+                <a href="{{ .Link }}" target="_blank">
+                    <h2 class="title book-title">{{ .Title | html }}</h2>
+                </a>
+                <p class="book-meta">
+                    {{ if .Authors }}by {{ .Byline | html }}{{ end }}{{ if and .Authors (not .Started.IsZero) }} &middot; {{ end }}{{ if not .Started.IsZero }}started {{ .FormattedStarted }}{{ end }}
+                </p>
+                {{ if .Description }}
+                    <div class="posthaven-post-body">
+                        <p class="current-book-description">{{ .Description | html }}</p>
+                        <a class="read-more" href="{{ .Link }}" target="_blank">[read more]</a>
+                    </div>
+                {{ end }}
+            </div>
+        </section>
+    {{ end }}
     <h1 class="title archive-title">Books I've read this year</h1>
     {{ range .Site.Books }}
         <article class="book">

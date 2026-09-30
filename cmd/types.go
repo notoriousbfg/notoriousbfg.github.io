@@ -15,11 +15,12 @@ import (
 )
 
 type Site struct {
-	Config      SiteConfig
-	Posts       []Post
-	CurrentBook CurrentBook
-	Books       []ReadBook
-	BooksYear   int
+	Config       SiteConfig
+	Posts        []Post
+	CurrentBook  CurrentBook
+	CurrentBooks []CurrentBook
+	Books        []ReadBook
+	BooksYear    int
 }
 
 func (s Site) PublishedBlogPosts() []Post {
@@ -82,6 +83,7 @@ type SiteConfig struct {
 	Description string
 	Bio         string
 	Player      Track
+	CurrentPage string
 }
 
 type Post struct {
@@ -128,13 +130,14 @@ func (p *Post) HasChanged(cache []CachedPost) bool {
 // this is a bit dumb because it doesn't really reflect the content of the post
 func (p Post) SrcFile() string {
 	var inputFile string
-	if p.Config.Category == "blog" {
+	switch p.Config.Category {
+	case "blog":
 		inputFile = fmt.Sprintf("%s/post.md", p.SrcPath)
-	} else if p.Config.Category == "photo" {
+	case "photo":
 		inputFile = fmt.Sprintf("%s/img.jpg", p.SrcPath)
-	} else if p.Config.Category == "video" {
+	case "video":
 		inputFile = fmt.Sprintf("%s/video.mp4", p.SrcPath)
-	} else {
+	default:
 		log.Printf("warning: post category not specified: %+v\n", p)
 		inputFile = fmt.Sprintf("%s/post.md", p.SrcPath)
 	}

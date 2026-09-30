@@ -446,9 +446,9 @@ a:hover > .title {
 }
 
 .post-title {
-    font-size: 1.875rem;
+    font-size: 1.75rem;
     line-height: 2.75rem;
-    margin-bottom: 0.3125rem;
+    margin-bottom: 0;
     font-family: var(--font-title);
     font-weight: var(--font-weight-title);
     font-style: normal;
@@ -895,6 +895,50 @@ a:hover > .title {
     margin: 0;
 }
 
+.current-book {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 10px;
+}
+
+.current-book-cover {
+    flex: 0 0 130px;
+}
+
+.current-book-cover img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.current-book-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.current-book-label {
+    color: var(--color-accent);
+    font-family: var(--font-title);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 0 0.5rem 0;
+}
+
+.current-book-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+    margin: 0.75rem 0 0 0;
+}
+
 .player {
     position: fixed;
     display: none;
@@ -1111,5 +1155,14 @@ a:hover > .title {
 
     .heading-anchor::before {
         display: none;
+    }
+
+    .current-book {
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .current-book-cover {
+        flex-basis: 90px;
     }
 }
