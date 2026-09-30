@@ -98,6 +98,10 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
+	if err := BuildNotFoundPage(site); err != nil {
+		buildErr = multierror.Append(buildErr, err)
+	}
+
 	var wg sync.WaitGroup
 	wg.Add(5)
 
@@ -131,7 +135,7 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 
 	go func() {
 		defer wg.Done()
-		if err := BuildAboutPage(site); err != nil {
+		if err := BuildBooksPage(site); err != nil {
 			buildErr = multierror.Append(buildErr, err)
 		}
 	}()
@@ -242,6 +246,35 @@ func BuildHomePage(site *Site) error {
 	return nil
 }
 
+// github pages serves 404.html from the root of the site for any missing page
+func BuildNotFoundPage(site *Site) error {
+	template := template.Must(
+		template.ParseFiles("./templates/404.html", "./templates/base.html"),
+	)
+
+	var content bytes.Buffer
+	templateErr := template.ExecuteTemplate(&content, "base", PageData{
+		Site: *site,
+	})
+	if templateErr != nil {
+		return fmt.Errorf("error generating template: %+v", templateErr)
+	}
+
+	newFilePath := "../docs/404.html"
+	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+
+	fp.WriteString(content.String())
+
+	if err := fp.Close(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func BuildArchivePage(site *Site) error {
 	template := template.Must(
 		template.ParseFiles("./templates/archive.html", "./templates/base.html"),
@@ -312,6 +345,21 @@ func BuildAboutPage(site *Site) error {
 	}
 
 	return nil
+}
+
+func BuildBooksPage(site *Site) error {
+	year := time.Now().Year()
+	books, err := GetHardcoverBooksRead(context.Background(), year)
+	if err != nil {
+		return err
+	}
+
+	// the other pages are built at the same time, so the books go on a copy of the site
+	data := PageData{Site: *site}
+	data.Site.Books = books
+	data.Site.BooksYear = year
+
+	return BuildFromTemplate("./templates/books.html", data, "../docs/reading")
 }
 
 func BuildFeedPage(site *Site) error {

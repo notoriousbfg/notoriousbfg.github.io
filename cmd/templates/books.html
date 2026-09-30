@@ -1,13 +1,18 @@
 {{ define "main" }}
-    <h1 class="title archive-title">
-        Books I recommend
-        <a href="https://oku.club/user/notoriousbfg/collection/recs" target="_blank" style="font-size: 1.25rem;">(From oku.club)</a>
-    </h1>
+    <h1 class="title archive-title">Books I've read this year</h1>
     {{ range .Site.Books }}
-        <a class="post-link" href="{{ .Link }}" target="_blank">
-            <h2 class="title" style="margin-bottom: 0;">{{ .Title }}</h2>
-            <p style="margin-bottom: 0;">by {{ .Author.Name }}</p>
-            <p style="margin-bottom: 0;">Read {{ .Published }}</p>
-        </a>
+        <article class="book">
+            <a href="{{ .Link }}" target="_blank">
+                <h2 class="title book-title">{{ .Title | html }}</h2>
+            </a>
+            <p class="book-meta">
+                {{ if .Authors }}by {{ .Byline | html }} &middot; {{ end }}finished {{ .FormattedDate }}
+            </p>
+            {{ if .Rating }}
+                <p class="book-rating" role="img" aria-label="Rated {{ .Rating }} out of 5">{{ .Stars }}</p>
+            {{ end }}
+        </article>
+    {{ else }}
+        <p>I haven't finished anything yet this year.</p>
     {{ end }}
 {{ end }}

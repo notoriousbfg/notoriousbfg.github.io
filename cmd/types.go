@@ -18,6 +18,8 @@ type Site struct {
 	Config      SiteConfig
 	Posts       []Post
 	CurrentBook CurrentBook
+	Books       []ReadBook
+	BooksYear   int
 }
 
 func (s Site) PublishedBlogPosts() []Post {

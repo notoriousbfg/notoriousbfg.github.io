@@ -868,6 +868,33 @@ a:hover > .title {
     font-weight: 400;
 }
 
+.book {
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.book:last-child {
+    border-bottom: none;
+}
+
+.book-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    margin-bottom: 0.25rem;
+}
+
+.book-meta {
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.book-rating {
+    color: var(--color-accent);
+    letter-spacing: 2px;
+    margin: 0;
+}
+
 .player {
     position: fixed;
     display: none;
