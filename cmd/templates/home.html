@@ -11,15 +11,16 @@
                 </p>
             </header>
             <div class="body">
-                <div class="posthaven-post-body">
-                    {{ .Content }}
+                <div class="posthaven-post-body home-post-content">
+                    {{ .ContentPreview }}
+                    <a class="read-more" href="/{{ .Config.Slug }}">[read more]</a>
                 </div>
             </div>
         </article>
     {{ end }}
 </section>
 <div class="home-footer">
-    <a class="link-hover" style="display: inline-block;" href="/essays">More</a>
-    <span class="version">Version: {{ .Site.Version }}</span>
+    <a class="link-hover" style="display: inline-block;" href="/essays">more essays</a>
+    <span class="version">version: {{ .Site.Version }}</span>
 </div>
 {{ end }}

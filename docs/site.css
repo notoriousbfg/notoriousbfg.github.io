@@ -469,7 +469,7 @@ a:hover > .title {
 .post-link {
     flex: 0 0 50%;
     max-width: 50%;
-    margin-bottom: 1.875rem;
+    margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
 }
@@ -479,7 +479,7 @@ a:hover > .title {
 }
 
 .post-link .title {
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
     line-height: 2.275rem;
 }
@@ -587,6 +587,14 @@ a:hover > .title {
 .posthaven-post-body h6 {
     font-family: var(--font-title);
     font-weight: var(--font-weight-title);
+}
+
+.posthaven-post-body.home-post-content p {
+    display: inline;
+}
+
+.read-more {
+    display: inline-block;
 }
 
 .posthaven-post-body .heading-anchor {

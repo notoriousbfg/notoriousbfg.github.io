@@ -85,6 +85,7 @@ type SiteConfig struct {
 type Post struct {
 	Config          PostConfig
 	Content         string
+	ContentPreview  string
 	RenderedContent string
 	SrcPath         string
 	RenderPath      string

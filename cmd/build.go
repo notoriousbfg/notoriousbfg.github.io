@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/gorilla/feeds"
@@ -360,13 +361,15 @@ func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 
-	postContent := string(markdown.ToHTML(contents, parser, renderer))
+	doc := markdown.Parse(contents, parser)
+	postContent := string(markdown.Render(doc, renderer))
 	postContent = addHeadingAnchors(postContent)
 	cleanHTML, err := replaceImagePaths(postContent, imageMap)
 	if err != nil {
 		return err
 	}
 	post.Content = cleanHTML
+	post.ContentPreview = renderPreview(doc, htmlFlags)
 
 	template := template.Must(
 		template.ParseFiles("./templates/post.html", "./templates/base.html"),
@@ -655,6 +658,75 @@ func addHeadingAnchors(html string) string {
 		html = headingAnchorRes[level-1].ReplaceAllString(html, replacement)
 	}
 	return html
+}
+
+var (
+	previewSkipTagRe = regexp.MustCompile(`(?i)^</?(a|img|video|source|iframe)\b`)
+	referenceRe      = regexp.MustCompile(`\s*\[\d+\]`)
+)
+
+// renders the first top-level paragraph that has text in it, leaving out any images, videos,
+// links or references e.g. [1]
+func renderPreview(doc ast.Node, flags html.Flags) string {
+	for _, node := range doc.GetChildren() {
+		para, ok := node.(*ast.Paragraph)
+		if !ok || !hasText(para) {
+			continue
+		}
+		var renderer *html.Renderer
+		renderer = html.NewRenderer(html.RendererOptions{
+			Flags: flags,
+			RenderNodeHook: func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+				return previewHook(renderer, w, node)
+			},
+		})
+		return strings.TrimSpace(string(markdown.Render(para, renderer)))
+	}
+	return ""
+}
+
+// markdown images and links are their own node types, but raw html tags need matching by name
+func previewHook(renderer *html.Renderer, w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
+	switch node := node.(type) {
+	case *ast.Image:
+		return ast.SkipChildren, true
+	case *ast.Link:
+		// footnote references have no text worth keeping
+		if node.NoteID > 0 {
+			return ast.SkipChildren, true
+		}
+		// drop the anchor tag but still render the link text
+		return ast.GoToNext, true
+	case *ast.HTMLSpan:
+		if previewSkipTagRe.Match(node.Literal) {
+			return ast.GoToNext, true
+		}
+	case *ast.Text:
+		if referenceRe.Match(node.Literal) {
+			stripped := *node
+			stripped.Literal = referenceRe.ReplaceAll(node.Literal, nil)
+			renderer.Text(w, &stripped)
+			return ast.GoToNext, true
+		}
+	}
+	return ast.GoToNext, false
+}
+
+func hasText(para *ast.Paragraph) bool {
+	found := false
+	ast.WalkFunc(para, func(node ast.Node, entering bool) ast.WalkStatus {
+		switch node := node.(type) {
+		case *ast.Image:
+			return ast.SkipChildren
+		case *ast.Text:
+			if len(bytes.TrimSpace(node.Literal)) > 0 {
+				found = true
+				return ast.Terminate
+			}
+		}
+		return ast.GoToNext
+	})
+	return found
 }
 
 func replaceImagePaths(html string, imageMap map[string]string) (string, error) {
