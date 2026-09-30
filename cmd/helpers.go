@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -12,31 +13,46 @@ type StringSet map[string]bool
 
 var allowedImageExtensions = []string{".jpg", ".png", ".jpeg"}
 
-func BuildFromTemplate(templateFile string, data PageData, dirName string) error {
+// functions available to every template
+var templateFuncs = template.FuncMap{
+	"lower": strings.ToLower,
+}
+
+// renders a page template inside the base layout
+func RenderTemplate(templateFile string, data PageData) (string, error) {
 	template := template.Must(
-		template.ParseFiles(templateFile, "./templates/base.html"),
+		template.New("page").Funcs(templateFuncs).ParseFiles(templateFile, "./templates/base.html"),
 	)
 
 	var content bytes.Buffer
 	templateErr := template.ExecuteTemplate(&content, "base", data)
 	if templateErr != nil {
-		return fmt.Errorf("error generating template: %+v", templateErr)
+		return "", fmt.Errorf("error generating template: %+v", templateErr)
 	}
 
-	dirErr := os.MkdirAll(dirName, os.ModePerm)
-	if dirErr != nil {
-		return dirErr
-	}
+	return content.String(), nil
+}
 
-	newFilePath := fmt.Sprintf("%s/index.html", dirName)
-	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+// renders a page template and writes it to filePath, creating its directory if needed
+func BuildFromTemplate(templateFile string, data PageData, filePath string) error {
+	content, err := RenderTemplate(templateFile, data)
 	if err != nil {
 		return err
 	}
 
-	fp.WriteString(content.String())
+	dirErr := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
+	if dirErr != nil {
+		return dirErr
+	}
 
-	return nil
+	fp, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+
+	fp.WriteString(content)
+
+	return fp.Close()
 }
 
 func Contains(s []string, e string) bool {

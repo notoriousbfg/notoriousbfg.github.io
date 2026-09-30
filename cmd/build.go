@@ -11,7 +11,6 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-	"text/template"
 	"time"
 
 	"github.com/gomarkdown/markdown"
@@ -94,11 +93,11 @@ func BuildSite(site *Site, nuke bool, buildDraftPosts bool) error {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
-	if err := BuildHomePage(site); err != nil {
+	if err := BuildHomePage(*site); err != nil {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
-	if err := BuildNotFoundPage(site); err != nil {
+	if err := BuildNotFoundPage(*site); err != nil {
 		buildErr = multierror.Append(buildErr, err)
 	}
 
@@ -218,106 +217,27 @@ func BuildPosts(site *Site, nuke bool, buildDraft bool) error {
 	return nil
 }
 
-func BuildHomePage(site *Site) error {
+func BuildHomePage(site Site) error {
 	site.Config.CurrentPage = "home"
 
-	template := template.Must(
-		template.ParseFiles("./templates/home.html", "./templates/base.html"),
-	)
-
-	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PageData{
-		Site: *site,
-	})
-	if templateErr != nil {
-		return fmt.Errorf("error generating template: %+v", templateErr)
-	}
-
-	newFilePath := "../docs/index.html"
-	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	if err != nil {
-		return err
-	}
-
-	fp.WriteString(content.String())
-
-	if err := fp.Close(); err != nil {
-		return err
-	}
-
-	return nil
+	return BuildFromTemplate("./templates/home.html", PageData{Site: site}, "../docs/index.html")
 }
 
 // github pages serves 404.html from the root of the site for any missing page
-func BuildNotFoundPage(site *Site) error {
-	template := template.Must(
-		template.ParseFiles("./templates/404.html", "./templates/base.html"),
-	)
+func BuildNotFoundPage(site Site) error {
+	site.Config.CurrentPage = "not found"
 
-	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PageData{
-		Site: *site,
-	})
-	if templateErr != nil {
-		return fmt.Errorf("error generating template: %+v", templateErr)
-	}
-
-	newFilePath := "../docs/404.html"
-	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	if err != nil {
-		return err
-	}
-
-	fp.WriteString(content.String())
-
-	if err := fp.Close(); err != nil {
-		return err
-	}
-
-	return nil
+	return BuildFromTemplate("./templates/404.html", PageData{Site: site}, "../docs/404.html")
 }
 
 func BuildArchivePage(site Site) error {
 	site.Config.CurrentPage = "essays"
 
-	template := template.Must(
-		template.ParseFiles("./templates/archive.html", "./templates/base.html"),
-	)
-
-	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PageData{
-		Site: site,
-	})
-	if templateErr != nil {
-		return fmt.Errorf("error generating template: %+v", templateErr)
-	}
-
-	err := os.MkdirAll("../docs/essays", os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	newFilePath := "../docs/essays/index.html"
-	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	if err != nil {
-		return err
-	}
-
-	fp.WriteString(content.String())
-
-	if err := fp.Close(); err != nil {
-		return err
-	}
-
-	return nil
+	return BuildFromTemplate("./templates/archive.html", PageData{Site: site}, "../docs/essays/index.html")
 }
 
 func BuildAboutPage(site Site) error {
 	site.Config.CurrentPage = "about"
-
-	template := template.Must(
-		template.ParseFiles("./templates/about.html", "./templates/base.html"),
-	)
 
 	currentBook, err := GetCurrentHardcoverBook(context.Background())
 	if err != nil {
@@ -325,32 +245,7 @@ func BuildAboutPage(site Site) error {
 	}
 	site.CurrentBook = currentBook
 
-	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PageData{
-		Site: site,
-	})
-	if templateErr != nil {
-		return fmt.Errorf("error generating template: %+v", templateErr)
-	}
-
-	err = os.MkdirAll("../docs/about", os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	newFilePath := "../docs/about/index.html"
-	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	if err != nil {
-		return err
-	}
-
-	fp.WriteString(content.String())
-
-	if err := fp.Close(); err != nil {
-		return err
-	}
-
-	return nil
+	return BuildFromTemplate("./templates/about.html", PageData{Site: site}, "../docs/about/index.html")
 }
 
 func BuildBooksPage(site Site) error {
@@ -367,50 +262,17 @@ func BuildBooksPage(site Site) error {
 		return err
 	}
 
-	// the other pages are built at the same time, so the books go on a copy of the site
-	data := PageData{
-		Site: site,
-	}
-	data.Site.CurrentBooks = currentBooks
-	data.Site.Books = books
-	data.Site.BooksYear = year
+	site.CurrentBooks = currentBooks
+	site.Books = books
+	site.BooksYear = year
 
-	return BuildFromTemplate("./templates/books.html", data, "../docs/reading")
+	return BuildFromTemplate("./templates/books.html", PageData{Site: site}, "../docs/reading/index.html")
 }
 
 func BuildFeedPage(site Site) error {
 	site.Config.CurrentPage = "timstagram"
 
-	template := template.Must(
-		template.ParseFiles("./templates/feed/feed.html", "./templates/base.html"),
-	)
-
-	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PageData{
-		Site: site,
-	})
-	if templateErr != nil {
-		return fmt.Errorf("error generating template: %+v", templateErr)
-	}
-
-	err := os.MkdirAll("../docs/feed", os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	newFilePath := "../docs/feed/index.html"
-	fp, err := os.OpenFile(newFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	if err != nil {
-		return err
-	}
-
-	fp.WriteString(content.String())
-
-	if err := fp.Close(); err != nil {
-		return err
-	}
-
-	return nil
+	return BuildFromTemplate("./templates/feed/feed.html", PageData{Site: site}, "../docs/feed/index.html")
 }
 
 func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
@@ -437,20 +299,15 @@ func RenderPost(post *Post, site *Site, imageMap map[string]string) error {
 	post.Content = cleanHTML
 	post.ContentPreview = renderPreview(doc, htmlFlags)
 
-	template := template.Must(
-		template.ParseFiles("./templates/post.html", "./templates/base.html"),
-	)
-
-	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PageData{
+	content, err := RenderTemplate("./templates/post.html", PageData{
 		Post: *post,
 		Site: *site,
 	})
-	if templateErr != nil {
-		return fmt.Errorf("error generating template: \n%+v", templateErr)
+	if err != nil {
+		return err
 	}
 
-	post.RenderedContent = content.String()
+	post.RenderedContent = content
 	return nil
 }
 
@@ -465,20 +322,15 @@ func RenderPhoto(post *Post, site *Site) error {
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
 	post.ContentPreview = ""
 
-	template := template.Must(
-		template.ParseFiles("./templates/feed/photo.html", "./templates/base.html"),
-	)
-
-	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PageData{
+	content, err := RenderTemplate("./templates/feed/photo.html", PageData{
 		Post: *post,
 		Site: *site,
 	})
-	if templateErr != nil {
-		return fmt.Errorf("error generating template: %+v", templateErr)
+	if err != nil {
+		return err
 	}
 
-	post.RenderedContent = content.String()
+	post.RenderedContent = content
 	return nil
 }
 
@@ -501,20 +353,15 @@ func RenderVideo(post *Post, site *Site, cache Cache, nuke bool) error {
 	post.ContentPreview = ""
 	post.Video = fmt.Sprintf("/feed/%s/resized.mp4", post.Config.Slug)
 
-	template := template.Must(
-		template.ParseFiles("./templates/feed/video.html", "./templates/base.html"),
-	)
-
-	var content bytes.Buffer
-	templateErr := template.ExecuteTemplate(&content, "base", PageData{
+	content, err := RenderTemplate("./templates/feed/video.html", PageData{
 		Post: *post,
 		Site: *site,
 	})
-	if templateErr != nil {
-		return fmt.Errorf("error generating template: %+v", templateErr)
+	if err != nil {
+		return err
 	}
 
-	post.RenderedContent = content.String()
+	post.RenderedContent = content
 	return nil
 }
 
