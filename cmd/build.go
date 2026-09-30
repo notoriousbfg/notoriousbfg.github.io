@@ -445,6 +445,7 @@ func RenderPhoto(post *Post, site *Site) error {
 	}
 
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
+	post.ContentPreview = ""
 
 	template := template.Must(
 		template.ParseFiles("./templates/feed/photo.html", "./templates/base.html"),
@@ -479,6 +480,7 @@ func RenderVideo(post *Post, site *Site, cache Cache, nuke bool) error {
 	}
 
 	post.Content = string(markdown.ToHTML(contents, nil, nil))
+	post.ContentPreview = ""
 	post.Video = fmt.Sprintf("/feed/%s/resized.mp4", post.Config.Slug)
 
 	template := template.Must(
