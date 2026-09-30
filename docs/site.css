@@ -1065,6 +1065,17 @@ a:hover > .title {
     }
 }
 
+.black-hole {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    background: #121416;
+    box-shadow: 0 0 12px 4px #121416;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
 .shooting-star {
     position: absolute;
     width: 2px;
