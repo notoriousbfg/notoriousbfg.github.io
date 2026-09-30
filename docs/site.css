@@ -1069,17 +1069,6 @@ a:hover > .title {
     }
 }
 
-.black-hole {
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-radius: 50%;
-    background: #121416;
-    box-shadow: 0 0 12px 4px #121416;
-    opacity: 0;
-    will-change: transform, opacity;
-}
-
 .shooting-star {
     position: absolute;
     width: 2px;
@@ -1102,6 +1091,76 @@ a:hover > .title {
     100% {
         opacity: 0;
         transform: translate(var(--shooting-dx, 200px), var(--shooting-dy, 0px));
+    }
+}
+
+/* softened and haloed, as through a telescope eyepiece */
+.planet {
+    position: absolute;
+    opacity: 0.9;
+    filter: blur(0.7px) drop-shadow(0 0 10px rgba(243, 198, 124, 0.35));
+    will-change: transform;
+}
+
+.planet-saturn {
+    top: 10%;
+    right: 5%;
+    width: 110px;
+}
+
+.planet-mars {
+    bottom: 12%;
+    left: 6%;
+    width: 44px;
+    filter: blur(0.7px) drop-shadow(0 0 8px rgba(238, 138, 78, 0.35));
+}
+
+.planet canvas {
+    position: absolute;
+    display: block;
+}
+
+.satellite {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    will-change: transform;
+}
+
+/* navigation lights, blinking red then blue */
+.satellite::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: #ff4b3a;
+    opacity: 0;
+    animation: satellite-blink 2.4s ease-out infinite;
+}
+
+@keyframes satellite-blink {
+    0% {
+        background: #ff4b3a;
+        opacity: 0.9;
+    }
+    18% {
+        opacity: 0;
+    }
+    50% {
+        background: #4f8dff;
+        opacity: 0.9;
+    }
+    68% {
+        opacity: 0;
+    }
+    100% {
+        background: #ff4b3a;
+        opacity: 0;
     }
 }
 
