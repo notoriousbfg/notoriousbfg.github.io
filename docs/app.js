@@ -39,6 +39,16 @@
     var PLANET_RADIUS = 42;
     var SATURN_SPEED = 0.12;
     var MARS_SPEED = 0.18;
+    // the endurance, a wheel of twelve modules around a docking hub, drifts
+    // nearer than the planets. it is modelled in 3d, in units of the wheel's
+    // radius, and painted afresh each frame as it turns, seen from a little
+    // above its plane
+    var ENDURANCE_SPEED = 0.3;
+    var ENDURANCE_ELEVATION = 0.5;
+    var ENDURANCE_ROLL = -18;
+    var ENDURANCE_SPIN_RATE = 20; // degrees a second
+    var ENDURANCE_EXTENT = 1.2;
+    var ENDURANCE_HULL = [226, 230, 238];
     // the planets are drawn onto canvases wide enough to hold their lensed images,
     // which reach at most an einstein radius beyond the planet and, for the
     // counter-image, an einstein radius around the hole
@@ -82,6 +92,25 @@
     var PLANET_DIGEST_DRAG = 6;
     // clicking again lets everything go, to fly back to where it belongs
     var RELEASE_S = 1.4;
+    // once the hole has eaten the whole sky it stays eaten from page to page,
+    // until a click lets it all go again
+    var SHOW_STARS_KEY = "showStars";
+
+    function readShowStars() {
+        try {
+            return window.localStorage.getItem(SHOW_STARS_KEY) !== "false";
+        } catch (e) {
+            return true;
+        }
+    }
+
+    function storeShowStars(show) {
+        try {
+            window.localStorage.setItem(SHOW_STARS_KEY, show ? "true" : "false");
+        } catch (e) {}
+    }
+
+    var devoured = !reduceMotion && !readShowStars();
 
     var stars = [];
     var planets = [];
@@ -111,7 +140,7 @@
     function buildStars() {
         field.innerHTML = "";
         stars = [];
-        hole.front = 0;
+        hole.front = devoured ? Infinity : 0;
 
         var cellWidthPercent = 100 / COLUMNS;
         var cellHeightPercent = 100 / ROWS;
@@ -159,7 +188,21 @@
             }
         }
 
-        planets = [makePlanet("saturn", buildSaturn(), SATURN_SPEED), makePlanet("mars", buildMars(), MARS_SPEED)];
+        planets = [
+            makePlanet("saturn", buildSaturn(), SATURN_SPEED),
+            makePlanet("mars", buildMars(), MARS_SPEED),
+            makePlanet("endurance", paintEndurance, ENDURANCE_SPEED)
+        ];
+
+        if (devoured) {
+            for (var s = 0; s < stars.length; s++) {
+                stars[s].fall = eatenFall();
+            }
+            for (var p = 0; p < planets.length; p++) {
+                planets[p].fall = eatenFall();
+                planets[p].digested = 1;
+            }
+        }
 
         draw();
     }
@@ -184,9 +227,10 @@
         return "M " + -radius + " " + cy + " A " + radius + " " + radius * RING_TILT + " 0 0 0 " + radius + " " + cy;
     }
 
-    // a planet is rasterised once from its svg into a sprite, then drawn on a
-    // canvas each frame so that the hole can bend it pixel by pixel
-    function makePlanet(name, svg, speed) {
+    // a planet is rasterised into a sprite, then drawn on a canvas each frame so
+    // that the hole can bend it pixel by pixel. the sprite comes either from an
+    // svg, drawn once, or from a function that repaints it as the body turns
+    function makePlanet(name, source, speed) {
         var dpr = Math.min(window.devicePixelRatio || 1, 2);
         var el = document.createElement("div");
         el.className = "planet planet-" + name;
@@ -213,7 +257,11 @@
             x: el.offsetLeft + size / 2,
             y: el.offsetTop + size / 2,
             spriteSize: Math.round(size * dpr),
-            sprite: null,
+            sprite: document.createElement("canvas"),
+            spriteCtx: null,
+            ready: false,
+            paint: null,
+            spin: 0,
             pixels: null,
             output: null,
             drawn: null,
@@ -222,21 +270,56 @@
             digested: 0
         };
 
+        planet.sprite.width = planet.sprite.height = planet.spriteSize;
+        planet.spriteCtx = planet.sprite.getContext("2d");
+        planet.output = planet.ctx.createImageData(canvas.width, canvas.height);
+
+        if (typeof source === "function") {
+            planet.paint = source;
+            planet.paint(planet.spriteCtx, planet.spriteSize, planet.spin);
+            planet.ready = true;
+            return planet;
+        }
+
         var image = new Image();
         image.onload = function () {
-            var sprite = document.createElement("canvas");
-            sprite.width = sprite.height = planet.spriteSize;
-            var spriteContext = sprite.getContext("2d");
-            spriteContext.drawImage(image, 0, 0, planet.spriteSize, planet.spriteSize);
-            planet.sprite = sprite;
-            planet.pixels = spriteContext.getImageData(0, 0, planet.spriteSize, planet.spriteSize).data;
-            planet.output = planet.ctx.createImageData(canvas.width, canvas.height);
+            planet.spriteCtx.drawImage(image, 0, 0, planet.spriteSize, planet.spriteSize);
+            planet.ready = true;
             requestFrame();
         };
-        var sized = svg.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="' + planet.spriteSize + '" height="' + planet.spriteSize + '" ');
+        var sized = source.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="' + planet.spriteSize + '" height="' + planet.spriteSize + '" ');
         image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(sized);
 
         return planet;
+    }
+
+    // turns the bodies that turn, returning true if any of them was in view to be repainted
+    function spinPlanets(elapsedMs) {
+        var scrollY = window.scrollY;
+        var spun = false;
+
+        for (var i = 0; i < planets.length; i++) {
+            var planet = planets[i];
+            if (!planet.paint || (planet.fall && planet.fall.eaten)) continue;
+
+            var y = planet.fall ? hole.y + planet.fall.y : planet.y - scrollY * planet.speed;
+            if (y < -planet.size || y > field.clientHeight + planet.size) continue;
+
+            planet.spin += (ENDURANCE_SPIN_RATE * elapsedMs) / 1000;
+            planet.paint(planet.spriteCtx, planet.spriteSize, planet.spin);
+            planet.pixels = null;
+            planet.drawn = null;
+            spun = true;
+        }
+
+        return spun;
+    }
+
+    function drawSpinningPlanets() {
+        var scrollY = window.scrollY;
+        for (var i = 0; i < planets.length; i++) {
+            if (planets[i].paint) drawPlanet(planets[i], -scrollY * planets[i].speed);
+        }
     }
 
     // `drawn` remembers what the canvas holds, to save redrawing an unchanged planet
@@ -269,7 +352,8 @@
         var offset = half + planet.pad;
         var canvasSize = planet.canvas.width;
         var spriteSize = planet.spriteSize;
-        var pixels = planet.pixels;
+        // the sprite's pixels are read back only when there is bending to do
+        var pixels = planet.pixels || (planet.pixels = planet.spriteCtx.getImageData(0, 0, spriteSize, spriteSize).data);
         var data = planet.output.data;
         var shadowRadius = SHADOW_RADIUS * hole.mass;
         var einsteinSquared = EINSTEIN_RADIUS * EINSTEIN_RADIUS * hole.mass;
@@ -361,7 +445,7 @@
         }
 
         planet.el.style.transform = "translate(" + (centreX - planet.x).toFixed(2) + "px, " + (centreY - planet.y).toFixed(2) + "px)";
-        if (!planet.pixels) return;
+        if (!planet.ready) return;
 
         if (presence <= 0 || scale <= 0.01) {
             blankPlanet(planet);
@@ -379,6 +463,120 @@
         }
 
         drawLensedPlanet(planet, holeX, holeY, scale, presence);
+    }
+
+    // the faces of the endurance that can be seen with the wheel turned to
+    // `spin` degrees, sorted for painting back to front
+    function enduranceFaces(spin) {
+        var sinE = ENDURANCE_ELEVATION;
+        var cosE = Math.sqrt(1 - sinE * sinE);
+        var faces = [];
+
+        function add(a, b, scale) {
+            return [a[0] + b[0] * scale, a[1] + b[1] * scale, a[2] + b[2] * scale];
+        }
+
+        function dot(a, b) {
+            return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+        }
+
+        // the wheel lies in the x-y plane with its axle along z. we look from in
+        // front and above, lit from over the left shoulder
+        var towardsUs = [0, cosE, sinE];
+        var light = add(add([-0.55, 0, 0], [0, -sinE, cosE], 0.6), towardsUs, 0.58);
+
+        function project(point) {
+            return [point[0], point[1] * sinE - point[2] * cosE];
+        }
+
+        // a box sitting at `angle` round the wheel, `distance` out from the axle,
+        // sized along the radius, round the rim and along the axle
+        function addBox(angle, distance, radial, around, axial, tone) {
+            var radians = ((angle + spin) * Math.PI) / 180;
+            var axes = [[Math.cos(radians), Math.sin(radians), 0], [-Math.sin(radians), Math.cos(radians), 0], [0, 0, 1]];
+            var halves = [radial / 2, around / 2, axial / 2];
+            var centre = add([0, 0, 0], axes[0], distance);
+
+            for (var a = 0; a < 3; a++) {
+                for (var side = -1; side <= 1; side += 2) {
+                    var normal = add([0, 0, 0], axes[a], side);
+                    if (dot(normal, towardsUs) <= 0) continue;
+
+                    var b = (a + 1) % 3;
+                    var c = (a + 2) % 3;
+                    var middle = add(centre, normal, halves[a]);
+                    var shade = Math.min(tone * (0.32 + 0.85 * Math.max(0, dot(normal, light))), 1.1);
+
+                    faces.push({
+                        depth: dot(middle, towardsUs),
+                        points: [
+                            project(add(add(middle, axes[b], halves[b]), axes[c], halves[c])),
+                            project(add(add(middle, axes[b], halves[b]), axes[c], -halves[c])),
+                            project(add(add(middle, axes[b], -halves[b]), axes[c], -halves[c])),
+                            project(add(add(middle, axes[b], -halves[b]), axes[c], halves[c]))
+                        ],
+                        colour:
+                            "rgb(" +
+                            ENDURANCE_HULL.map(function (channel) {
+                                return Math.min(Math.round(channel * shade), 255);
+                            }).join(",") +
+                            ")"
+                    });
+                }
+            }
+        }
+
+        var i;
+
+        // the two tunnels from the hub out to the wheel
+        addBox(0, 0.5, 0.74, 0.06, 0.06, 0.75);
+        addBox(180, 0.5, 0.74, 0.06, 0.06, 0.75);
+
+        // the hub, and the four craft docked around it
+        addBox(0, 0, 0.26, 0.26, 0.28, 0.9);
+        for (i = 0; i < 4; i++) {
+            addBox(45 + i * 90, 0.27, 0.22, 0.13, 0.1, 1.05);
+        }
+
+        // the wheel: twelve modules, every third an engine, joined by short tunnels
+        for (i = 0; i < 12; i++) {
+            addBox(i * 30, 1, 0.26, 0.4, 0.22, i % 3 === 0 ? 0.72 : 1);
+            addBox(i * 30 + 15, 1, 0.12, 0.2, 0.1, 0.8);
+        }
+
+        return faces.sort(function (a, b) {
+            return a.depth - b.depth;
+        });
+    }
+
+    function paintEndurance(ctx, size, spin) {
+        var faces = enduranceFaces(spin);
+        var scale = size / (ENDURANCE_EXTENT * 2);
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, size, size);
+        ctx.translate(size / 2, size / 2);
+        ctx.rotate((ENDURANCE_ROLL * Math.PI) / 180);
+        ctx.scale(scale, scale);
+        ctx.lineWidth = 0.008;
+        ctx.lineJoin = "round";
+
+        for (var i = 0; i < faces.length; i++) {
+            var points = faces[i].points;
+            ctx.beginPath();
+            ctx.moveTo(points[0][0], points[0][1]);
+            for (var p = 1; p < points.length; p++) {
+                ctx.lineTo(points[p][0], points[p][1]);
+            }
+            ctx.closePath();
+
+            // the outline, in the face's own colour, closes the hairline gaps between faces
+            ctx.fillStyle = ctx.strokeStyle = faces[i].colour;
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 
     function buildMars() {
@@ -660,6 +858,13 @@
         };
     }
 
+    // something the hole finished off before this page was built
+    function eatenFall() {
+        var fall = startFall(0, 0);
+        fall.eaten = true;
+        return fall;
+    }
+
     function stepFall(fall, dt, drag) {
         var distance = Math.max(fall.distance, 1);
         var pull = FEED_PULL / Math.max(distance, FEED_PULL_FLOOR);
@@ -741,6 +946,11 @@
             }
         }
 
+        if (hole.pinned && !busy && !devoured) {
+            devoured = true;
+            storeShowStars(false);
+        }
+
         return busy;
     }
 
@@ -787,6 +997,9 @@
         hole.pinned = false;
         hole.targetX = x;
         hole.targetY = y;
+
+        devoured = false;
+        storeShowStars(true);
     }
 
     function draw() {
@@ -855,7 +1068,8 @@
         requestTick();
     }
 
-    // the loop keeps running while the hole is settling or feeding, or a satellite is in flight
+    // the loop keeps running while the hole is settling or feeding, a satellite
+    // is in flight, or something in view is turning
     function requestTick() {
         if (frameRequested) return;
         frameRequested = true;
@@ -865,15 +1079,18 @@
             var elapsedMs = lastFrameTime ? Math.min(now - lastFrameTime, 50) : 16;
             var resting = moveHole(elapsedMs);
             var feeding = stepFeeding(elapsedMs);
+            var spun = spinPlanets(elapsedMs);
 
             if (!resting || feeding || redrawNeeded) {
                 draw();
                 redrawNeeded = false;
+            } else if (spun) {
+                drawSpinningPlanets();
             }
 
             moveSatellite(elapsedMs);
 
-            if (resting && !feeding && !satellite) {
+            if (resting && !feeding && !satellite && !spun) {
                 lastFrameTime = 0;
             } else {
                 lastFrameTime = now;
@@ -1138,6 +1355,9 @@
         setTimeout(spawnSatellite, random(SATELLITE_MIN_GAP_MS, SATELLITE_MAX_GAP_MS));
     }
 
+    // a sky eaten on an earlier page stays that way, the hole waiting mid-screen
+    if (devoured) pinHole(window.scrollX + field.clientWidth / 2, window.scrollY + field.clientHeight / 2);
+
     buildStars();
 
     if (!reduceMotion) {
@@ -1148,6 +1368,7 @@
         document.addEventListener("click", onClick);
         scheduleShootingStar();
         scheduleSatellite();
+        requestTick();
     }
 
     var resizeTimer;

@@ -1120,6 +1120,13 @@ a:hover > .title {
     filter: blur(0.7px) drop-shadow(0 0 8px rgba(238, 138, 78, 0.35));
 }
 
+.planet-endurance {
+    top: 30%;
+    left: 10%;
+    width: 51px;
+    filter: blur(0.4px) drop-shadow(0 0 6px rgba(200, 215, 255, 0.25));
+}
+
 .planet canvas {
     position: absolute;
     display: block;
