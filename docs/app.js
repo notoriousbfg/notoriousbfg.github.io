@@ -112,6 +112,63 @@
 
     var devoured = !reduceMotion && !readShowStars();
 
+    // on load the sky slides down into place over our heads, as if the stars
+    // curved around us. each row of stars arrives as an arc, lowest in the
+    // middle of the page with its ends curling up at the sides, far off and
+    // small at the top and nearer and larger as it comes down, before space
+    // settles flat
+    var ARRIVAL_S = 3;
+    var ARRIVAL_DROP = 1.3; // how far above its home the sky starts, in screen heights
+    var ARRIVAL_ARC = 130; // how far the ends of a row rise above its middle
+    var ARRIVAL_FAR = 0.45; // the size of things at the top of the page
+    var ARRIVAL_NEAR = 1.25; // and at the bottom
+    var ARRIVAL_SETTLE = 0.55; // the point in the arrival at which space starts to flatten
+
+    var intro = null;
+
+    function startIntro() {
+        intro = { elapsed: 0, slide: 0, curve: 1 };
+    }
+
+    // moves the sky on, returning true while it is still arriving
+    function stepIntro(elapsedMs) {
+        if (!intro) return false;
+
+        intro.elapsed += elapsedMs / 1000;
+        if (intro.elapsed >= ARRIVAL_S) {
+            intro = null;
+            return true;
+        }
+
+        var progress = intro.elapsed / ARRIVAL_S;
+        intro.slide = 1 - Math.pow(1 - progress, 3);
+        intro.curve = 1 - smoothstep(ARRIVAL_SETTLE, 1, progress);
+        return true;
+    }
+
+    // where something whose home is (x, y) is shown while the sky arrives
+    function arrivalAt(x, y) {
+        var width = field.clientWidth;
+        var height = field.clientHeight;
+        var across = (x - width / 2) / (width / 2);
+        var down = y / height - (1 - intro.slide) * ARRIVAL_DROP;
+
+        // seen along the curve of the sky, the far rows at the top bunch together
+        var bunched = down < 0 ? down : down * down;
+        var near = ARRIVAL_FAR + (ARRIVAL_NEAR - ARRIVAL_FAR) * Math.min(Math.max(down, 0), 1);
+        var size = 1 + (near - 1) * intro.curve;
+
+        var shownX = width / 2 + (x - width / 2) * size;
+        var shownY = height * (down + (bunched - down) * intro.curve) - ARRIVAL_ARC * across * across * intro.curve;
+
+        return {
+            dx: shownX - x,
+            dy: shownY - y,
+            size: size,
+            gain: 0.4 + 0.6 * size
+        };
+    }
+
     var stars = [];
     var planets = [];
     var hole = {
@@ -444,7 +501,17 @@
             presence = releasePresence(planet.release);
         }
 
-        planet.el.style.transform = "translate(" + (centreX - planet.x).toFixed(2) + "px, " + (centreY - planet.y).toFixed(2) + "px)";
+        var transform = "translate(" + (centreX - planet.x).toFixed(2) + "px, " + (centreY - planet.y).toFixed(2) + "px)";
+
+        // while the sky arrives, the planets come down with it
+        if (intro && !planet.fall) {
+            var arrival = arrivalAt(centreX, centreY);
+            transform =
+                "translate(" + (centreX + arrival.dx - planet.x).toFixed(2) + "px, " + (centreY + arrival.dy - planet.y).toFixed(2) + "px)" +
+                " scale(" + arrival.size.toFixed(3) + ")";
+        }
+
+        planet.el.style.transform = transform;
         if (!planet.ready) return;
 
         if (presence <= 0 || scale <= 0.01) {
@@ -762,9 +829,25 @@
         };
     }
 
+    // a star on its way down as the sky arrives
+    function drawArrivingStar(star, parallaxY) {
+        var arrival = arrivalAt(star.x, star.y + parallaxY);
+
+        hideGhost(star);
+        star.el.style.transform =
+            "translate(" + arrival.dx.toFixed(2) + "px, " + (parallaxY + arrival.dy).toFixed(2) + "px) scale(" + arrival.size.toFixed(3) + ")";
+        setStarOpacity(star, Math.min(star.opacityScale * arrival.gain, MAX_BRIGHTNESS));
+        setStarSteady(star, true);
+    }
+
     function drawStar(star, parallaxY) {
         if (star.fall) {
             drawFallingStar(star);
+            return;
+        }
+
+        if (intro) {
+            drawArrivingStar(star, parallaxY);
             return;
         }
 
@@ -1035,6 +1118,8 @@
             hole.targetMass = 1;
         } else {
             hole.targetMass = hole.summoned ? smoothstep(HOLE_GONE_STAR_SHARE, HOLE_FULL_STAR_SHARE, shareOfStarsOnScreen()) : 0;
+            // the hole waits for the sky to finish arriving
+            if (intro) hole.targetMass = 0;
         }
 
         var follow = 1 - Math.exp(-elapsedMs / HOLE_FOLLOW_MS);
@@ -1080,8 +1165,9 @@
             var resting = moveHole(elapsedMs);
             var feeding = stepFeeding(elapsedMs);
             var spun = spinPlanets(elapsedMs);
+            var arriving = stepIntro(elapsedMs);
 
-            if (!resting || feeding || redrawNeeded) {
+            if (!resting || feeding || arriving || redrawNeeded) {
                 draw();
                 redrawNeeded = false;
             } else if (spun) {
@@ -1090,7 +1176,7 @@
 
             moveSatellite(elapsedMs);
 
-            if (resting && !feeding && !satellite && !spun) {
+            if (resting && !feeding && !arriving && !satellite && !spun) {
                 lastFrameTime = 0;
             } else {
                 lastFrameTime = now;
@@ -1356,7 +1442,11 @@
     }
 
     // a sky eaten on an earlier page stays that way, the hole waiting mid-screen
-    if (devoured) pinHole(window.scrollX + field.clientWidth / 2, window.scrollY + field.clientHeight / 2);
+    if (devoured) {
+        pinHole(window.scrollX + field.clientWidth / 2, window.scrollY + field.clientHeight / 2);
+    } else if (!reduceMotion) {
+        startIntro();
+    }
 
     buildStars();
 
