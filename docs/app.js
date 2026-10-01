@@ -68,9 +68,36 @@
         { height: 0.58, width: 3, opacity: 0.16 }
     ];
 
+    // clicking empty space pins the hole to the page, where it starts to feed. a
+    // front spreads out from it, and whatever the front reaches spirals in: the
+    // pull is FEED_PULL / distance, with a sideways kick and some drag
+    var FEED_FRONT_SPEED = 260;
+    var FEED_PULL = 110000;
+    var FEED_PULL_FLOOR = 30;
+    var FEED_SWIRL = 150;
+    var FEED_DRAG = 0.9;
+    var FEED_FADE_PX = 36;
+    var FEED_STREAK_SPEED = 110;
+    var PLANET_DIGEST_S = 1.6;
+    var PLANET_DIGEST_DRAG = 6;
+    // clicking again lets everything go, to fly back to where it belongs
+    var RELEASE_S = 1.4;
+
     var stars = [];
     var planets = [];
-    var hole = { x: 0, y: 0, targetX: 0, targetY: 0, mass: 0, targetMass: 0, summoned: false };
+    var hole = {
+        x: 0,
+        y: 0,
+        targetX: 0,
+        targetY: 0,
+        mass: 0,
+        targetMass: 0,
+        summoned: false,
+        pinned: false,
+        pageX: 0,
+        pageY: 0,
+        front: 0
+    };
 
     function random(min, max) {
         return min + Math.random() * (max - min);
@@ -84,6 +111,7 @@
     function buildStars() {
         field.innerHTML = "";
         stars = [];
+        hole.front = 0;
 
         var cellWidthPercent = 100 / COLUMNS;
         var cellHeightPercent = 100 / ROWS;
@@ -118,7 +146,10 @@
                         el: star,
                         ghost: null,
                         ghostVisible: false,
-                        lensed: false,
+                        steady: false,
+                        opacityText: null,
+                        fall: null,
+                        release: null,
                         x: (xPercent / 100) * fieldWidth + size / 2,
                         y: (yPercent / 100) * fieldHeight + size / 2,
                         speed: random(MIN_SPEED, MAX_SPEED),
@@ -185,7 +216,10 @@
             sprite: null,
             pixels: null,
             output: null,
-            plain: false
+            drawn: null,
+            fall: null,
+            release: null,
+            digested: 0
         };
 
         var image = new Image();
@@ -205,17 +239,31 @@
         return planet;
     }
 
-    function drawPlainPlanet(planet) {
+    // `drawn` remembers what the canvas holds, to save redrawing an unchanged planet
+    function drawPlainPlanet(planet, scale, presence) {
+        var key = scale.toFixed(3) + "/" + presence.toFixed(3);
+        if (planet.drawn === key) return;
+
+        var size = planet.spriteSize * scale;
+        var corner = planet.pad * planet.dpr + (planet.spriteSize - size) / 2;
         planet.ctx.clearRect(0, 0, planet.canvas.width, planet.canvas.height);
-        planet.ctx.drawImage(planet.sprite, planet.pad * planet.dpr, planet.pad * planet.dpr);
-        planet.plain = true;
+        planet.ctx.globalAlpha = presence;
+        planet.ctx.drawImage(planet.sprite, corner, corner, size, size);
+        planet.ctx.globalAlpha = 1;
+        planet.drawn = key;
+    }
+
+    function blankPlanet(planet) {
+        if (planet.drawn === "blank") return;
+        planet.ctx.clearRect(0, 0, planet.canvas.width, planet.canvas.height);
+        planet.drawn = "blank";
     }
 
     // works the lens backwards: each pixel of the image asks which point of the
     // planet it shows, which for a point mass is θ(1 - E²/|θ|²) relative to the
     // hole. that naturally yields both the bent primary image and the
     // counter-image inside the einstein ring
-    function drawLensedPlanet(planet, holeX, holeY) {
+    function drawLensedPlanet(planet, holeX, holeY, scale, presence) {
         var dpr = planet.dpr;
         var half = planet.size / 2;
         var offset = half + planet.pad;
@@ -227,7 +275,7 @@
         var einsteinSquared = EINSTEIN_RADIUS * EINSTEIN_RADIUS * hole.mass;
 
         // only the pixels that can hold an image are worth visiting
-        var primaryReach = (half + EINSTEIN_RADIUS + 4) * dpr;
+        var primaryReach = (half * scale + EINSTEIN_RADIUS + 4) * dpr;
         var counterReach = (EINSTEIN_RADIUS + 4) * dpr;
         var centre = canvasSize / 2;
         var holeCanvasX = centre + holeX * dpr;
@@ -251,8 +299,8 @@
 
                 var strength = 1 - smoothstep(LENS_FULL_RADIUS, LENS_END_RADIUS, theta);
                 var bend = 1 - Math.pow(Math.sqrt(einsteinSquared * strength) / theta, PLANET_LENS_SHARPNESS + 1);
-                var sx = (holeX + thetaX * bend + half) * dpr - 0.5;
-                var sy = (holeY + thetaY * bend + half) * dpr - 0.5;
+                var sx = ((holeX + thetaX * bend) / scale + half) * dpr - 0.5;
+                var sy = ((holeY + thetaY * bend) / scale + half) * dpr - 0.5;
 
                 if (sx < 0 || sy < 0 || sx > spriteSize - 1 || sy > spriteSize - 1) continue;
 
@@ -284,29 +332,53 @@
                 data[o] = (pixels[i00] * a00 + pixels[i10] * a10 + pixels[i01] * a01 + pixels[i11] * a11) / alpha;
                 data[o + 1] = (pixels[i00 + 1] * a00 + pixels[i10 + 1] * a10 + pixels[i01 + 1] * a01 + pixels[i11 + 1] * a11) / alpha;
                 data[o + 2] = (pixels[i00 + 2] * a00 + pixels[i10 + 2] * a10 + pixels[i01 + 2] * a01 + pixels[i11 + 2] * a11) / alpha;
-                data[o + 3] = alpha * fade;
+                data[o + 3] = alpha * fade * presence;
             }
         }
 
         planet.ctx.putImageData(planet.output, 0, 0);
-        planet.plain = false;
+        planet.drawn = null;
     }
 
     function drawPlanet(planet, parallaxY) {
-        planet.el.style.transform = "translateY(" + parallaxY + "px)";
+        // where the planet's centre is: falling into the hole, flying home, or at rest
+        var centreX = planet.x;
+        var centreY = planet.y + parallaxY;
+        var scale = 1;
+        var presence = 1;
+
+        if (planet.fall) {
+            centreX = hole.x + planet.fall.x;
+            centreY = hole.y + planet.fall.y;
+            scale = 1 - planet.digested;
+            presence = planet.fall.eaten ? 0 : 1;
+        } else if (planet.release) {
+            var left = releaseLeft(planet.release);
+            centreX += planet.release.offsetX * left;
+            centreY += planet.release.offsetY * left;
+            scale = 1 - planet.release.digested * left;
+            presence = releasePresence(planet.release);
+        }
+
+        planet.el.style.transform = "translate(" + (centreX - planet.x).toFixed(2) + "px, " + (centreY - planet.y).toFixed(2) + "px)";
         if (!planet.pixels) return;
 
-        // the hole's position relative to the planet's centre
-        var holeX = hole.x - planet.x;
-        var holeY = hole.y - (planet.y + parallaxY);
-        var reach = planet.size / 2 + LENS_END_RADIUS;
-
-        if (hole.mass <= 0 || holeX * holeX + holeY * holeY > reach * reach) {
-            if (!planet.plain) drawPlainPlanet(planet);
+        if (presence <= 0 || scale <= 0.01) {
+            blankPlanet(planet);
             return;
         }
 
-        drawLensedPlanet(planet, holeX, holeY);
+        // the hole's position relative to the planet's centre
+        var holeX = hole.x - centreX;
+        var holeY = hole.y - centreY;
+        var reach = planet.size / 2 + LENS_END_RADIUS;
+
+        if (hole.mass <= 0 || holeX * holeX + holeY * holeY > reach * reach) {
+            drawPlainPlanet(planet, scale, presence);
+            return;
+        }
+
+        drawLensedPlanet(planet, holeX, holeY, scale, presence);
     }
 
     function buildMars() {
@@ -417,15 +489,56 @@
         star.ghostVisible = false;
     }
 
-    function unlensStar(star, parallaxY) {
-        star.el.style.transform = "translateY(" + parallaxY + "px)";
-        hideGhost(star);
+    function setStarOpacity(star, opacity) {
+        var text = opacity.toFixed(3);
+        if (text === star.opacityText) return;
+        star.el.style.setProperty("--star-opacity-scale", text);
+        star.opacityText = text;
+    }
 
-        if (star.lensed) {
-            star.el.style.setProperty("--star-opacity-scale", star.opacityScale);
-            star.el.style.animationPlayState = "";
-            star.lensed = false;
+    // stars hold steady while in the hole's pull, picking their twinkle back up once free
+    function setStarSteady(star, steady) {
+        if (star.steady === steady) return;
+        star.el.style.animationPlayState = steady ? "paused" : "";
+        star.steady = steady;
+    }
+
+    // how much of a released body's journey home is left, easing as it arrives
+    function releaseLeft(release) {
+        return release.left * release.left * release.left;
+    }
+
+    function releasePresence(release) {
+        return release.presence + (1 - release.presence) * (1 - release.left);
+    }
+
+    function unlensStar(star, x, y, presence) {
+        star.el.style.transform = x ? "translate(" + x.toFixed(2) + "px, " + y.toFixed(2) + "px)" : "translateY(" + y + "px)";
+        hideGhost(star);
+        setStarOpacity(star, star.opacityScale * presence);
+        setStarSteady(star, presence < 1);
+    }
+
+    // a star on its way into the hole, drawn as a streak along its path
+    function drawFallingStar(star) {
+        var fall = star.fall;
+        hideGhost(star);
+        setStarSteady(star, true);
+
+        if (fall.eaten) {
+            setStarOpacity(star, 0);
+            return;
         }
+
+        var speed = Math.sqrt(fall.vx * fall.vx + fall.vy * fall.vy);
+        star.el.style.transform = lensTransform(
+            hole.x + fall.x - star.x,
+            hole.y + fall.y - star.y,
+            Math.atan2(fall.vy, fall.vx) + Math.PI / 2,
+            1,
+            Math.min(1 + speed / FEED_STREAK_SPEED, MAX_STRETCH)
+        );
+        setStarOpacity(star, star.opacityScale * fallPresence(fall));
     }
 
     // where the hole moves something sitting at (x, y), or null when it is out of the pull
@@ -451,11 +564,28 @@
         };
     }
 
-    function lensStar(star, parallaxY) {
-        var lens = lensAt(star.x, star.y + parallaxY);
+    function drawStar(star, parallaxY) {
+        if (star.fall) {
+            drawFallingStar(star);
+            return;
+        }
+
+        // a released star flies home from wherever the hole let go of it
+        var offsetX = 0;
+        var offsetY = 0;
+        var presence = 1;
+
+        if (star.release) {
+            var left = releaseLeft(star.release);
+            offsetX = star.release.offsetX * left;
+            offsetY = star.release.offsetY * left;
+            presence = releasePresence(star.release);
+        }
+
+        var lens = hole.mass > 0 ? lensAt(star.x, star.y + parallaxY) : null;
 
         if (!lens) {
-            unlensStar(star, parallaxY);
+            unlensStar(star, offsetX, parallaxY + offsetY, presence);
             return;
         }
 
@@ -471,13 +601,19 @@
         // lensing magnifies as well as distorts, so stars brighten as they near the ring
         var magnification = imageDistance / distance;
 
-        star.el.style.transform = lensTransform(push * unitX, parallaxY + push * unitY, angle, 1, stretchFor(imageDistance, distance));
-        star.el.style.setProperty("--star-opacity-scale", Math.min(star.opacityScale * magnification, MAX_BRIGHTNESS).toFixed(3));
+        star.el.style.transform = lensTransform(
+            offsetX + push * unitX,
+            offsetY + parallaxY + push * unitY,
+            angle,
+            1,
+            stretchFor(imageDistance, distance)
+        );
+        setStarOpacity(star, Math.min(star.opacityScale * magnification, MAX_BRIGHTNESS) * presence);
+        setStarSteady(star, true);
 
-        // stars hold steady while in the hole's pull, picking their twinkle back up once free
-        if (!star.lensed) {
-            star.el.style.animationPlayState = "paused";
-            star.lensed = true;
+        if (star.release) {
+            hideGhost(star);
+            return;
         }
 
         // the second image sits inside the einstein ring, opposite the star,
@@ -510,19 +646,154 @@
         star.ghostVisible = true;
     }
 
+    // a body the feeding hole has caught, tracked relative to the hole. it starts
+    // from where it was seen, moving sideways so that it spirals in
+    function startFall(x, y) {
+        var distance = Math.max(Math.sqrt(x * x + y * y), 1);
+        return {
+            x: x,
+            y: y,
+            vx: (-y / distance) * FEED_SWIRL,
+            vy: (x / distance) * FEED_SWIRL,
+            distance: distance,
+            eaten: false
+        };
+    }
+
+    function stepFall(fall, dt, drag) {
+        var distance = Math.max(fall.distance, 1);
+        var pull = FEED_PULL / Math.max(distance, FEED_PULL_FLOOR);
+        var slow = Math.exp(-drag * dt);
+
+        fall.vx = (fall.vx - (fall.x / distance) * pull * dt) * slow;
+        fall.vy = (fall.vy - (fall.y / distance) * pull * dt) * slow;
+        fall.x += fall.vx * dt;
+        fall.y += fall.vy * dt;
+        fall.distance = Math.sqrt(fall.x * fall.x + fall.y * fall.y);
+    }
+
+    // falling bodies fade out as they cross into the shadow
+    function fallPresence(fall) {
+        return fall.eaten ? 0 : smoothstep(SHADOW_RADIUS, SHADOW_RADIUS + FEED_FADE_PX, fall.distance);
+    }
+
+    // where the hole currently shows something that sits at (x, y), relative to the hole
+    function caughtAt(x, y) {
+        var lens = lensAt(x, y);
+        var bend = lens ? lens.imageDistance / lens.distance : 1;
+        return startFall((x - hole.x) * bend, (y - hole.y) * bend);
+    }
+
+    // advances the feast and any flights home, returning true while there is more to come
+    function stepFeeding(elapsedMs) {
+        var dt = elapsedMs / 1000;
+        var scrollY = window.scrollY;
+        var busy = false;
+        var i, x, y, dx, dy;
+
+        if (hole.pinned) hole.front += FEED_FRONT_SPEED * dt;
+
+        for (i = 0; i < stars.length; i++) {
+            var star = stars[i];
+
+            if (star.fall) {
+                if (star.fall.eaten) continue;
+                stepFall(star.fall, dt, FEED_DRAG);
+                if (star.fall.distance < SHADOW_RADIUS) star.fall.eaten = true;
+                busy = true;
+            } else if (hole.pinned) {
+                x = star.x;
+                y = star.y - scrollY * star.speed;
+                dx = x - hole.x;
+                dy = y - hole.y;
+                if (dx * dx + dy * dy < hole.front * hole.front) star.fall = caughtAt(x, y);
+                busy = true;
+            } else if (star.release) {
+                star.release.left -= dt / RELEASE_S;
+                if (star.release.left <= 0) star.release = null;
+                busy = true;
+            }
+        }
+
+        for (i = 0; i < planets.length; i++) {
+            var planet = planets[i];
+
+            if (planet.fall) {
+                if (planet.fall.eaten) continue;
+
+                // once within the ring a planet settles onto the hole and is slowly consumed
+                var digesting = planet.fall.distance < EINSTEIN_RADIUS;
+                stepFall(planet.fall, dt, digesting ? PLANET_DIGEST_DRAG : FEED_DRAG);
+                if (digesting) planet.digested = Math.min(planet.digested + dt / PLANET_DIGEST_S, 1);
+                if (planet.digested >= 1) planet.fall.eaten = true;
+                busy = true;
+            } else if (hole.pinned) {
+                x = planet.x;
+                y = planet.y - scrollY * planet.speed;
+                dx = x - hole.x;
+                dy = y - hole.y;
+                if (dx * dx + dy * dy < hole.front * hole.front) planet.fall = startFall(dx, dy);
+                busy = true;
+            } else if (planet.release) {
+                planet.release.left -= dt / RELEASE_S;
+                if (planet.release.left <= 0) planet.release = null;
+                busy = true;
+            }
+        }
+
+        return busy;
+    }
+
+    function pinHole(pageX, pageY) {
+        hole.pinned = true;
+        hole.pageX = pageX;
+        hole.pageY = pageY;
+        hole.front = 0;
+    }
+
+    // lets go of everything the hole has caught or eaten, and returns the hole to the mouse
+    function releaseHole(x, y) {
+        var scrollY = window.scrollY;
+        var i;
+
+        for (i = 0; i < stars.length; i++) {
+            var star = stars[i];
+            if (!star.fall) continue;
+
+            star.release = {
+                offsetX: hole.x + (star.fall.eaten ? 0 : star.fall.x) - star.x,
+                offsetY: hole.y + (star.fall.eaten ? 0 : star.fall.y) - (star.y - scrollY * star.speed),
+                presence: fallPresence(star.fall),
+                left: 1
+            };
+            star.fall = null;
+        }
+
+        for (i = 0; i < planets.length; i++) {
+            var planet = planets[i];
+            if (!planet.fall) continue;
+
+            planet.release = {
+                offsetX: hole.x + planet.fall.x - planet.x,
+                offsetY: hole.y + planet.fall.y - (planet.y - scrollY * planet.speed),
+                presence: planet.fall.eaten ? 0 : 1,
+                digested: planet.digested,
+                left: 1
+            };
+            planet.fall = null;
+            planet.digested = 0;
+        }
+
+        hole.pinned = false;
+        hole.targetX = x;
+        hole.targetY = y;
+    }
+
     function draw() {
         var scrollY = window.scrollY;
-        var lensing = hole.mass > 0;
 
         for (var i = 0; i < stars.length; i++) {
-            var star = stars[i];
-            var parallaxY = -scrollY * star.speed;
-
-            if (lensing) {
-                lensStar(star, parallaxY);
-            } else {
-                unlensStar(star, parallaxY);
-            }
+            drawStar(stars[i], -scrollY * stars[i].speed);
         }
 
         for (var p = 0; p < planets.length; p++) {
@@ -544,7 +815,14 @@
 
     // eases the hole towards the mouse, returning true once it has come to rest
     function moveHole(elapsedMs) {
-        hole.targetMass = hole.summoned ? smoothstep(HOLE_GONE_STAR_SHARE, HOLE_FULL_STAR_SHARE, shareOfStarsOnScreen()) : 0;
+        if (hole.pinned) {
+            // a pinned hole belongs to the page, and scrolls with it
+            hole.x = hole.targetX = hole.pageX - window.scrollX;
+            hole.y = hole.targetY = hole.pageY - window.scrollY;
+            hole.targetMass = 1;
+        } else {
+            hole.targetMass = hole.summoned ? smoothstep(HOLE_GONE_STAR_SHARE, HOLE_FULL_STAR_SHARE, shareOfStarsOnScreen()) : 0;
+        }
 
         var follow = 1 - Math.exp(-elapsedMs / HOLE_FOLLOW_MS);
         var grow = 1 - Math.exp(-elapsedMs / HOLE_GROW_MS);
@@ -577,7 +855,7 @@
         requestTick();
     }
 
-    // the loop keeps running while the hole is settling or a satellite is in flight
+    // the loop keeps running while the hole is settling or feeding, or a satellite is in flight
     function requestTick() {
         if (frameRequested) return;
         frameRequested = true;
@@ -586,15 +864,16 @@
 
             var elapsedMs = lastFrameTime ? Math.min(now - lastFrameTime, 50) : 16;
             var resting = moveHole(elapsedMs);
+            var feeding = stepFeeding(elapsedMs);
 
-            if (!resting || redrawNeeded) {
+            if (!resting || feeding || redrawNeeded) {
                 draw();
                 redrawNeeded = false;
             }
 
             moveSatellite(elapsedMs);
 
-            if (resting && !satellite) {
+            if (resting && !feeding && !satellite) {
                 lastFrameTime = 0;
             } else {
                 lastFrameTime = now;
@@ -604,7 +883,7 @@
     }
 
     function onPointerMove(event) {
-        if (event.pointerType === "touch") return;
+        if (event.pointerType === "touch" || hole.pinned) return;
 
         hole.targetX = event.clientX;
         hole.targetY = event.clientY;
@@ -621,6 +900,66 @@
 
     function onPointerLeave() {
         hole.summoned = false;
+        requestFrame();
+    }
+
+    // things a click is meant for, which should not also move the hole
+    var CLICKABLE =
+        "a, button, input, textarea, select, label, summary, video, audio, img, picture, svg, canvas, iframe, embed, object, hr, [role='button'], [contenteditable], [tabindex]";
+
+    function textUnderPoint(el, x, y) {
+        var range = document.createRange();
+
+        for (var node = el.firstChild; node; node = node.nextSibling) {
+            if (node.nodeType !== 3 || !node.nodeValue.trim()) continue;
+
+            range.selectNodeContents(node);
+            var rects = range.getClientRects();
+            for (var i = 0; i < rects.length; i++) {
+                if (x >= rects[i].left && x <= rects[i].right && y >= rects[i].top && y <= rects[i].bottom) return true;
+            }
+        }
+
+        return false;
+    }
+
+    // empty space is anywhere a click would otherwise do nothing: not on a link,
+    // an image, a video or the like, and not on a run of text
+    function isEmptySpace(event) {
+        var target = event.target;
+        if (!target || !target.closest || target.closest(CLICKABLE)) return false;
+        if (window.getComputedStyle(target).cursor === "pointer") return false;
+        return !textUnderPoint(target, event.clientX, event.clientY);
+    }
+
+    function selectedText() {
+        var selection = window.getSelection();
+        return selection && !selection.isCollapsed ? selection.toString() : "";
+    }
+
+    var pressedOnTouch = false;
+    var pressedWithText = "";
+
+    function onPointerDown(event) {
+        pressedOnTouch = event.pointerType === "touch";
+        pressedWithText = selectedText();
+    }
+
+    // a click on empty space pins the hole there to feed, and the next lets everything go
+    function onClick(event) {
+        // a press that ends with newly selected text was a selection, not a click.
+        // one that merely clears a selection, or leaves it alone, still counts
+        var text = selectedText();
+        var selecting = text !== "" && text !== pressedWithText;
+        if (pressedOnTouch || selecting || event.button !== 0 || !isEmptySpace(event)) return;
+
+        if (hole.pinned) {
+            releaseHole(event.clientX, event.clientY);
+        } else {
+            pinHole(event.pageX, event.pageY);
+        }
+
+        hole.summoned = true;
         requestFrame();
     }
 
@@ -697,7 +1036,8 @@
             vx: (endX - startX) / duration,
             vy: (endY - startY) / duration,
             age: 0,
-            swallowed: 0
+            swallowed: 0,
+            fall: null
         };
 
         field.appendChild(el);
@@ -729,7 +1069,29 @@
             return;
         }
 
-        if (hole.mass > 0) {
+        // a feeding hole takes the satellite like everything else, once its pull has spread that far
+        if (hole.pinned && !s.fall) {
+            var offX = s.x - hole.x;
+            var offY = s.y - hole.y;
+            var off = Math.sqrt(offX * offX + offY * offY);
+            if (off < hole.front) s.fall = { x: offX, y: offY, vx: s.vx, vy: s.vy, distance: off, eaten: false };
+        } else if (!hole.pinned && s.fall) {
+            // let go mid-fall, it carries on from wherever it had got to
+            s.fall = null;
+        }
+
+        if (s.fall) {
+            stepFall(s.fall, dt, FEED_DRAG);
+            s.x = hole.x + s.fall.x;
+            s.y = hole.y + s.fall.y;
+            s.vx = s.fall.vx;
+            s.vy = s.fall.vy;
+
+            if (s.fall.distance < SHADOW_RADIUS) {
+                s.swallowed = 0.0001;
+                return;
+            }
+        } else if (hole.mass > 0) {
             var dx = hole.x - s.x;
             var dy = hole.y - s.y;
             var distanceSquared = dx * dx + dy * dy;
@@ -752,14 +1114,16 @@
             }
         }
 
-        s.x += s.vx * dt;
-        s.y += s.vy * dt;
+        if (!s.fall) {
+            s.x += s.vx * dt;
+            s.y += s.vy * dt;
+        }
 
         var width = field.clientWidth;
         var height = field.clientHeight;
         var edge = Math.min(s.x, width - s.x, s.y, height - s.y);
 
-        if (s.age > 1 && edge < -SATELLITE_MARGIN) {
+        if (!s.fall && s.age > 1 && edge < -SATELLITE_MARGIN) {
             removeSatellite();
             return;
         }
@@ -780,6 +1144,8 @@
         window.addEventListener("scroll", requestFrame, { passive: true });
         window.addEventListener("pointermove", onPointerMove, { passive: true });
         document.documentElement.addEventListener("pointerleave", onPointerLeave);
+        document.addEventListener("pointerdown", onPointerDown, { passive: true });
+        document.addEventListener("click", onClick);
         scheduleShootingStar();
         scheduleSatellite();
     }

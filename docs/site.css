@@ -597,6 +597,11 @@ a:hover > .title {
     display: inline-block;
 }
 
+.read-more,
+.more-link {
+    font-family: var(--font-title);
+}
+
 .posthaven-post-body .heading-anchor {
     position: relative;
     display: inline-block;
