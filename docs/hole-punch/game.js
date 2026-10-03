@@ -26,6 +26,15 @@
     // it to show what placing one there would do
     const HOVER_MASS = 26;
     const HOVER_EASE = 0.12; // seconds for the bending to come and go
+    // a selected hole wears three controls: more, less and remove. their size and
+    // distance from the hole are in screen pixels, so they are the same to press at any zoom
+    const CONTROL_RADIUS = 13;
+    const TOUCH_CONTROL_RADIUS = 19;
+    const CONTROL_GAP = 12;
+    const TAP_STEP = 1; // matter added or taken by one tap of a control or an arrow key
+    const ADJUST_DELAY = 0.3; // seconds a control is held before it starts to run
+    const WHEEL_RATE = 0.02; // matter for each unit the wheel reports
+    const TWEAK_SETTLE = 0.5; // seconds of quiet after which wheel or key changes become one undo step
     const DEMO_GROW = 55; // matter a second, when the plotter places the holes itself
     const DEMO_PAUSE = 0.4; // seconds between its holes
     const STAR_COUNT = 520;
@@ -123,6 +132,9 @@
         history: [], // each change to a hole, newest last, for undo
         growing: null,
         pressed: null, // a press on an existing hole: waiting, then either dragging or feeding
+        selected: null, // the hole whose controls are showing
+        adjusting: null, // a control being held
+        tweak: null, // a run of wheel or key changes, not yet recorded for undo
         touch: false, // whether the last press or move came from a finger
         panning: null, // the direction an arrow is being held in
         demo: null, // the plotter placing its own holes, after the player gives up
@@ -866,6 +878,7 @@
             else drawHole(hole, (!!state.growing && hole === state.growing.hole) || (!!state.demo && hole === state.demo.hole));
         }
         drawPreview();
+        drawControls();
         if (state.feast) feasted(goalNow().x, goalNow().y, drawShip);
         else drawShip();
         drawParticles();
@@ -975,7 +988,7 @@
     function refreshHud() {
         const left = Math.max(state.level.matter - spent(), 0);
         const share = (left / state.level.matter).toFixed(3);
-        const key = [share, state.phase, state.history.length, state.holes.length, !!state.growing, !!state.pressed, !!state.demo].join("|");
+        const key = [share, state.phase, state.history.length, state.holes.length, !!state.growing, !!state.pressed, !!state.adjusting, !!state.tweak, !!state.demo].join("|");
         if (key === shownHud) return;
         shownHud = key;
 
@@ -984,8 +997,8 @@
         el.holeCount.textContent = state.level.limit ? state.holes.length + "/" + state.level.limit : String(state.holes.length);
 
         const setup = state.phase === "setup";
-        const busy = !!state.growing || !!state.pressed || !!state.demo;
-        el.undo.disabled = !setup || !state.history.length || busy;
+        const busy = !!state.growing || !!state.pressed || !!state.adjusting || !!state.demo;
+        el.undo.disabled = !setup || (!state.history.length && !state.tweak) || busy;
         el.reset.disabled = !setup || !state.holes.length || busy;
         el.launch.disabled = state.phase === "ending" || state.phase === "feast" || state.phase === "won" || !!state.demo;
         el.launch.textContent = state.phase === "flying" ? "Abort" : "Launch";
@@ -1043,15 +1056,17 @@
         if (!hover) return;
 
         const wanted =
-            hover.inside && state.phase === "setup" && !state.growing && !state.pressed && !state.demo && !holeAt(hover) && S.capacityAt(state.level, state.holes, hover.x, hover.y) > 0;
+            hover.inside && state.phase === "setup" && !state.growing && !state.pressed && !state.demo && !holeAt(hover) && !controlAt(hover) && S.capacityAt(state.level, state.holes, hover.x, hover.y) > 0;
         const step = elapsed / HOVER_EASE;
         hover.strength = wanted ? Math.min(hover.strength + step, 1) : Math.max(hover.strength - step, 0);
         if (!hover.inside && hover.strength === 0) state.hover = null;
     }
 
     function setCursor() {
-        const over = state.hover && state.phase === "setup" && holeAt(state.hover);
-        const cursor = state.pressed && state.pressed.mode === "drag" ? "grabbing" : over ? "grab" : "crosshair";
+        const setup = state.hover && state.phase === "setup";
+        const over = setup && holeAt(state.hover);
+        const control = setup && controlAt(state.hover);
+        const cursor = state.pressed && state.pressed.mode === "drag" ? "grabbing" : control ? "pointer" : over ? "grab" : "crosshair";
         if (canvas.style.cursor !== cursor) canvas.style.cursor = cursor;
     }
 
@@ -1135,14 +1150,173 @@
         refreshPreview();
     }
 
+    // ---- adjusting a hole: select it, then give or take matter, or remove it
+
+    // where the selected hole's controls sit, kept inside the tube
+    function controls() {
+        const hole = state.selected;
+        if (!hole || state.phase !== "setup" || state.demo || state.holes.indexOf(hole) < 0) return null;
+
+        const radius = (state.touch ? TOUCH_CONTROL_RADIUS : CONTROL_RADIUS) / view.scale;
+        const reach = S.horizonRadius(hole.mass) + CONTROL_GAP / view.scale + radius;
+        const edge = radius + 4 / view.scale;
+        const left = -view.x / view.scale + edge;
+        const top = -view.y / view.scale + edge;
+        const right = (view.width - view.x) / view.scale - edge;
+        const bottom = (view.height - view.y) / view.scale - edge;
+        const keep = (x, y) => ({ x: Math.min(Math.max(x, left), right), y: Math.min(Math.max(y, top), bottom) });
+
+        return { radius: radius, up: keep(hole.x, hole.y - reach), down: keep(hole.x, hole.y + reach), remove: keep(hole.x + reach, hole.y) };
+    }
+
+    function controlAt(point) {
+        const set = controls();
+        if (!set) return null;
+        for (const name of ["up", "down", "remove"]) {
+            const dx = point.x - set[name].x;
+            const dy = point.y - set[name].y;
+            if (dx * dx + dy * dy < set.radius * set.radius) return name;
+        }
+        return null;
+    }
+
+    function drawControls() {
+        const set = controls();
+        if (!set) return;
+        const hole = state.selected;
+        const radius = S.horizonRadius(hole.mass);
+        const unit = 1 / view.scale;
+
+        // a collar round the chosen hole, and its size
+        ctx.strokeStyle = COLOUR.matter;
+        ctx.lineWidth = 1.2 * unit;
+        ctx.globalAlpha = 0.8;
+        ctx.setLineDash([4 * unit, 4 * unit]);
+        ctx.beginPath();
+        ctx.arc(hole.x, hole.y, radius + 5 * unit, 0, 6.2832);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = COLOUR.matter;
+        ctx.font = 13 * unit + "px ui-monospace, Menlo, monospace";
+        ctx.textAlign = "left";
+        ctx.globalAlpha = 1;
+        ctx.fillText(String(Math.round(hole.mass)), set.up.x + set.radius + 6 * unit, set.up.y + 4 * unit);
+
+        const live = state.adjusting ? (state.adjusting.direction > 0 ? "up" : "down") : null;
+        for (const name of ["up", "down", "remove"]) {
+            const at = set[name];
+            const colour = name === "remove" ? COLOUR.danger : COLOUR.matter;
+            const arm = set.radius * 0.42;
+
+            ctx.globalAlpha = name === live ? 0.45 : 0.85;
+            ctx.fillStyle = name === live ? colour : "rgba(6, 8, 7, 0.9)";
+            ctx.beginPath();
+            ctx.arc(at.x, at.y, set.radius, 0, 6.2832);
+            ctx.fill();
+
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = colour;
+            ctx.lineWidth = 1.2 * unit;
+            ctx.beginPath();
+            ctx.arc(at.x, at.y, set.radius, 0, 6.2832);
+            ctx.stroke();
+
+            ctx.lineWidth = 1.8 * unit;
+            ctx.beginPath();
+            if (name === "remove") {
+                ctx.moveTo(at.x - arm, at.y - arm);
+                ctx.lineTo(at.x + arm, at.y + arm);
+                ctx.moveTo(at.x + arm, at.y - arm);
+                ctx.lineTo(at.x - arm, at.y + arm);
+            } else {
+                const tip = name === "up" ? -arm * 0.7 : arm * 0.7;
+                ctx.moveTo(at.x - arm, at.y - tip);
+                ctx.lineTo(at.x, at.y + tip);
+                ctx.lineTo(at.x + arm, at.y - tip);
+            }
+            ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    // sets a hole's matter, within the smallest a hole can be and the most there
+    // is matter and room for. returns whether anything changed
+    function setMass(hole, mass) {
+        const others = state.holes.filter((other) => other !== hole);
+        const most = Math.max(S.capacityAt(state.level, others, hole.x, hole.y), hole.mass);
+        const next = Math.min(Math.max(mass, S.MIN_MASS), most);
+        if (next === hole.mass) return false;
+        hole.mass = next;
+        state.assisted = false;
+        refreshPreview();
+        return true;
+    }
+
+    // wheel and key changes come in runs. a run is recorded for undo once it goes quiet
+    function settleTweak() {
+        const tweak = state.tweak;
+        state.tweak = null;
+        if (tweak && tweak.hole.mass !== tweak.was.mass) state.history.push({ hole: tweak.hole, was: tweak.was });
+    }
+
+    function tweakMass(hole, change) {
+        if (!state.tweak || state.tweak.hole !== hole) {
+            settleTweak();
+            state.tweak = { hole: hole, was: { x: hole.x, y: hole.y, mass: hole.mass }, last: state.clock };
+        }
+        setMass(hole, hole.mass + change);
+        state.tweak.last = state.clock;
+    }
+
+    function removeHole(hole) {
+        const index = state.holes.indexOf(hole);
+        if (index < 0) return;
+        settleTweak();
+        state.holes.splice(index, 1);
+        state.history.push({ hole: hole, gone: index });
+        state.selected = null;
+        state.assisted = false;
+        refreshPreview();
+    }
+
+    // a control answers a tap with one step, and a hold by running on
+    function useControl(name) {
+        const hole = state.selected;
+        if (name === "remove") {
+            removeHole(hole);
+            return;
+        }
+        const direction = name === "up" ? 1 : -1;
+        const was = { x: hole.x, y: hole.y, mass: hole.mass };
+        setMass(hole, hole.mass + direction * TAP_STEP);
+        state.adjusting = { hole: hole, direction: direction, was: was, start: hole.mass, since: state.clock };
+    }
+
+    function adjust() {
+        const adjusting = state.adjusting;
+        const held = state.clock - adjusting.since - ADJUST_DELAY;
+        if (held > 0) setMass(adjusting.hole, adjusting.start + adjusting.direction * S.GROW_RATE * held);
+    }
+
     function press(event) {
         if (state.demo) return;
         state.touch = event.pointerType === "touch";
         const point = toWorld(event);
+        settleTweak();
+
+        const control = controlAt(point);
+        if (control) {
+            useControl(control);
+            return;
+        }
+
         const hole = holeAt(point);
 
         if (!hole) {
-            startHole(point);
+            // with a hole selected, a press elsewhere only lets go of it
+            if (state.selected) state.selected = null;
+            else startHole(point);
             return;
         }
 
@@ -1190,17 +1364,26 @@
 
     function release() {
         const pressed = state.pressed;
+        const adjusting = state.adjusting;
         state.pressed = null;
+        state.adjusting = null;
         stopGrowing();
+
+        if (adjusting && adjusting.hole.mass !== adjusting.was.mass) state.history.push({ hole: adjusting.hole, was: adjusting.was });
 
         if (pressed && pressed.mode === "drag" && (pressed.hole.x !== pressed.was.x || pressed.hole.y !== pressed.was.y)) {
             state.history.push({ hole: pressed.hole, was: pressed.was });
         }
+
+        // a click on a hole that neither dragged nor fed it selects it
+        if (pressed && pressed.mode === "waiting") state.selected = pressed.hole;
     }
 
     // clears every hole the player has placed. it is one more change, so undo brings them back
     function reset() {
-        if (state.phase !== "setup" || state.growing || state.pressed || state.demo || !state.holes.length) return;
+        if (state.phase !== "setup" || state.growing || state.pressed || state.adjusting || state.demo || !state.holes.length) return;
+        settleTweak();
+        state.selected = null;
         state.assisted = false;
         state.history.push({ cleared: state.holes, ghost: state.ghost });
         state.holes = [];
@@ -1211,10 +1394,14 @@
     // takes back the last change: a new hole goes; a fed or moved one returns to
     // how it was; a reset is put back
     function undo() {
-        if (state.phase !== "setup" || state.growing || state.pressed || state.demo || !state.history.length) return;
+        if (state.phase !== "setup" || state.growing || state.pressed || state.adjusting || state.demo) return;
+        settleTweak();
+        if (!state.history.length) return;
         state.assisted = false;
         const last = state.history.pop();
-        if (last.cleared) {
+        if (last.gone !== undefined) {
+            state.holes.splice(last.gone, 0, last.hole);
+        } else if (last.cleared) {
             state.holes = last.cleared;
             state.ghost = last.ghost;
         } else if (last.was) {
@@ -1233,6 +1420,8 @@
     function giveUp() {
         if (state.phase !== "setup" || state.demo || !state.level.answer) return;
         release();
+        settleTweak();
+        state.selected = null;
         el.levels.hidden = true;
         state.holes = [];
         state.history = [];
@@ -1278,6 +1467,7 @@
     function launch() {
         if (state.phase !== "setup" || state.demo) return;
         release();
+        settleTweak();
 
         // with no fuel and nothing pulling, the ship would only sit there until time ran out
         if (S.becalmed(state.level, state.holes)) {
@@ -1382,6 +1572,9 @@
         state.history = [];
         state.growing = null;
         state.pressed = null;
+        state.selected = null;
+        state.adjusting = null;
+        state.tweak = null;
         state.demo = null;
         state.assisted = false;
         state.flight = null;
@@ -1492,6 +1685,11 @@
             ["Place a hole", press + " an empty part of the field and hold. The hole grows, using up matter, until you let go."],
             ["Feed a hole", press + " one of your holes and hold still. After a moment it starts growing again."],
             ["Move a hole", press + " one of your holes and drag it straight away."],
+            [
+                "Adjust a hole",
+                (touch ? "Tap" : "Click") + " one of your holes to select it. The arrows above and below it give and take matter, and the cross removes it." +
+                    (touch ? "" : " The up and down keys and the mouse wheel do the same; Delete removes it.")
+            ],
             ["Launch", (touch ? "Press Launch." : "Click Launch, or press Space.") + " The dotted line shows the first seconds of the flight. In flight the same key aborts."],
             ["Undo, reset", "Undo takes back your last change" + (touch ? "" : " (Z)") + ". Reset clears every hole" + (touch ? "" : " (R)") + "."],
             ["Hazards", "The ship is lost if it strays inside a black hole, hits a rock or planet, leaves the field, or flies " + S.FLIGHT_LIMIT + " seconds without docking."]
@@ -1537,6 +1735,9 @@
         state.clock += elapsed;
 
         if (state.demo) stepDemo(elapsed);
+        if (state.adjusting) adjust();
+        if (state.tweak && state.clock - state.tweak.last > TWEAK_SETTLE) settleTweak();
+        if (state.selected && state.holes.indexOf(state.selected) < 0) state.selected = null;
         if (state.pressed) holdPress();
         if (state.growing) grow();
         easeHover(elapsed);
@@ -1591,6 +1792,20 @@
     canvas.addEventListener("contextmenu", function (event) {
         event.preventDefault();
     });
+
+    // the wheel, over a hole, gives and takes matter
+    canvas.addEventListener(
+        "wheel",
+        function (event) {
+            if (state.phase !== "setup" || state.demo || state.growing || state.pressed || state.adjusting) return;
+            const hole = holeAt(toWorld(event));
+            if (!hole) return;
+            event.preventDefault();
+            // some mice report lines, not pixels
+            tweakMass(hole, -event.deltaY * (event.deltaMode === 1 ? 16 : 1) * WHEEL_RATE);
+        },
+        { passive: false }
+    );
 
     el.undo.addEventListener("click", undo);
     el.reset.addEventListener("click", reset);
@@ -1656,6 +1871,14 @@
             undo();
         } else if (event.key === "r" || event.key === "R") {
             reset();
+        } else if (state.selected && state.phase === "setup" && !state.demo && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
+            // up and down give and take matter from the selected hole; with shift, in bigger steps
+            event.preventDefault();
+            tweakMass(state.selected, (event.key === "ArrowUp" ? TAP_STEP : -TAP_STEP) * (event.shiftKey ? 5 : 1));
+        } else if (state.selected && state.phase === "setup" && !state.demo && event.key === "Delete") {
+            removeHole(state.selected);
+        } else if (state.selected && event.key === "Escape") {
+            state.selected = null;
         } else if (event.key.indexOf("Arrow") === 0 && view.zoomed && state.phase === "setup") {
             event.preventDefault();
             const step = PAN_DIRECTIONS[event.key.slice(5).toLowerCase()];
