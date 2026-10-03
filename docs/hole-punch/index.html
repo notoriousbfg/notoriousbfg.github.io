@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Hole Punch</title>
+        <meta name="description" content="Punch black holes in space and sling a ship home round them.">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="theme-color" content="#151716">
+        <link rel="icon" type="image/svg+xml" href="icon.svg">
+        <link rel="stylesheet" href="hole-punch.css">
+    </head>
+    <body>
+        <div class="console">
+            <header class="strip plate">
+                <div class="side">
+                    <button class="well level" id="levels-open" type="button" aria-haspopup="dialog">
+                        <span class="label">Sector</span>
+                        <span class="digits" id="level-number">01</span>
+                        <span class="phosphor" id="level-name"></span>
+                    </button>
+                    <span class="well flag" id="fuel" hidden>No fuel</span>
+                    <span class="label">Matter</span>
+                </div>
+
+                <span class="well meter" id="matter"><span class="meter-fill" id="matter-fill"></span></span>
+
+                <div class="side">
+                    <span class="well digits amber" id="matter-left">0</span>
+                    <span class="label">Holes</span>
+                    <span class="well digits amber" id="hole-count">0</span>
+                    <button class="well help" id="manual-open" type="button" aria-haspopup="dialog" aria-label="Instructions">?</button>
+                </div>
+            </header>
+
+            <main class="screen">
+                <canvas id="field" aria-label="The playing field"></canvas>
+                <div class="crt" aria-hidden="true"></div>
+                <button class="pan pan-left" id="pan-left" type="button" aria-label="Pan left" hidden></button>
+                <button class="pan pan-right" id="pan-right" type="button" aria-label="Pan right" hidden></button>
+                <button class="pan pan-up" id="pan-up" type="button" aria-label="Pan up" hidden></button>
+                <button class="pan pan-down" id="pan-down" type="button" aria-label="Pan down" hidden></button>
+                <button class="zoom" id="zoom" type="button" hidden>Map</button>
+            </main>
+
+            <footer class="deck plate">
+                <p class="well hint" id="hint" aria-live="polite"></p>
+
+                <div class="guard">
+                    <span class="lamp" id="lamp" aria-hidden="true"></span>
+                    <button class="key key-launch" id="launch" type="button">Launch</button>
+                </div>
+
+                <div class="side">
+                    <button class="key" id="undo" type="button">Undo</button>
+                    <button class="key" id="reset" type="button">Reset</button>
+                    <p class="stamp">Hole Punch<br>Unit 0426 &middot; Mk II</p>
+                </div>
+            </footer>
+        </div>
+
+        <div class="overlay" id="won" role="dialog" aria-modal="true" aria-labelledby="won-title" hidden>
+            <div class="panel">
+                <h1 id="won-title">Docking confirmed</h1>
+                <p id="won-detail"></p>
+                <div class="panel-actions">
+                    <button class="key" id="replay" type="button">Replay</button>
+                    <button class="key key-go" id="next" type="button">Next sector</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="overlay" id="levels" role="dialog" aria-modal="true" aria-labelledby="levels-title" hidden>
+            <div class="panel panel-wide">
+                <h1 id="levels-title">Sector index</h1>
+                <ol class="level-list" id="level-list"></ol>
+                <div class="panel-actions">
+                    <button class="key first" id="give-up" type="button">I give up</button>
+                    <button class="key" id="levels-close" type="button">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="overlay" id="manual" role="dialog" aria-modal="true" aria-labelledby="manual-title" hidden>
+            <div class="panel panel-wide">
+                <img class="logo" src="logo.svg" alt="Hole Punch" width="264" height="80">
+                <h1 id="manual-title">Operating instructions</h1>
+                <dl class="manual" id="manual-list"></dl>
+                <div class="panel-actions">
+                    <button class="key key-go" id="manual-close" type="button">Understood</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="rotate" role="alert">
+            <div class="panel">
+                <span class="handset" aria-hidden="true"></span>
+                <h1>Rotate device</h1>
+                <p>This console operates in landscape.</p>
+            </div>
+        </div>
+
+        <script src="physics.js"></script>
+        <script src="game.js"></script>
+    </body>
+</html>
