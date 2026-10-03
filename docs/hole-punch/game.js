@@ -1263,6 +1263,28 @@
         refreshPreview();
     }
 
+    // tab steps the selection through the player's holes in the order they were
+    // placed, and shift-tab back. past either end it lets go, and the key goes on
+    // to do what it always does, so the buttons round the tube can still be reached
+    function stepSelection(event) {
+        const focused = document.activeElement;
+        if (state.phase !== "setup" || state.demo || !state.holes.length) return;
+        if (focused && focused.tagName === "BUTTON") return;
+
+        settleTweak();
+        const at = state.holes.indexOf(state.selected);
+        const next = event.shiftKey ? (at < 0 ? state.holes.length - 1 : at - 1) : at + 1;
+
+        if (next < 0 || next >= state.holes.length) {
+            state.selected = null;
+            return;
+        }
+
+        event.preventDefault();
+        state.selected = state.holes[next];
+        if (view.zoomed) panTo(state.selected.x, state.selected.y);
+    }
+
     // a control answers a tap with one step, and a hold by running on
     function useControl(name) {
         const hole = state.selected;
@@ -1661,7 +1683,7 @@
             [
                 "Adjust a hole",
                 (touch ? "Tap" : "Click") + " one of your holes to select it. The arrows above and below it give and take matter, and the cross removes it." +
-                    (touch ? "" : " The up and down keys and the mouse wheel do the same; Delete removes it.")
+                    (touch ? "" : " The up and down keys and the mouse wheel do the same; Delete removes it. Tab steps from hole to hole.")
             ],
             ["Launch", (touch ? "Press Launch." : "Click Launch, or press Space.") + " The dotted line shows the first seconds of the flight. In flight the same key aborts."],
             ["Undo, reset", "Undo takes back your last change" + (touch ? "" : " (Z)") + ". Reset clears every hole" + (touch ? "" : " (R)") + "."],
@@ -1781,6 +1803,15 @@
 
     el.undo.addEventListener("click", undo);
     el.reset.addEventListener("click", reset);
+
+    // a key pressed with the mouse gives up the focus it was handed, so that tab
+    // and space go on meaning what they mean on the field. pressed from the
+    // keyboard (which reports no click count) it keeps it
+    for (const key of [el.undo, el.reset, el.launch]) {
+        key.addEventListener("click", function (event) {
+            if (event.detail > 0) key.blur();
+        });
+    }
     el.zoom.addEventListener("click", function () {
         view.close = !view.close;
         placeView();
@@ -1829,6 +1860,8 @@
             el.levels.hidden = true;
         } else if (overlay) {
             return;
+        } else if (event.key === "Tab") {
+            stepSelection(event);
         } else if (state.phase === "feast" && (event.key === " " || event.key === "Enter")) {
             event.preventDefault();
             showWon();
