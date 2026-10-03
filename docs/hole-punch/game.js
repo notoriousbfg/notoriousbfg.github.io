@@ -16,12 +16,11 @@
     const FEAST_FRONT = 1000; // how fast the front spreads, in field units a second
     const FEAST_SWIRL = 1.7; // how far round something turns on its way in, in radians
     const EINSTEIN = 2.4; // the ring that starlight bends round, in horizon radii
-    // a press on one of the player's holes moves it if the pointer travels this
-    // far (in screen pixels) before the hold has lasted long enough to feed it
+    // a press on one of the player's holes moves it once the pointer has travelled
+    // this far (in screen pixels); short of that, it selects the hole
     const DRAG_DISTANCE = 6;
     const TOUCH_DRAG_DISTANCE = 14; // a finger wanders more than a mouse
     const TOUCH_REACH = 26; // and needs a bigger target, in screen pixels
-    const FEED_DELAY = 0.5;
     // the pointer carries an unseen hole of this mass, bending the stars under
     // it to show what placing one there would do
     const HOVER_MASS = 26;
@@ -131,7 +130,7 @@
         holes: [],
         history: [], // each change to a hole, newest last, for undo
         growing: null,
-        pressed: null, // a press on an existing hole: waiting, then either dragging or feeding
+        pressed: null, // a press on an existing hole: waiting, then dragging if the pointer moves
         selected: null, // the hole whose controls are showing
         adjusting: null, // a control being held
         tweak: null, // a run of wheel or key changes, not yet recorded for undo
@@ -1074,14 +1073,12 @@
         return (state.level.zones || []).some((zone) => point.x >= zone.x && point.x <= zone.x + zone.w && point.y >= zone.y && point.y <= zone.y + zone.h);
     }
 
-    function refuseGrowth(point, existing) {
-        const left = state.level.matter - spent();
+    function refuseHole(point) {
         const limit = state.level.limit;
-        const short = existing ? left < 0.5 : left < S.MIN_MASS;
-        let reason = existing ? "No room for it to grow." : "No room for a hole there.";
-        if (!existing && limit && state.holes.length >= limit) reason = "The plotter can hold only " + limit + (limit === 1 ? " hole" : " holes") + " here.";
-        else if (short) reason = "Not enough matter left.";
-        else if (!existing && inZone(point)) reason = "No holes in the exclusion zone.";
+        let reason = "No room for a hole there.";
+        if (limit && state.holes.length >= limit) reason = "The plotter can hold only " + limit + (limit === 1 ? " hole" : " holes") + " here.";
+        else if (state.level.matter - spent() < S.MIN_MASS) reason = "Not enough matter left.";
+        else if (inZone(point)) reason = "No holes in the exclusion zone.";
         refuse(point, reason);
     }
 
@@ -1089,7 +1086,7 @@
     function startHole(point) {
         const capacity = S.capacityAt(state.level, state.holes, point.x, point.y);
         if (!capacity) {
-            refuseGrowth(point, false);
+            refuseHole(point);
             return;
         }
 
@@ -1099,20 +1096,6 @@
         state.assisted = false;
         state.growing = { hole: hole, was: null, start: hole.mass, capacity: capacity, since: state.clock };
         refreshPreview();
-    }
-
-    // a press held still on one of the player's holes feeds it more matter
-    function startFeeding(hole) {
-        const others = state.holes.filter((other) => other !== hole);
-        const capacity = S.capacityAt(state.level, others, hole.x, hole.y);
-        if (capacity < hole.mass + 0.5) {
-            refuseGrowth(hole, true);
-            return;
-        }
-
-        el.matter.classList.remove("refused");
-        state.assisted = false;
-        state.growing = { hole: hole, was: { x: hole.x, y: hole.y, mass: hole.mass }, start: hole.mass, capacity: capacity, since: state.clock };
     }
 
     function grow() {
@@ -1353,15 +1336,6 @@
         if (pressed.mode === "drag") drag(point);
     }
 
-    // a press that has been held still long enough becomes a feed
-    function holdPress() {
-        const pressed = state.pressed;
-        if (pressed.mode !== "waiting" || state.clock - pressed.since < FEED_DELAY) return;
-        pressed.mode = "feed";
-        startFeeding(pressed.hole);
-        if (!state.growing) state.pressed = null;
-    }
-
     function release() {
         const pressed = state.pressed;
         const adjusting = state.adjusting;
@@ -1375,7 +1349,7 @@
             state.history.push({ hole: pressed.hole, was: pressed.was });
         }
 
-        // a click on a hole that neither dragged nor fed it selects it
+        // a press on a hole that did not drag it selects it
         if (pressed && pressed.mode === "waiting") state.selected = pressed.hole;
     }
 
@@ -1683,8 +1657,7 @@
         const entries = [
             ["Objective", "Get the ship to the station. You cannot steer it. Place black holes, and their gravity bends its course."],
             ["Place a hole", press + " an empty part of the field and hold. The hole grows, using up matter, until you let go."],
-            ["Feed a hole", press + " one of your holes and hold still. After a moment it starts growing again."],
-            ["Move a hole", press + " one of your holes and drag it straight away."],
+            ["Move a hole", press + " one of your holes and drag it."],
             [
                 "Adjust a hole",
                 (touch ? "Tap" : "Click") + " one of your holes to select it. The arrows above and below it give and take matter, and the cross removes it." +
@@ -1738,7 +1711,6 @@
         if (state.adjusting) adjust();
         if (state.tweak && state.clock - state.tweak.last > TWEAK_SETTLE) settleTweak();
         if (state.selected && state.holes.indexOf(state.selected) < 0) state.selected = null;
-        if (state.pressed) holdPress();
         if (state.growing) grow();
         easeHover(elapsed);
         setCursor();
