@@ -170,6 +170,9 @@ body {
 }
 
 .help {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 30px;
     height: 30px;
     padding: 0;
@@ -177,6 +180,27 @@ body {
     color: var(--phosphor);
     text-shadow: 0 0 6px rgba(141, 255, 180, 0.55);
     cursor: pointer;
+}
+
+.help[hidden] {
+    display: none;
+}
+
+/* the full-screen key: corners pointing out to enter, in to leave */
+.help svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    filter: drop-shadow(0 0 3px rgba(141, 255, 180, 0.6));
+}
+
+.help .leave,
+.help.on .enter {
+    display: none;
+}
+
+.help.on .leave {
+    display: inline;
 }
 
 /* the fuel warning: lit only when the ship has none */

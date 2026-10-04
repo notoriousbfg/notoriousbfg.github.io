@@ -9,7 +9,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="theme-color" content="#151716">
         <link rel="icon" type="image/svg+xml" href="icon.svg">
-        <link rel="stylesheet" href="hole-punch.css">
+        <link rel="stylesheet" href="hole-punch.css?v=9">
     </head>
     <body>
         <div class="console">
@@ -30,6 +30,12 @@
                     <span class="well digits amber" id="matter-left">0</span>
                     <span class="label">Holes</span>
                     <span class="well digits amber" id="hole-count">0</span>
+                    <button class="well help" id="fullscreen" type="button" aria-label="Full screen" hidden>
+                        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                            <path class="enter" d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/>
+                            <path class="leave" d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4"/>
+                        </svg>
+                    </button>
                     <button class="well help" id="manual-open" type="button" aria-haspopup="dialog" aria-label="Instructions">?</button>
                 </div>
             </header>
@@ -101,7 +107,9 @@
             </div>
         </div>
 
-        <script src="physics.js"></script>
-        <script src="game.js"></script>
+        <!-- raise the version on all three files together whenever any of them changes, so that
+             nobody is left running a new page against old script, or the other way about -->
+        <script src="physics.js?v=9"></script>
+        <script src="game.js?v=9"></script>
     </body>
 </html>

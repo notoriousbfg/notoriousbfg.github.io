@@ -19,7 +19,13 @@
     // a press on one of the player's holes moves it once the pointer has travelled
     // this far (in screen pixels); short of that, it selects the hole
     const DRAG_DISTANCE = 6;
-    const TOUCH_DRAG_DISTANCE = 14; // a finger wanders more than a mouse
+    const TOUCH_DRAG_DISTANCE = 18; // a finger wanders more than a mouse
+    // a touch that was down only briefly and did not go far was a tap that slipped, not a drag
+    const SLIPPED_TAP_SECONDS = 0.3;
+    const SLIPPED_TAP_DISTANCE = 32;
+    // after a touch, phones may send a pretend mouse press at the same spot. anything
+    // from a mouse this soon after a finger is ignored
+    const GHOST_MOUSE_MS = 1000;
     const TOUCH_REACH = 26; // and needs a bigger target, in screen pixels
     // the pointer carries an unseen hole of this mass, bending the stars under
     // it to show what placing one there would do
@@ -102,6 +108,7 @@
         manual: document.getElementById("manual"),
         manualList: document.getElementById("manual-list"),
         manualOpen: document.getElementById("manual-open"),
+        fullscreen: document.getElementById("fullscreen"),
         manualClose: document.getElementById("manual-close")
     };
 
@@ -1330,12 +1337,39 @@
             mode: "waiting",
             since: state.clock,
             screen: { x: event.clientX, y: event.clientY },
+            travel: 0,
+            touch: state.touch,
             grip: { x: point.x - hole.x, y: point.y - hole.y },
             was: { x: hole.x, y: hole.y, mass: hole.mass }
         };
     }
 
+    let lastTouchAt = -Infinity;
+
+    // true for a mouse event that is really the echo of a touch
+    function ghostMouse(event) {
+        const now = performance.now();
+        if (event.pointerType === "touch" || event.pointerType === "pen") {
+            lastTouchAt = now;
+            return false;
+        }
+        return now - lastTouchAt < GHOST_MOUSE_MS;
+    }
+
+    // with #debug on the address, the message window reports what the pointer is
+    // doing, so that someone with a misbehaving phone can show us
+    const debugging = /debug/.test(window.location ? window.location.hash : "");
+    const debugLines = [];
+
+    function debug(event, note) {
+        if (!debugging) return;
+        debugLines.push(event.type.replace("pointer", "") + ":" + (event.pointerType || "?") + (note ? " " + note : ""));
+        if (debugLines.length > 6) debugLines.shift();
+        el.hint.textContent = debugLines.join(" | ");
+    }
+
     function movePointer(event) {
+        if (ghostMouse(event)) return;
         const point = toWorld(event);
         const pressed = state.pressed;
         state.touch = event.pointerType === "touch";
@@ -1349,11 +1383,17 @@
 
         if (!pressed) return;
 
+        const dx = event.clientX - pressed.screen.x;
+        const dy = event.clientY - pressed.screen.y;
+        pressed.travel = Math.max(pressed.travel, Math.sqrt(dx * dx + dy * dy));
+
         if (pressed.mode === "waiting") {
-            const dx = event.clientX - pressed.screen.x;
-            const dy = event.clientY - pressed.screen.y;
             const far = state.touch ? TOUCH_DRAG_DISTANCE : DRAG_DISTANCE;
-            if (dx * dx + dy * dy > far * far) pressed.mode = "drag";
+            if (pressed.travel > far) {
+                pressed.mode = "drag";
+                pressed.ghost = state.ghost;
+                debug(event, "drag");
+            }
         }
         if (pressed.mode === "drag") drag(point);
     }
@@ -1366,6 +1406,22 @@
         stopGrowing();
 
         if (adjusting && adjusting.hole.mass !== adjusting.was.mass) state.history.push({ hole: adjusting.hole, was: adjusting.was });
+
+        // a finger that was down for a moment and slid a little meant to tap: put
+        // the hole back where it was and treat it as one
+        if (
+            pressed &&
+            pressed.mode === "drag" &&
+            pressed.touch &&
+            state.clock - pressed.since < SLIPPED_TAP_SECONDS &&
+            pressed.travel < SLIPPED_TAP_DISTANCE
+        ) {
+            pressed.hole.x = pressed.was.x;
+            pressed.hole.y = pressed.was.y;
+            state.ghost = pressed.ghost;
+            pressed.mode = "waiting";
+            refreshPreview();
+        }
 
         if (pressed && pressed.mode === "drag" && (pressed.hole.x !== pressed.was.x || pressed.hole.y !== pressed.was.y)) {
             state.history.push({ hole: pressed.hole, was: pressed.was });
@@ -1669,6 +1725,41 @@
         el.levelsClose.focus();
     }
 
+    // ---- full screen, for touch devices that allow a page to take it
+
+    const page = document.documentElement;
+    const enterFullscreen = page.requestFullscreen || page.webkitRequestFullscreen;
+    const leaveFullscreen = document.exitFullscreen || document.webkitExitFullscreen;
+    const canFullscreen = !!enterFullscreen && !!leaveFullscreen && (document.fullscreenEnabled || document.webkitFullscreenEnabled) !== false;
+
+    function isFullscreen() {
+        return !!(document.fullscreenElement || document.webkitFullscreenElement);
+    }
+
+    // the same key enters and leaves. while the game has the screen it also asks
+    // for landscape, where the phone will hold it
+    function toggleFullscreen() {
+        if (isFullscreen()) {
+            leaveFullscreen.call(document);
+            return;
+        }
+        const entering = enterFullscreen.call(page, { navigationUI: "hide" });
+        if (entering && entering.then) {
+            entering
+                .then(function () {
+                    if (window.screen && window.screen.orientation && window.screen.orientation.lock) return window.screen.orientation.lock("landscape");
+                })
+                .catch(function () {});
+        }
+    }
+
+    function fullscreenChanged() {
+        const full = isFullscreen();
+        el.fullscreen.classList.toggle("on", full);
+        el.fullscreen.setAttribute("aria-label", full ? "Leave full screen" : "Full screen");
+        resize();
+    }
+
     // ---- the manual
 
     // the instructions are written for the device in hand: a finger or a mouse
@@ -1691,6 +1782,12 @@
         ];
         if (view.fit < MIN_SCALE) {
             entries.push(["Look around", "The field is bigger than the screen. " + (touch ? "Hold an arrow" : "Hold an arrow, or use the arrow keys,") + " to pan. Map shows the whole field."]);
+        }
+        if (touch && !canFullscreen) {
+            // an iphone will not let a page fill the screen, but it will run one from the home screen with no browser round it
+            entries.push(["Full screen", "This browser cannot fill the screen from a page. Use Share, then Add to Home Screen, and open the game from there."]);
+        } else if (touch) {
+            entries.push(["Full screen", "The key with four corners, beside the question mark, fills the screen. Press it again to leave."]);
         }
         entries.push(["Further out", "Later sectors add amber beacons to pass before the station opens, hatched zones that take no holes, and a ship with no fuel, which sits until something pulls it."]);
         entries.push(["Score", "Fewer holes and less matter are better. Your best of each is kept for every sector."]);
@@ -1771,15 +1868,38 @@
             showWon();
             return;
         }
-        if (event.button !== 0 || state.phase !== "setup" || state.growing || state.pressed) return;
+        if (ghostMouse(event)) {
+            debug(event, "ignored");
+            return;
+        }
+        if (event.button !== 0 || state.phase !== "setup") return;
         event.preventDefault();
-        canvas.setPointerCapture(event.pointerId);
+
+        // if the end of an earlier press never arrived, finish it now. left
+        // unfinished it would swallow every press after it
+        if (state.pressed && state.pressed.mode === "waiting") state.pressed = null;
+        if (state.growing || state.pressed || state.adjusting) release();
+
+        try {
+            canvas.setPointerCapture(event.pointerId);
+        } catch (e) {}
         press(event);
+        debug(event, state.pressed ? "on-hole" : state.growing ? "new" : state.adjusting ? "control" : "other");
     });
 
+    function endPointer(event) {
+        const pressed = state.pressed;
+        release();
+        debug(event, pressed ? (state.selected === pressed.hole ? "selected" : "moved " + Math.round(pressed.travel)) : "");
+    }
+
     canvas.addEventListener("pointermove", movePointer);
-    canvas.addEventListener("pointerup", release);
-    canvas.addEventListener("pointercancel", release);
+    canvas.addEventListener("pointerup", endPointer);
+    canvas.addEventListener("pointercancel", endPointer);
+    canvas.addEventListener("lostpointercapture", function () {
+        // the browser took the pointer away without saying it was lifted
+        if (state.growing || state.pressed || state.adjusting) release();
+    });
     canvas.addEventListener("pointerleave", function () {
         if (state.hover) state.hover.inside = false;
     });
@@ -1848,6 +1968,14 @@
     });
     el.giveUp.addEventListener("click", giveUp);
     el.manualOpen.addEventListener("click", showManual);
+
+    // offered on touch devices only: a desktop browser has its own full-screen key
+    if (canFullscreen && window.matchMedia && window.matchMedia("(pointer: coarse)").matches) {
+        el.fullscreen.hidden = false;
+        el.fullscreen.addEventListener("click", toggleFullscreen);
+        document.addEventListener("fullscreenchange", fullscreenChanged);
+        document.addEventListener("webkitfullscreenchange", fullscreenChanged);
+    }
     el.manualClose.addEventListener("click", closeManual);
 
     window.addEventListener("keydown", function (event) {
