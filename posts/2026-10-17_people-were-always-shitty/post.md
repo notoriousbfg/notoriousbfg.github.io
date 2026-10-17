@@ -10,7 +10,7 @@ While not perfect, I eventually settled on only offering feedback in the form of
 
 Recently I was reviewing a rather long merge request. The title hadn't been changed from the one Github generates, there was no description and there were hundreds of file changes over twenty or so files. I tend to feel slightly self-aware if giving ten or more comments but if there is good reason to give feedback I will give it.
 
-Having tried to rephrase one particular question a number of times, I decided that instead I would phrase it as a command e.g. "Write it like this so that you have the benefit of that".It changed the tone entirely, but I had just become so fed up with being so... 
+Having tried to rephrase one particular question a number of times, I decided that instead I would phrase it as a command e.g. "Write it like this so that you have the benefit of that". It changed the tone entirely, but I had just become so fed up with being so... 
 
 ...so fucking considerate all the time?
 
@@ -22,7 +22,7 @@ People have always been shitty but at least before AI, we *sometimes* made an at
 
 And the code itself? Well, it's just not a plate of food I enjoy eating anymore: with the chicken, and the [roasties](https://notoriousbfg.com/feed/perfect-roasties/) and the green beans, the carrots and maybe some gravy. Each with its own distinct appearance and flavour. Instead I'm being served that meal replacement stuff people drink. Huel. All of it Huel. No flavourings, just one homogenous, tasteless liquid. Maybe if I'm lucky I'll find a blueberry at the bottom. Yes, I remember what blueberries used to taste like: sweet and sometimes a little bitter. Imagine eating (drinking?) Huel three times a day. That's what reviewing LLM code feels like, and my peers expect me to act like they really wrote it, to pretend. I'm expected to pretend this bland liquid is a delicious cooked meal.
 
-I'm not saying "let's not use AI at all" (because most conversations about using it seem to degenerate to ["should be using AI or not? yes we should"](https://notoriousbfg.com/no-smoking-gun/), and I'm not going to try prove to you that I really do love AI by showing you [all the things](https://notoriousbfg.com/hole-punch/) I made with it. I'm just saying the behaviours we used to consider "fairly inconsiderate" when offering code up for review seem to have been exaggerated by the sheer amount of code we're now putting out, a blind trust that "the LLM probably knows what it's doing better than I do", and an over-reliance on speed over quality.
+I'm not saying "let's not use AI at all" (because most conversations about using it seem to degenerate to ["should be using AI or not? yes we should"](https://notoriousbfg.com/no-smoking-gun/)) and I'm not going to try prove to you that I really do love AI by showing you [all the things](https://notoriousbfg.com/hole-punch/) I made with it. I'm just saying the behaviours we used to consider "fairly inconsiderate" when offering code up for review seem to have been exaggerated by the sheer amount of code we're now putting out, a blind trust that "the LLM probably knows what it's doing better than I do", and an over-reliance on speed over quality.
 
 Perhaps some of the ways we worked before weren't *totally* misguided?
 
