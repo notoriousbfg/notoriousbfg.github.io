@@ -4,7 +4,7 @@ I had learned earlier in my career that my professional worth was not intrinsica
 
 So, in some ways I empathised with my colleague. I spent a great deal of time and effort thinking about how I might best work around their behaviour, their reactivity.
 
-Ultimately, it just didn't work. I gave so much of myself trying to adapt *my* process, *my* behaviours. I asked for advice on Hacker News. I asked for help from friends. I couldn't control, or dare I say *influence*, how my colleague felt and it completely sapped my desire, my love of the craft. I resented the thought of coming to work on a Monday.
+Ultimately, it just didn't work. I gave so much of myself trying to adapt *my* process, *my* behaviours. I asked for advice on Hacker News. I asked for help from friends. I couldn't control, or dare I say *influence*, how my colleague felt and it completely sapped my desire, my love of the craft. I resented the thought of coming to work on a Monday. In part this was also due to my manager at the time's indifference to the matter, [creating a culture](https://notoriousbfg.com/the-impact-of-culture/#the-actions-of-leaders) in which behaviours like my colleague's were acceptable.
 
 While not perfect, I eventually settled on only offering feedback in the form of questions: "Might writing it like this have the benefit of that?", for example. This worked a bit better than any of the other approaches and is the one I have taken for any feedback I have since given. It has the benefit of making you not sound like a prick, even if you have no intention of sounding like one. I have since had the great pleasure of working with some truly lovely people who aren't generally bothered by "difficult" feedback.
 
