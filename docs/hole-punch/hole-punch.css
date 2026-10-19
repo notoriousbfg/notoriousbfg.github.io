@@ -37,10 +37,68 @@ body {
     overscroll-behavior: none;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---- notice: a printed label stuck to the top of the cabinet, pointing at
+   the iOS version */
+
+.notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex: none;
+    padding: 7px max(28px, env(safe-area-inset-right)) 7px max(28px, env(safe-area-inset-left));
+    font: 700 10px/1.3 var(--label);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-decoration: none;
+    background: var(--steel-dark);
+    border-bottom: 1px solid #000;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
+}
+
+.notice-tag {
+    flex: none;
+    padding: 3px 6px 2px;
+    border-radius: 2px;
+    color: var(--ink);
+    background: var(--amber);
+    text-shadow: none;
+}
+
+.notice-text {
+    min-width: 0;
+}
+
+.notice-go {
+    color: var(--phosphor);
+    text-shadow: 0 0 6px rgba(141, 255, 180, 0.55);
+    text-decoration: underline;
+    text-decoration-color: var(--phosphor-dim);
+    text-underline-offset: 3px;
+    white-space: nowrap;
+}
+
+.notice:hover .notice-go,
+.notice:focus-visible .notice-go {
+    text-decoration-color: var(--phosphor);
+}
+
+.notice:focus-visible {
+    outline: 2px solid var(--phosphor);
+    outline-offset: -4px;
+}
+
 .console {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 /* ---- plates: the pressed-steel panels the controls are mounted on */
@@ -758,6 +816,12 @@ body {
 /* ---- small screens: the message window moves above the keys */
 
 @media (max-width: 760px) {
+    .notice {
+        padding-left: 22px;
+        padding-right: 22px;
+        text-align: center;
+    }
+
     /* the message window takes a row of its own, above the keys */
     .hint {
         grid-column: 1 / -1;
@@ -818,6 +882,18 @@ body {
    right-hand edge as a column of keys and the strip slims down */
 
 @media (max-height: 540px) and (orientation: landscape) {
+    .notice {
+        gap: 8px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 9px;
+        white-space: nowrap;
+    }
+
+    .notice-tag {
+        padding: 2px 5px 1px;
+    }
+
     .console {
         grid-template-columns: minmax(0, 1fr) auto;
         grid-template-rows: auto minmax(0, 1fr);
